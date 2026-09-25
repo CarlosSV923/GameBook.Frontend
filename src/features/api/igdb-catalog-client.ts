@@ -70,7 +70,13 @@ export function createIgdbCatalogClient(
       return suggestions;
     },
     async listCatalog(filters = {}, signal) {
-      const params = new URLSearchParams({ limit: "20" });
+      const params = new URLSearchParams({
+        limit: String(filters.limit ?? 20),
+      });
+
+      if (filters.offset !== undefined) {
+        params.set("offset", String(filters.offset));
+      }
 
       if (filters.name?.trim()) {
         params.set("name", filters.name.trim());
