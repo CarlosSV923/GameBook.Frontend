@@ -1,9 +1,9 @@
 "use client";
 
 import { AppShell } from "@/features/layout/app-shell";
+import { CatalogList } from "@/features/catalog/catalog-list";
 import { PreferenceControls } from "@/features/preferences/preference-controls";
 import { usePreferences } from "@/features/preferences/preferences-provider";
-import { CatalogState } from "@/shared/ui/catalog-state";
 
 export default function Home() {
   return (
@@ -43,7 +43,7 @@ function CatalogPreview() {
         <h2 id="catalog-title">{copy.catalog.title}</h2>
         <p>{copy.catalog.description}</p>
       </div>
-      <CatalogState kind="empty" messages={copy} />
+      <CatalogList />
     </section>
   );
 }

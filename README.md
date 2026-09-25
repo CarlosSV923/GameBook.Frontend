@@ -10,7 +10,7 @@ The frontend will provide public catalog and game-detail views, authenticated ac
 
 ## Repository status
 
-This repository contains the Next.js App Router foundation, the first visual system, and the server-only IGDB provider adapter. Product views, authenticated experiences, and deployment remain scheduled as later SDD tasks.
+This repository contains the Next.js App Router foundation, the first visual system, the server-only IGDB provider adapter, and the initial public catalog card view. Filters, detail, authenticated experiences, and deployment remain scheduled as later SDD tasks.
 
 ## Local development
 

@@ -26,6 +26,9 @@ export const messages = {
       emptyTitle: "The shelves are ready for your next search.",
       eyebrow: "Public catalog",
       title: "Find a game worth keeping",
+      cardKicker: "IGDB record",
+      coverAlt: "Cover art for {name}",
+      missingImage: "Cover image unavailable",
     },
     preferences: {
       eyebrow: "Archive settings",
@@ -77,6 +80,9 @@ export const messages = {
       emptyTitle: "Las estanterías esperan tu próxima búsqueda.",
       eyebrow: "Catálogo público",
       title: "Encuentra un juego que valga la pena conservar",
+      cardKicker: "Registro de IGDB",
+      coverAlt: "Arte de portada de {name}",
+      missingImage: "Imagen de portada no disponible",
     },
     preferences: {
       eyebrow: "Ajustes del archivo",
