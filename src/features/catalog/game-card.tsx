@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import type { AuthStatus } from "@/features/auth/auth-provider";
+import { FavoriteAction } from "@/features/catalog/favorite-action";
 import {
   formatGamePlatforms,
   formatGameRating,
@@ -15,9 +17,15 @@ type GameCardProps = {
   game: IgdbGameCardData;
   messages: Messages;
   onSelect: () => void;
+  authStatus: AuthStatus;
 };
 
-export function GameCard({ game, messages, onSelect }: GameCardProps) {
+export function GameCard({
+  authStatus,
+  game,
+  messages,
+  onSelect,
+}: GameCardProps) {
   const [imageUrl, setImageUrl] = useState(game.imageUrl);
   const titleId = `game-card-${game.igdbId}`;
   const coverAlt = messages.catalog.coverAlt.replace("{name}", game.name);
@@ -87,6 +95,13 @@ export function GameCard({ game, messages, onSelect }: GameCardProps) {
           </span>
         </span>
       </button>
+      <FavoriteAction
+        gameId={game.igdbId}
+        gameName={game.name}
+        messages={messages}
+        placement="card"
+        status={authStatus}
+      />
     </article>
   );
 }

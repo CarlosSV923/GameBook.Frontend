@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
+import type { AuthStatus } from "@/features/auth/auth-provider";
+import { FavoriteAction } from "@/features/catalog/favorite-action";
 import {
   formatGamePlatforms,
   formatGameRating,
@@ -18,6 +20,7 @@ type GameDetailModalProps = {
   game: IgdbGameCard;
   messages: Messages;
   onClose: () => void;
+  authStatus: AuthStatus;
 };
 
 type DetailStatus = "error" | "loading" | "ready";
@@ -26,6 +29,7 @@ export function GameDetailModal({
   game,
   messages,
   onClose,
+  authStatus,
 }: GameDetailModalProps) {
   const [detail, setDetail] = useState<IgdbGameDetail | null>(null);
   const [status, setStatus] = useState<DetailStatus>("loading");
@@ -166,6 +170,13 @@ export function GameDetailModal({
               <span aria-hidden="true">•</span>
               <span>{formatGamePlatforms(game.platforms)}</span>
             </p>
+            <FavoriteAction
+              gameId={game.igdbId}
+              gameName={game.name}
+              messages={messages}
+              placement="modal"
+              status={authStatus}
+            />
           </div>
           <button
             aria-label={messages.catalog.detail.close}

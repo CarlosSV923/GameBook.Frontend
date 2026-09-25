@@ -883,6 +883,7 @@ h2 {
 }
 
 .game-card {
+  position: relative;
   min-width: 0;
   transition: transform 160ms ease-out;
 }
@@ -1022,6 +1023,163 @@ h2 {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.favorite-action {
+  position: relative;
+  z-index: 2;
+}
+
+.favorite-action--card {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.favorite-action--modal {
+  margin-top: 16px;
+}
+
+.favorite-action--card .favorite-action__prompt {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.favorite-action__button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper-raised) 92%, transparent);
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+  box-shadow: var(--shadow-raised);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.favorite-action__button:hover {
+  color: var(--copper-strong);
+  background: var(--paper-raised);
+  border-color: var(--copper);
+}
+
+.favorite-action__button:active {
+  transform: scale(0.94);
+}
+
+.favorite-action__button:focus-visible,
+.favorite-action__link:focus-visible,
+.favorite-action__dismiss:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.favorite-action__button:disabled {
+  color: var(--ink-muted);
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.favorite-action__button svg {
+  width: 19px;
+  height: 19px;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.favorite-action__prompt {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(264px, calc(100vw - 32px));
+  padding: 16px;
+  color: var(--ink-secondary);
+  background: var(--paper-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-raised);
+}
+
+.favorite-action--modal .favorite-action__prompt {
+  right: auto;
+  left: 0;
+}
+
+.favorite-action__prompt-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+.favorite-action__prompt-description {
+  margin: 8px 0 0;
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.favorite-action__prompt-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.favorite-action__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  color: var(--paper-raised);
+  background: var(--slate);
+  border: 1px solid var(--slate);
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.favorite-action__link:hover {
+  color: var(--paper-raised);
+  background: var(--copper-strong);
+  border-color: var(--copper-strong);
+}
+
+.favorite-action__dismiss {
+  display: block;
+  min-height: 32px;
+  margin: 6px auto 0;
+  padding: 4px 8px;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+}
+
+.favorite-action__dismiss:hover {
+  color: var(--ink);
 }
 
 .game-detail-modal {
@@ -1512,6 +1670,11 @@ h2 {
     font-size: 1.6rem;
   }
 
+  .favorite-action--modal .favorite-action__prompt {
+    right: 0;
+    left: auto;
+  }
+
   .game-detail-modal__facts,
   .game-detail-modal__screenshots {
     grid-template-columns: 1fr;
@@ -1530,7 +1693,9 @@ h2 {
   }
 
   .catalog-filter-button,
-  .catalog-filter-field input {
+  .catalog-filter-field input,
+  .favorite-action__button,
+  .favorite-action__link {
     transition: none;
   }
 }

@@ -43,6 +43,14 @@ export const messages = {
         "Choose a platform suggestion before applying the filter.",
       invalidYearRange:
         "The start year must be before or equal to the end year.",
+      favorite: {
+        action: "Save {name} to favorites",
+        dismiss: "Not now",
+        loading: "Checking your session",
+        prompt: "To save favorites, you must:",
+        promptDescription:
+          "Sign in or create an account to keep this game in your personal shelf.",
+      },
       detail: {
         open: "Open details for {name}",
         close: "Close game details",
@@ -203,6 +211,14 @@ export const messages = {
       choosePlatform:
         "Elige una sugerencia de plataforma antes de aplicar el filtro.",
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",
+      favorite: {
+        action: "Guardar {name} en favoritos",
+        dismiss: "Ahora no",
+        loading: "Comprobando tu sesión",
+        prompt: "Para guardar en favoritos debes:",
+        promptDescription:
+          "Inicia sesión o crea una cuenta para conservar este juego en tu estantería personal.",
+      },
       detail: {
         open: "Abrir detalle de {name}",
         close: "Cerrar detalle del juego",

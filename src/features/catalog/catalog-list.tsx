@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
+import { useAuth } from "@/features/auth/auth-provider";
 import {
   getNextCatalogOffset,
   mergeCatalogItems,
@@ -29,6 +30,7 @@ const CATALOG_PAGE_SIZE = 20;
 
 export function CatalogList() {
   const { copy } = usePreferences();
+  const { status: authStatus } = useAuth();
   const [items, setItems] = useState<IgdbGameCard[]>([]);
   const [status, setStatus] = useState<CatalogStatus>("loading");
   const [filters, setFilters] = useState<AppliedCatalogFilters>({});
@@ -199,6 +201,7 @@ export function CatalogList() {
             {items.map((game) => (
               <li key={game.igdbId}>
                 <GameCard
+                  authStatus={authStatus}
                   game={game}
                   messages={copy}
                   onSelect={() => setSelectedGame(game)}
@@ -249,6 +252,7 @@ export function CatalogList() {
       <IgdbAttribution messages={copy} />
       {selectedGame ? (
         <GameDetailModal
+          authStatus={authStatus}
           game={selectedGame}
           messages={copy}
           onClose={() => setSelectedGame(null)}
