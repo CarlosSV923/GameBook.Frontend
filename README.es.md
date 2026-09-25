@@ -10,7 +10,7 @@ El frontend ofrecerá las vistas públicas del catálogo y los detalles de juego
 
 ## Estado del repositorio
 
-Este repositorio contiene la base de Next.js con App Router y el primer sistema visual. Las funcionalidades, los adaptadores de proveedores y el despliegue están programados intencionadamente como tareas SDD posteriores.
+Este repositorio contiene la base de Next.js con App Router, el primer sistema visual y el adaptador de IGDB exclusivo del servidor. Las vistas de producto, las experiencias autenticadas y el despliegue siguen programados como tareas SDD posteriores.
 
 ## Desarrollo local
 
@@ -31,7 +31,8 @@ pnpm build
 ## Estructura
 
 - `src/app/` — shell de App Router y fronteras de rutas servidoras.
-- `src/app/api/igdb/` y `src/app/api/twitch/` — rutas reservadas para servidor; las credenciales nunca deben entrar en componentes cliente.
+- `src/app/api/igdb/` — rutas proxy de IGDB exclusivas del servidor para catálogo, detalle y sugerencias; las credenciales nunca deben entrar en componentes cliente.
+- `src/app/api/twitch/` — rutas reservadas para futuras necesidades de Twitch.
 - `src/features/` — UI orientada al producto y composición de funcionalidades.
 - `src/server/` — clientes de proveedores y código exclusivo del servidor.
 - `src/shared/` — primitivas reutilizables y contratos compartidos.
@@ -39,6 +40,8 @@ pnpm build
 Las preferencias visuales funcionan sin cuenta: el tema sigue al sistema en la primera visita, las elecciones manuales claro/oscuro persisten en `gamebook.theme` y las elecciones entre inglés/español persisten en `gamebook.language`.
 
 Los nombres de variables de runtime se documentan sin valores: `NEXT_PUBLIC_AUTHUSER_URL`, `NEXT_PUBLIC_GAME_URL`, `IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET`.
+
+El navegador público solo se comunica con el proxy del frontend: `GET /api/igdb/games`, `GET /api/igdb/games/:igdbId`, `GET /api/igdb/games/suggestions?query=...` y `GET /api/igdb/platforms?query=...`. El proxy obtiene y renueva el token de aplicación de Twitch en el servidor, usa endpoints fijos de IGDB y aplica los límites contractuales de cuatro solicitudes por segundo y ocho solicitudes concurrentes.
 
 ## Proyectos relacionados
 
