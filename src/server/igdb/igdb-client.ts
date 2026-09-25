@@ -10,6 +10,7 @@ import {
   type IgdbGameDetail,
   type IgdbGameSuggestion,
   type IgdbPlatformSuggestion,
+  type IgdbReleaseDatePrecision,
 } from "@/shared/api/igdb";
 import type { Platform } from "@/shared/api/game";
 import {
@@ -45,6 +46,10 @@ const detailFields = [
   "genres.name",
   "involved_companies.developer",
   "involved_companies.company.name",
+  "release_dates.date",
+  "release_dates.y",
+  "release_dates.m",
+  "release_dates.d",
   "screenshots.image_id",
 ].join(",");
 
@@ -277,9 +282,78 @@ function normalizeGameDetail(value: unknown): IgdbGameDetail {
     ...normalizeGameCard(value),
     developers: readDevelopers(record.involved_companies),
     genres: readNamedValues(record.genres, "genre"),
+    releaseDatePrecision: readReleaseDatePrecision(
+      record.first_release_date,
+      record.release_dates,
+    ),
     screenshots: readScreenshots(record.screenshots),
     summary: readNullableString(record.summary, "summary"),
   };
+}
+
+type ReleaseDateParts = {
+  date: number | null;
+  d: number | null;
+  m: number | null;
+  y: number | null;
+};
+
+function readReleaseDatePrecision(
+  firstReleaseDate: unknown,
+  value: unknown,
+): IgdbReleaseDatePrecision | null {
+  if (firstReleaseDate === undefined || firstReleaseDate === null) {
+    return null;
+  }
+
+  const releaseDates = readReleaseDateParts(value);
+  const firstDate =
+    typeof firstReleaseDate === "number" ? firstReleaseDate : null;
+  const matchingRelease =
+    releaseDates.find((releaseDate) => releaseDate.date === firstDate) ??
+    releaseDates[0];
+
+  if (
+    matchingRelease?.d !== null &&
+    matchingRelease?.d !== undefined &&
+    matchingRelease?.m !== null &&
+    matchingRelease?.m !== undefined &&
+    matchingRelease?.y !== null &&
+    matchingRelease?.y !== undefined
+  ) {
+    return "day";
+  }
+
+  if (
+    matchingRelease?.m !== null &&
+    matchingRelease?.m !== undefined &&
+    matchingRelease?.y !== null &&
+    matchingRelease?.y !== undefined
+  ) {
+    return "month";
+  }
+
+  return "year";
+}
+
+function readReleaseDateParts(value: unknown): ReleaseDateParts[] {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  if (!Array.isArray(value)) {
+    throw invalidResponse("release dates");
+  }
+
+  return value.map((item) => {
+    const record = asRecord(item);
+    return {
+      date: readOptionalNumber(record.date, "release date"),
+      d: readOptionalInteger(record.d, "release day", 1, 31),
+      m: readOptionalInteger(record.m, "release month", 1, 12),
+      y: readOptionalInteger(record.y, "release year", 1, 9999),
+    };
+  });
 }
 
 function normalizePlatform(value: unknown): Platform {
@@ -404,6 +478,40 @@ function readNullableString(value: unknown, label: string): string | null {
   }
 
   return readRequiredString(value, label);
+}
+
+function readOptionalNumber(value: unknown, label: string): number | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+    throw invalidResponse(label);
+  }
+
+  return value;
+}
+
+function readOptionalInteger(
+  value: unknown,
+  label: string,
+  minimum: number,
+  maximum: number,
+): number | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (
+    typeof value !== "number" ||
+    !Number.isInteger(value) ||
+    value < minimum ||
+    value > maximum
+  ) {
+    throw invalidResponse(label);
+  }
+
+  return value;
 }
 
 function readRequiredString(value: unknown, label: string): string {

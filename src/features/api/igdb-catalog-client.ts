@@ -3,8 +3,10 @@ import type {
   IgdbCatalogFilters,
   IgdbCatalogPage,
   IgdbGameCard,
+  IgdbGameDetail,
   IgdbGameSuggestion,
   IgdbPlatformSuggestion,
+  IgdbReleaseDatePrecision,
 } from "@/shared/api/igdb";
 
 type IgdbCatalogClientOptions = {
@@ -12,6 +14,10 @@ type IgdbCatalogClientOptions = {
 };
 
 export interface IgdbCatalogClient {
+  getGameDetail(
+    igdbId: number,
+    signal?: AbortSignal,
+  ): Promise<IgdbGameDetail | null>;
   getGameSuggestions(
     query: string,
     signal?: AbortSignal,
@@ -32,6 +38,27 @@ export function createIgdbCatalogClient(
   const fetcher = options.fetcher ?? fetch;
 
   return {
+    async getGameDetail(igdbId, signal) {
+      const detail = await requestJson<unknown>(
+        fetcher,
+        `/api/igdb/games/${igdbId}`,
+        {
+          headers: { Accept: "application/json" },
+          method: "GET",
+          signal,
+        },
+      );
+
+      if (detail === null) {
+        return null;
+      }
+
+      if (!isGameDetail(detail)) {
+        throw invalidResponse("game detail");
+      }
+
+      return detail;
+    },
     async getGameSuggestions(query, signal) {
       const suggestions = await requestJson<unknown>(
         fetcher,
@@ -150,6 +177,31 @@ function isGameCard(value: unknown): value is IgdbGameCard {
     Array.isArray(record.platforms) &&
     record.platforms.every(isPlatform)
   );
+}
+
+function isGameDetail(value: unknown): value is IgdbGameDetail {
+  if (!isGameCard(value)) {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+  return (
+    (record.summary === null || typeof record.summary === "string") &&
+    Array.isArray(record.genres) &&
+    record.genres.every((genre) => typeof genre === "string") &&
+    Array.isArray(record.developers) &&
+    record.developers.every((developer) => typeof developer === "string") &&
+    (record.releaseDatePrecision === null ||
+      isReleaseDatePrecision(record.releaseDatePrecision)) &&
+    Array.isArray(record.screenshots) &&
+    record.screenshots.every((screenshot) => typeof screenshot === "string")
+  );
+}
+
+function isReleaseDatePrecision(
+  value: unknown,
+): value is IgdbReleaseDatePrecision {
+  return value === "day" || value === "month" || value === "year";
 }
 
 function isGameSuggestion(value: unknown): value is IgdbGameSuggestion {

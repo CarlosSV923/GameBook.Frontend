@@ -40,6 +40,24 @@ export const messages = {
         "Choose a platform suggestion before applying the filter.",
       invalidYearRange:
         "The start year must be before or equal to the end year.",
+      detail: {
+        open: "Open details for {name}",
+        close: "Close game details",
+        eyebrow: "Game details",
+        loading: "Loading game details",
+        errorTitle: "Details are temporarily unavailable",
+        errorDescription:
+          "The catalog card is still available, but IGDB could not provide the full detail right now.",
+        summary: "Summary",
+        genres: "Genres",
+        developers: "Developers",
+        releaseDate: "Release date",
+        screenshots: "Screenshots",
+        noSummary: "No description is available for this game.",
+        noGenres: "No genres are available.",
+        noDevelopers: "No developers are available.",
+        screenshotAlt: "Screenshot {number} from {name}",
+      },
     },
     preferences: {
       eyebrow: "Archive settings",
@@ -114,6 +132,24 @@ export const messages = {
       choosePlatform:
         "Elige una sugerencia de plataforma antes de aplicar el filtro.",
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",
+      detail: {
+        open: "Abrir detalle de {name}",
+        close: "Cerrar detalle del juego",
+        eyebrow: "Detalle del juego",
+        loading: "Cargando detalle del juego",
+        errorTitle: "El detalle no está disponible temporalmente",
+        errorDescription:
+          "La tarjeta del catálogo sigue disponible, pero IGDB no pudo entregar el detalle completo en este momento.",
+        summary: "Descripción",
+        genres: "Géneros",
+        developers: "Desarrolladores",
+        releaseDate: "Fecha de lanzamiento",
+        screenshots: "Capturas",
+        noSummary: "No hay una descripción disponible para este juego.",
+        noGenres: "No hay géneros disponibles.",
+        noDevelopers: "No hay desarrolladores disponibles.",
+        screenshotAlt: "Captura {number} de {name}",
+      },
     },
     preferences: {
       eyebrow: "Ajustes del archivo",

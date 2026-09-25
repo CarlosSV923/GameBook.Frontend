@@ -86,4 +86,22 @@ describe("IGDB catalog browser client", () => {
       "/api/igdb/platforms?query=pc",
     ]);
   });
+
+  it("requests and validates game details", async () => {
+    const detail = {
+      ...page.items[0],
+      developers: ["Studio"],
+      genres: ["Adventure"],
+      releaseDatePrecision: "day",
+      screenshots: [
+        "https://images.igdb.com/igdb/image/upload/t_screenshot_med/id.jpg",
+      ],
+      summary: "A game summary.",
+    };
+    const { fetcher, requests } = createMockFetcher([{ body: detail }]);
+    const client = createIgdbCatalogClient({ fetcher });
+
+    await expect(client.getGameDetail(42)).resolves.toEqual(detail);
+    expect(requests[0].url).toBe("/api/igdb/games/42");
+  });
 });
