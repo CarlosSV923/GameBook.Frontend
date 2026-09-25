@@ -59,6 +59,36 @@ Reinicia el servidor de desarrollo de Next.js después de cambiar
 de AuthUser a Game para listar, filtrar, sugerir, sincronizar instantáneas y
 eliminar favoritos.
 
+### Integración local con Docker Compose
+
+El repositorio incluye un punto de entrada Compose de desarrollo para los tres
+repositorios hermanos. Usa los roles runtime de Neon `develop`; no inicia un
+PostgreSQL alternativo ni ejecuta migraciones de Prisma.
+
+Desde la disposición de clones hermanos, copia las plantillas privadas y
+completa los valores locales de prueba:
+
+```bash
+copy compose.authuser.env.example compose.authuser.env
+copy compose.game.env.example compose.game.env
+copy compose.frontend.env.example compose.frontend.env
+docker compose up --build
+```
+
+Conserva privados los archivos copiados. AuthUser usa `AUTH_DATABASE_URL` y su
+clave privada JWT, Game usa `GAME_DATABASE_URL` y la clave pública JWT
+correspondiente, y el Frontend usa las credenciales de desarrollo de
+IGDB/Twitch. No agregues `AUTH_DATABASE_DIRECT_URL` ni
+`GAME_DATABASE_DIRECT_URL`; son credenciales exclusivas de migración para
+GitHub Actions. Mantén las claves PEM en una sola línea con escapes literales
+`\n`, ya que los backends normalizan esos valores al iniciar.
+
+Compose espera los endpoints públicos de OpenAPI antes de iniciar los
+dependientes: Frontend queda disponible en `http://localhost:3000`, AuthUser
+en `http://localhost:3001/docs` y Game en `http://localhost:3002/docs`.
+Detén el stack con `docker compose down`; usa `docker compose down -v` solo si
+quieres eliminar intencionalmente los volúmenes de dependencias.
+
 ### Revisión de favoritos
 
 La revisión GB-011.06 cubre la redirección del visitante al inicio de sesión,

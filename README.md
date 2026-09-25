@@ -57,6 +57,35 @@ Restart the Next.js development server after changing `NEXT_PUBLIC_GAME_URL`.
 The authenticated favorites view then sends the same AuthUser JWT to Game for
 listing, filtering, suggestions, snapshot synchronization and deletion.
 
+### Local Docker Compose integration
+
+The repository includes a development Compose entry point for the three sibling
+repositories. It uses the local Neon `develop` runtime roles; it does not start
+an alternative PostgreSQL container and it never runs Prisma migrations.
+
+From the sibling checkout layout, copy the private environment templates and
+fill them with local test values:
+
+```bash
+copy compose.authuser.env.example compose.authuser.env
+copy compose.game.env.example compose.game.env
+copy compose.frontend.env.example compose.frontend.env
+docker compose up --build
+```
+
+Keep the copied files private. AuthUser uses `AUTH_DATABASE_URL` and its JWT
+private key, Game uses `GAME_DATABASE_URL` and the matching JWT public key, and
+the Frontend uses the development IGDB/Twitch credentials. Do not place
+`AUTH_DATABASE_DIRECT_URL` or `GAME_DATABASE_DIRECT_URL` in these files; those
+are migration-only credentials for GitHub Actions. Keep PEM keys on one line
+with literal `\n` escapes, as the backends normalize those values at startup.
+
+Compose waits for the public OpenAPI endpoints before starting dependants:
+Frontend is available at `http://localhost:3000`, AuthUser at
+`http://localhost:3001/docs`, and Game at `http://localhost:3002/docs`.
+Stop the stack with `docker compose down`; use `docker compose down -v` only
+when you intentionally want to remove the dependency volumes.
+
 ### Favorites review
 
 The GB-011.06 review covers the visitor redirect to sign-in, authenticated
