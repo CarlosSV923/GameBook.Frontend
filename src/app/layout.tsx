@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { AuthProvider } from "@/features/auth/auth-provider";
 import { PreferencesProvider } from "@/features/preferences/preferences-provider";
 import { ThemeScript } from "@/features/preferences/theme-script";
 
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeScript />
-        <PreferencesProvider>{children}</PreferencesProvider>
+        <AuthProvider>
+          <PreferencesProvider>{children}</PreferencesProvider>
+        </AuthProvider>
       </body>
     </html>
   );

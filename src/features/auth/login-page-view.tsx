@@ -1,6 +1,8 @@
 "use client";
 
-import { createAuthUserClient } from "@/features/api/auth-user-client";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/features/auth/auth-provider";
 import { AuthForm } from "@/features/auth/auth-form";
 import { AppShell } from "@/features/layout/app-shell";
 import { usePreferences } from "@/features/preferences/preferences-provider";
@@ -12,6 +14,8 @@ type LoginPageViewProps = {
 
 export function LoginPageView({ registered }: LoginPageViewProps) {
   const { copy } = usePreferences();
+  const router = useRouter();
+  const { signIn } = useAuth();
 
   const login = async (
     values: RegisterUserInput | LoginUserInput,
@@ -20,7 +24,8 @@ export function LoginPageView({ registered }: LoginPageViewProps) {
       return;
     }
 
-    await createAuthUserClient().login(values);
+    await signIn(values);
+    router.push("/");
   };
 
   return (
