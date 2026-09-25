@@ -46,5 +46,7 @@ jobs:
         run: pnpm lint
       - name: Check types
         run: pnpm typecheck
+      - name: Run tests
+        run: pnpm test
       - name: Build application
         run: pnpm build
