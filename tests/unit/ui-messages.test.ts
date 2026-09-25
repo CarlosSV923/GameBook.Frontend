@@ -23,6 +23,8 @@ describe("GameBook UI message catalog", () => {
     const requiredMessages = [
       messages.en.catalog.emptyDescription,
       messages.en.catalog.emptyTitle,
+      messages.en.catalog.attribution,
+      messages.en.catalog.attributionLink,
       messages.en.navigation.catalog,
       messages.en.navigation.createAccount,
       messages.en.states.errorDescription,
@@ -30,6 +32,8 @@ describe("GameBook UI message catalog", () => {
       messages.en.states.loading,
       messages.es.catalog.emptyDescription,
       messages.es.catalog.emptyTitle,
+      messages.es.catalog.attribution,
+      messages.es.catalog.attributionLink,
       messages.es.navigation.catalog,
       messages.es.navigation.createAccount,
       messages.es.states.errorDescription,
@@ -40,5 +44,10 @@ describe("GameBook UI message catalog", () => {
     expect(requiredMessages.every((message) => message.trim().length > 0)).toBe(
       true,
     );
+  });
+
+  it("keeps the external attribution anchored to IGDB", () => {
+    expect(messages.en.catalog.attributionLink).toBe("IGDB");
+    expect(messages.es.catalog.attributionLink).toBe("IGDB");
   });
 });

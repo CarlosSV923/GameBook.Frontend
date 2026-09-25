@@ -28,6 +28,8 @@ export const messages = {
       title: "Find a game worth keeping",
       coverAlt: "Cover art for {name}",
       missingImage: "Cover image unavailable",
+      attribution: "Game data and images provided by",
+      attributionLink: "IGDB",
       filters: "Filters",
       name: "Game name",
       platform: "Platform",
@@ -76,7 +78,7 @@ export const messages = {
     },
     states: {
       errorDescription:
-        "The catalog could not be reached. Your current view and preferences are still safe.",
+        "The external catalog could not be reached. Your current view and preferences are still safe.",
       errorTitle: "The catalog is temporarily unavailable.",
       loading: "Loading catalog",
       loadingMore: "Loading more games",
@@ -121,6 +123,8 @@ export const messages = {
       title: "Encuentra un juego que valga la pena conservar",
       coverAlt: "Arte de portada de {name}",
       missingImage: "Imagen de portada no disponible",
+      attribution: "Datos e imágenes proporcionados por",
+      attributionLink: "IGDB",
       filters: "Filtros",
       name: "Nombre del juego",
       platform: "Plataforma",
@@ -168,7 +172,7 @@ export const messages = {
     },
     states: {
       errorDescription:
-        "No se pudo acceder al catálogo. Tu vista y tus preferencias actuales siguen a salvo.",
+        "No se pudo acceder al catálogo externo. Tu vista y tus preferencias actuales siguen a salvo.",
       errorTitle: "El catálogo no está disponible temporalmente.",
       loading: "Cargando catálogo",
       loadingMore: "Cargando más juegos",

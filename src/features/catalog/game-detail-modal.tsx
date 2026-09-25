@@ -12,6 +12,7 @@ import {
 import { formatGameReleaseDate } from "@/features/catalog/game-detail-formatting";
 import type { IgdbGameCard, IgdbGameDetail } from "@/shared/api/igdb";
 import type { Messages } from "@/shared/i18n/messages";
+import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
 type GameDetailModalProps = {
   game: IgdbGameCard;
@@ -28,6 +29,7 @@ export function GameDetailModal({
 }: GameDetailModalProps) {
   const [detail, setDetail] = useState<IgdbGameDetail | null>(null);
   const [status, setStatus] = useState<DetailStatus>("loading");
+  const [coverUrl, setCoverUrl] = useState(game.imageUrl);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -128,17 +130,27 @@ export function GameDetailModal({
       <div className="game-detail-modal__panel">
         <header className="game-detail-modal__header">
           <div className="game-detail-modal__media">
-            {game.imageUrl ? (
+            {coverUrl ? (
               <Image
                 alt={coverAlt}
                 className="game-detail-modal__image"
                 fill
+                onError={() => setCoverUrl(null)}
                 sizes="(max-width: 720px) 40vw, 180px"
-                src={game.imageUrl}
+                src={coverUrl}
               />
             ) : (
-              <span aria-hidden="true" className="game-detail-modal__fallback">
-                {game.name.slice(0, 1).toUpperCase()}
+              <span
+                aria-label={messages.catalog.missingImage}
+                className="game-detail-modal__fallback"
+                role="img"
+              >
+                <span aria-hidden="true">
+                  {game.name.slice(0, 1).toUpperCase()}
+                </span>
+                <span className="game-detail-modal__fallback-label">
+                  {messages.catalog.missingImage}
+                </span>
               </span>
             )}
           </div>
@@ -182,6 +194,7 @@ export function GameDetailModal({
             <DetailContent detail={detail} messages={messages} />
           ) : null}
         </div>
+        <IgdbAttribution messages={messages} />
       </div>
     </div>
   );
@@ -232,23 +245,50 @@ function DetailContent({ detail, messages }: DetailContentProps) {
           <h3>{detailCopy.screenshots}</h3>
           <div className="game-detail-modal__screenshots">
             {detail.screenshots.map((screenshot, index) => (
-              <div
-                className="game-detail-modal__screenshot"
+              <DetailScreenshot
+                alt={detailCopy.screenshotAlt
+                  .replace("{number}", String(index + 1))
+                  .replace("{name}", detail.name)}
                 key={`${screenshot}-${index}`}
-              >
-                <Image
-                  alt={detailCopy.screenshotAlt
-                    .replace("{number}", String(index + 1))
-                    .replace("{name}", detail.name)}
-                  fill
-                  sizes="(max-width: 720px) 100vw, 50vw"
-                  src={screenshot}
-                />
-              </div>
+                missingImage={messages.catalog.missingImage}
+                src={screenshot}
+              />
             ))}
           </div>
         </section>
       ) : null}
     </>
+  );
+}
+
+type DetailScreenshotProps = {
+  alt: string;
+  missingImage: string;
+  src: string;
+};
+
+function DetailScreenshot({ alt, missingImage, src }: DetailScreenshotProps) {
+  const [imageUrl, setImageUrl] = useState(src);
+
+  return (
+    <div className="game-detail-modal__screenshot">
+      {imageUrl ? (
+        <Image
+          alt={alt}
+          fill
+          onError={() => setImageUrl("")}
+          sizes="(max-width: 720px) 100vw, 50vw"
+          src={imageUrl}
+        />
+      ) : (
+        <span
+          aria-label={missingImage}
+          className="game-detail-modal__screenshot-fallback"
+          role="img"
+        >
+          {missingImage}
+        </span>
+      )}
+    </div>
   );
 }
