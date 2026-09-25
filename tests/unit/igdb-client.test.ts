@@ -21,6 +21,18 @@ const rawGame = {
   total_rating: 88.5,
 };
 
+const rawDetail = {
+  ...rawGame,
+  genres: [{ name: "Adventure" }],
+  involved_companies: [
+    { company: { name: "Studio" }, developer: true },
+    { company: { name: "Publisher" }, developer: false },
+  ],
+  release_dates: [{ d: 1, date: 1704067200, m: 1, y: 2024 }],
+  screenshots: [{ image_id: "screen-id" }],
+  summary: "A game summary.",
+};
+
 describe("IGDB query adapter", () => {
   it("builds fixed, escaped catalog queries with the v3 filters", () => {
     const query = buildGamesQuery({
@@ -106,6 +118,27 @@ describe("IGDB client", () => {
     expect(requests[1].headers.get("authorization")).toBe(
       "Bearer refreshed-token",
     );
+  });
+
+  it("maps detail fields and preserves the release date precision", async () => {
+    const { fetcher, requests } = createMockFetcher([{ body: [rawDetail] }]);
+    const client = createIgdbClient({
+      config,
+      fetcher,
+      tokenProvider: createMockTokenProvider().provider,
+    });
+
+    await expect(client.getGameDetail(42)).resolves.toMatchObject({
+      developers: ["Studio"],
+      genres: ["Adventure"],
+      releaseDatePrecision: "day",
+      screenshots: [
+        "https://images.igdb.com/igdb/image/upload/t_screenshot_med/screen-id.jpg",
+      ],
+      summary: "A game summary.",
+    });
+    expect(requests[0].body).toContain("release_dates.date");
+    expect(requests[0].body).toContain("release_dates.d");
   });
 
   it("maps malformed responses and rate limits to safe domain errors", async () => {

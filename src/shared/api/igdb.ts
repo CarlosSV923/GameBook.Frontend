@@ -28,9 +28,12 @@ export type IgdbCatalogPage = {
 export type IgdbGameDetail = IgdbGameCard & {
   developers: string[];
   genres: string[];
+  releaseDatePrecision: IgdbReleaseDatePrecision | null;
   screenshots: string[];
   summary: string | null;
 };
+
+export type IgdbReleaseDatePrecision = "day" | "month" | "year";
 
 export type IgdbGameSuggestion = {
   igdbId: number;

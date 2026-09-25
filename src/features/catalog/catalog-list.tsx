@@ -17,6 +17,7 @@ import {
   CatalogFilters,
   type AppliedCatalogFilters,
 } from "@/features/catalog/catalog-filters";
+import { GameDetailModal } from "@/features/catalog/game-detail-modal";
 import { GameCard } from "@/features/catalog/game-card";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 import type { IgdbGameCard } from "@/shared/api/igdb";
@@ -34,6 +35,7 @@ export function CatalogList() {
   const [nextOffset, setNextOffset] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [paginationError, setPaginationError] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<IgdbGameCard | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const activeControllerRef = useRef<AbortController | null>(null);
@@ -195,7 +197,11 @@ export function CatalogList() {
           <ul aria-label={copy.catalog.title} className="catalog-grid">
             {items.map((game) => (
               <li key={game.igdbId}>
-                <GameCard game={game} messages={copy} />
+                <GameCard
+                  game={game}
+                  messages={copy}
+                  onSelect={() => setSelectedGame(game)}
+                />
               </li>
             ))}
           </ul>
@@ -239,6 +245,13 @@ export function CatalogList() {
           </div>
         </>
       )}
+      {selectedGame ? (
+        <GameDetailModal
+          game={selectedGame}
+          messages={copy}
+          onClose={() => setSelectedGame(null)}
+        />
+      ) : null}
     </>
   );
 }
