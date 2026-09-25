@@ -1,1 +1,234 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --paper: #f3efe6;
+  --paper-raised: #fbf8f1;
+  --paper-inset: #e8e1d4;
+  --ink: #252b2e;
+  --ink-secondary: #536067;
+  --ink-muted: #7a858a;
+  --slate: #344b59;
+  --copper: #a85f3b;
+  --copper-strong: #874523;
+  --moss: #55705a;
+  --warning: #9b7027;
+  --danger: #a84e49;
+  --border: rgba(37, 43, 46, 0.16);
+  --border-soft: rgba(37, 43, 46, 0.09);
+  --focus-ring: #c6794e;
+  --shadow-raised:
+    0 0 0 1px rgba(37, 43, 46, 0.06), 0 1px 2px -1px rgba(37, 43, 46, 0.06),
+    0 2px 4px rgba(37, 43, 46, 0.04);
+  --font-interface: "Segoe UI", Aptos, system-ui, sans-serif;
+  --font-editorial: Georgia, "Times New Roman", serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #1c252b;
+  --paper-raised: #253139;
+  --paper-inset: #141c21;
+  --ink: #edf0ea;
+  --ink-secondary: #b8c2c4;
+  --ink-muted: #89969b;
+  --slate: #91a7af;
+  --copper: #d3956b;
+  --copper-strong: #e2ab80;
+  --moss: #8eae91;
+  --warning: #d0a457;
+  --danger: #dc8279;
+  --border: rgba(237, 240, 234, 0.14);
+  --border-soft: rgba(237, 240, 234, 0.08);
+  --focus-ring: #e0a078;
+  --shadow-raised: 0 0 0 1px rgba(237, 240, 234, 0.09);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-interface);
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.home-shell {
+  display: grid;
+  min-height: 100svh;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 48px;
+  align-content: center;
+  width: min(100% - 48px, 960px);
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.home-intro {
+  max-width: 680px;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  color: var(--copper-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+h1 {
+  max-width: 12ch;
+  margin-bottom: 20px;
+  color: var(--ink);
+  font-family: var(--font-editorial);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+h2 {
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.home-intro__description {
+  max-width: 52ch;
+  margin-bottom: 0;
+  color: var(--ink-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.preference-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 32px;
+  align-items: end;
+  padding: 24px;
+  background: var(--paper-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  box-shadow: var(--shadow-raised);
+}
+
+.preference-panel__intro p:last-child {
+  max-width: 34ch;
+  margin-bottom: 0;
+  color: var(--ink-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.preference-panel__groups {
+  display: grid;
+  gap: 16px;
+}
+
+.preference-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.preference-group legend {
+  margin-bottom: 8px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.preference-options {
+  display: flex;
+  gap: 8px;
+}
+
+.preference-option {
+  min-height: 44px;
+  flex: 1;
+  padding: 8px 12px;
+  color: var(--ink-secondary);
+  background: var(--paper-inset);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out,
+    border-color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.preference-option:hover {
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+.preference-option:active {
+  transform: scale(0.97);
+}
+
+.preference-option[data-selected="true"] {
+  color: var(--paper-raised);
+  background: var(--slate);
+  border-color: var(--slate);
+}
+
+@media (max-width: 720px) {
+  .home-shell {
+    gap: 36px;
+    width: min(100% - 32px, 560px);
+    padding: 32px 0;
+  }
+
+  .preference-panel {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preference-option {
+    transition: none;
+  }
+}

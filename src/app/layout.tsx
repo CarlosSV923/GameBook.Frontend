@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { ThemeScript } from "@/features/preferences/theme-script";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,8 +17,11 @@ type RootLayoutProps = Readonly<{
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeScript />
+        <PreferencesProvider>{children}</PreferencesProvider>
+      </body>
     </html>
   );
 }
