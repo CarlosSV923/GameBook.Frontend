@@ -883,6 +883,7 @@ h2 {
 }
 
 .game-card {
+  position: relative;
   min-width: 0;
   transition: transform 160ms ease-out;
 }
@@ -1022,6 +1023,96 @@ h2 {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.favorite-action {
+  position: relative;
+  z-index: 2;
+}
+
+.favorite-action--card {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.favorite-action--modal {
+  margin-top: 16px;
+}
+
+.favorite-action__button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper-raised) 92%, transparent);
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+  box-shadow: var(--shadow-raised);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.favorite-action__button:hover {
+  color: var(--copper-strong);
+  background: var(--paper-raised);
+  border-color: var(--copper);
+}
+
+.favorite-action__button:active {
+  transform: scale(0.94);
+}
+
+.favorite-action__button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.favorite-action__button:disabled {
+  color: var(--ink-muted);
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.favorite-action__button[data-saved="true"] {
+  color: var(--copper-strong);
+  background: var(--paper-raised);
+  border-color: var(--copper);
+}
+
+.favorite-action__button[data-saved="true"] svg {
+  fill: currentColor;
+}
+
+.favorite-action__button svg {
+  width: 19px;
+  height: 19px;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.favorite-action__status {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: max-content;
+  max-width: 220px;
+  padding: 8px 10px;
+  color: var(--danger);
+  background: var(--paper-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  box-shadow: var(--shadow-raised);
+  font-size: 0.6875rem;
+  line-height: 1.35;
 }
 
 .game-detail-modal {
@@ -1530,7 +1621,8 @@ h2 {
   }
 
   .catalog-filter-button,
-  .catalog-filter-field input {
+  .catalog-filter-field input,
+  .favorite-action__button {
     transition: none;
   }
 }
