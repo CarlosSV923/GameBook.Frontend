@@ -1080,6 +1080,37 @@ h2 {
   border-color: var(--slate);
 }
 
+@media (max-width: 860px) and (min-width: 721px) {
+  .catalog-navbar__inner {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    width: min(100% - 32px, 720px);
+    min-height: 0;
+    padding: 14px 0 12px;
+  }
+
+  .catalog-brand__tagline {
+    display: none;
+  }
+
+  .catalog-navbar__links {
+    grid-column: 1;
+    grid-row: 3;
+    justify-content: flex-start;
+    padding-top: 4px;
+  }
+
+  .catalog-navbar__actions {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+
+  .account-links {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 720px) {
   .catalog-navbar__inner {
     grid-template-columns: 1fr;

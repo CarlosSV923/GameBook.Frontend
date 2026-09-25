@@ -168,6 +168,21 @@ describe("IGDB client", () => {
       code: "IGDB_RATE_LIMITED",
     });
   });
+
+  it("maps upstream server failures to an unavailable domain error", async () => {
+    const { fetcher } = createMockFetcher([
+      { status: 503, body: { message: "temporarily unavailable" } },
+    ]);
+    const client = createIgdbClient({
+      config,
+      fetcher,
+      tokenProvider: createMockTokenProvider().provider,
+    });
+
+    await expect(client.getCatalog()).rejects.toMatchObject({
+      code: "IGDB_UNAVAILABLE",
+    });
+  });
 });
 
 describe("Twitch application token provider", () => {
@@ -185,5 +200,16 @@ describe("Twitch application token provider", () => {
     expect(requests[0].body).toContain("client_id=test-client-id");
     expect(requests[0].body).toContain("client_secret=test-client-secret");
     expect(requests[0].body).toContain("grant_type=client_credentials");
+  });
+
+  it("maps rejected Twitch token responses to a safe auth error", async () => {
+    const { fetcher } = createMockFetcher([
+      { status: 401, body: { error: "invalid_client" } },
+    ]);
+    const provider = createTwitchApplicationTokenProvider(config, fetcher);
+
+    await expect(provider.getToken()).rejects.toMatchObject({
+      code: "IGDB_AUTH_FAILED",
+    });
   });
 });
