@@ -57,6 +57,25 @@ Restart the Next.js development server after changing `NEXT_PUBLIC_GAME_URL`.
 The authenticated favorites view then sends the same AuthUser JWT to Game for
 listing, filtering, suggestions, snapshot synchronization and deletion.
 
+### Favorites review
+
+The GB-011.06 review covers the visitor redirect to sign-in, authenticated
+favorite actions, Game Bearer-token boundaries, IGDB detail fallback, English
+and Spanish copy, persisted theme preferences, and the responsive catalog
+layout. Run the automated review with:
+
+```bash
+pnpm test
+pnpm typecheck
+pnpm lint
+pnpm build
+```
+
+The browser review uses the public catalog at desktop and mobile breakpoints;
+favorite details keep their stored card data when IGDB is unavailable, while
+the authenticated shelf keeps the same filters, pagination, and confirmation
+patterns as the catalog.
+
 ## Structure
 
 - `src/app/` — App Router shell and server route boundaries.

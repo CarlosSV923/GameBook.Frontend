@@ -106,6 +106,10 @@ describe("Game client", () => {
       expect(request.headers.get("authorization")).toBe("Bearer jwt-token");
     }
 
+    expect(requests.every((request) => !request.url.includes("userId"))).toBe(
+      true,
+    );
+
     const listUrl = new URL(requests[0].url);
     expect(listUrl.pathname).toBe("/v1/favorites");
     expect(listUrl.searchParams.get("platformId")).toBe("6");

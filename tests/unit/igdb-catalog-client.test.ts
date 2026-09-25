@@ -104,4 +104,22 @@ describe("IGDB catalog browser client", () => {
     await expect(client.getGameDetail(42)).resolves.toEqual(detail);
     expect(requests[0].url).toBe("/api/igdb/games/42");
   });
+
+  it("preserves an unavailable-detail error for the favorite modal fallback", async () => {
+    const { fetcher } = createMockFetcher([
+      {
+        body: {
+          code: "IGDB_UNAVAILABLE",
+          message: "The IGDB service is unavailable.",
+        },
+        status: 503,
+      },
+    ]);
+    const client = createIgdbCatalogClient({ fetcher });
+
+    await expect(client.getGameDetail(42)).rejects.toMatchObject({
+      code: "IGDB_UNAVAILABLE",
+      status: 503,
+    });
+  });
 });

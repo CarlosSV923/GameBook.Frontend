@@ -59,6 +59,26 @@ Reinicia el servidor de desarrollo de Next.js después de cambiar
 de AuthUser a Game para listar, filtrar, sugerir, sincronizar instantáneas y
 eliminar favoritos.
 
+### Revisión de favoritos
+
+La revisión GB-011.06 cubre la redirección del visitante al inicio de sesión,
+las acciones autenticadas de favoritos, los límites del Bearer de Game, el
+fallback del detalle cuando IGDB falla, los textos en inglés y español, la
+persistencia del tema y el diseño responsive del catálogo. Ejecuta la revisión
+automatizada con:
+
+```bash
+pnpm test
+pnpm typecheck
+pnpm lint
+pnpm build
+```
+
+La revisión en navegador usa el catálogo público en escritorios y breakpoints
+móviles; el detalle conserva los datos almacenados de la tarjeta cuando IGDB no
+está disponible, y la bandeja autenticada conserva los mismos filtros,
+paginación y patrones de confirmación del catálogo.
+
 ## Estructura
 
 - `src/app/` — shell de App Router y fronteras de rutas servidoras.
