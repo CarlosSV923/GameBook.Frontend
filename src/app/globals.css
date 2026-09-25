@@ -887,7 +887,6 @@ h2 {
   z-index: 0;
 }
 
-.catalog-grid > li:hover,
 .catalog-grid > li:focus-within {
   z-index: 2;
 }
@@ -1054,6 +1053,24 @@ h2 {
   right: auto;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.catalog-grid
+  > li:nth-child(4n + 1)
+  .favorite-action--card
+  .favorite-action__prompt {
+  right: auto;
+  left: 0;
+  transform: none;
+}
+
+.catalog-grid
+  > li:nth-child(4n)
+  .favorite-action--card
+  .favorite-action__prompt {
+  right: 0;
+  left: auto;
+  transform: none;
 }
 
 .favorite-action__button {
@@ -1604,6 +1621,24 @@ h2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .catalog-grid
+    > li:nth-child(2n + 1)
+    .favorite-action--card
+    .favorite-action__prompt {
+    right: auto;
+    left: 0;
+    transform: none;
+  }
+
+  .catalog-grid
+    > li:nth-child(2n)
+    .favorite-action--card
+    .favorite-action__prompt {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+
   .catalog-filters__fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1642,6 +1677,24 @@ h2 {
   .catalog-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .catalog-grid
+    > li:nth-child(3n + 1)
+    .favorite-action--card
+    .favorite-action__prompt {
+    right: auto;
+    left: 0;
+    transform: none;
+  }
+
+  .catalog-grid
+    > li:nth-child(3n)
+    .favorite-action--card
+    .favorite-action__prompt {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1669,6 +1722,12 @@ h2 {
 
   .catalog-grid {
     grid-template-columns: 1fr;
+  }
+
+  .catalog-grid > li .favorite-action--card .favorite-action__prompt {
+    right: auto;
+    left: 0;
+    transform: none;
   }
 
   .game-detail-modal__header {

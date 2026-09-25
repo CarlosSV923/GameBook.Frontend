@@ -50,6 +50,12 @@ export function FavoriteAction({
     setIsPromptOpen(false);
   };
 
+  const handleMouseLeave = () => {
+    if (placement === "card") {
+      setIsPromptOpen(false);
+    }
+  };
+
   useEffect(() => {
     if (!isPromptOpen) {
       return;
@@ -72,6 +78,7 @@ export function FavoriteAction({
     <div
       className={`favorite-action favorite-action--${placement}`}
       onBlur={handleBlur}
+      onMouseLeave={handleMouseLeave}
       ref={actionRef}
     >
       <button
