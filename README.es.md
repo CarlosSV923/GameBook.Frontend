@@ -2,71 +2,75 @@
 
 [Leer este README en inglés](README.md)
 
-`GameBook.Frontend` es la aplicación web Next.js de GameBook, un proyecto de portfolio para explorar videojuegos y administrar favoritos personales.
+`GameBook.Frontend` es la aplicación web Next.js de GameBook. Permite consultar el catálogo público de IGDB y permite a las personas autenticadas administrar sus propios juegos favoritos.
 
 ## Responsabilidad
 
-El frontend ofrecerá las vistas públicas del catálogo y los detalles de juegos, las experiencias autenticadas de cuenta y favoritos, y preferencias persistentes de tema claro/oscuro e idioma inglés/español. Su código de servidor consultará IGDB mediante credenciales de aplicación de Twitch sin exponerlas, y el navegador consumirá los servicios AuthUser y Game.
+El frontend es responsable de la experiencia del navegador, los flujos de cuenta y sesión, la interfaz de favoritos, la presentación responsive, la preferencia persistente de tema y la preferencia de idioma inglés/español. Consume AuthUser y Game para las operaciones de GameBook. Su adaptador de IGDB, exclusivo del servidor, se autentica con credenciales de aplicación de Twitch para que nunca lleguen al navegador.
 
-## Estado del repositorio
+El navegador no llama directamente a IGDB. El servidor Next.js expone las rutas proxy locales `/api/igdb/*`, obtiene y renueva el token de aplicación de Twitch, aplica los límites contractuales de cuatro solicitudes por segundo y ocho solicitudes concurrentes, y transforma los fallos del proveedor al contrato de API del frontend.
 
-Este repositorio contiene la base de Next.js con App Router, el primer sistema visual, el adaptador de IGDB exclusivo del servidor y la vista inicial de tarjetas del catálogo público. Los filtros, el detalle, las experiencias autenticadas y el despliegue siguen programados como tareas SDD posteriores.
+## Arquitectura implementada
 
-## Desarrollo local
+- `src/app/` — páginas de Next.js App Router, layout y límites de rutas API del servidor.
+- `src/app/api/igdb/` — rutas proxy exclusivas del servidor para catálogo, detalle, sugerencias y plataformas.
+- `src/features/` — funcionalidades de autenticación, catálogo, favoritos, perfil, navegación y preferencias.
+- `src/server/` — clientes exclusivos del servidor para IGDB y Twitch, limitación de solicitudes y errores del proveedor.
+- `src/shared/` — contratos de API, almacenamiento de sesión del navegador, mensajes i18n, preferencias y primitivas UI reutilizables.
+
+El navegador almacena el JWT de GameBook en `sessionStorage`. Las peticiones autenticadas lo envían como `Authorization: Bearer <token>` a AuthUser y Game. El catálogo público está disponible sin cuenta de GameBook.
+
+## Configuración local
+
+Requisitos previos:
+
+- Node.js 24 o una versión LTS compatible.
+- pnpm 12.4.1, habilitado mediante Corepack.
+- Credenciales locales de prueba para IGDB/Twitch al probar el catálogo público.
+- Los repositorios hermanos AuthUser y Game para la integración local completa.
+
+Instala las dependencias e inicia el servidor de desarrollo:
 
 ```bash
-pnpm install
+corepack enable
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Comprobaciones de calidad:
+El frontend queda disponible por defecto en `http://localhost:3000`.
 
-```bash
-pnpm format:check
-pnpm lint
-pnpm typecheck
-pnpm build
+## Variables de runtime
+
+Crea un archivo `.env` privado e ignorado por Git. Los nombres de variables requeridos por el frontend se muestran sin valores:
+
+```dotenv
+IGDB_CLIENT_ID=
+IGDB_CLIENT_SECRET=
+NEXT_PUBLIC_AUTHUSER_URL=
+NEXT_PUBLIC_GAME_URL=
 ```
 
-### Integración local con AuthUser
+`IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET` solo son leídas por código del servidor. Las dos variables `NEXT_PUBLIC_` son las URLs base usadas por los clientes del navegador y no deben contener el sufijo `/v1`. No confirmes archivos `.env` ni credenciales. Reinicia el servidor Next.js después de cambiar una variable `NEXT_PUBLIC_`.
 
-Ejecuta `GameBook.Microservice.AuthUser` en `http://localhost:3001` y permite
-el origen exacto del Frontend con `CORS_ALLOWED_ORIGINS=http://localhost:3000`.
-Añade la siguiente variable local ignorada en `.env`:
+## Integración local de servicios
 
-```bash
-NEXT_PUBLIC_AUTHUSER_URL=http://localhost:3001
-```
+Ejecuta AuthUser en el puerto local 3001 y Game en el puerto local 3002. AuthUser debe permitir el origen exacto `http://localhost:3000`; Game debe permitir el mismo origen y resolver AuthUser mediante su propia configuración `AUTHUSER_URL`.
 
-Reinicia el servidor de desarrollo de Next.js después de cambiar una variable
-`NEXT_PUBLIC_`. El Frontend soporta entonces localmente el flujo de registro,
-inicio de sesión, sesión, perfil y revocación por cambio de contraseña sin
-exponer secretos de AuthUser.
+Los endpoints locales son:
 
-### Integración local con Game
+| Servicio | URL |
+| --- | --- |
+| Frontend | `http://localhost:3000` |
+| Swagger UI de AuthUser | `http://localhost:3001/docs` |
+| JSON OpenAPI de AuthUser | `http://localhost:3001/docs/openapi.json` |
+| Swagger UI de Game | `http://localhost:3002/docs` |
+| JSON OpenAPI de Game | `http://localhost:3002/docs/openapi.json` |
 
-Ejecuta `GameBook.Microservice.Game` en `http://localhost:3002`, configura su
-`.env` ignorado con `AUTHUSER_URL=http://localhost:3001` y el origen exacto del
-navegador `CORS_ALLOWED_ORIGINS=http://localhost:3000`, y añade la siguiente
-variable local ignorada en el Frontend:
+El frontend soporta registro, inicio de sesión, acceso a sesión/perfil, cambio y revocación de contraseña, listado y filtrado de favoritos, sugerencias, sincronización de instantáneas y eliminación mediante esos servicios.
 
-```bash
-NEXT_PUBLIC_GAME_URL=http://localhost:3002
-```
+## Docker Compose local
 
-Reinicia el servidor de desarrollo de Next.js después de cambiar
-`NEXT_PUBLIC_GAME_URL`. La vista autenticada de favoritos enviará el mismo JWT
-de AuthUser a Game para listar, filtrar, sugerir, sincronizar instantáneas y
-eliminar favoritos.
-
-### Integración local con Docker Compose
-
-El repositorio incluye un punto de entrada Compose de desarrollo para los tres
-repositorios hermanos. Usa los roles runtime de Neon `develop`; no inicia un
-PostgreSQL alternativo ni ejecuta migraciones de Prisma.
-
-Desde la disposición de clones hermanos, copia las plantillas privadas y
-completa los valores locales de prueba:
+`compose.yaml` es el punto de entrada de desarrollo para los tres repositorios hermanos. Desde el repositorio frontend, copia las plantillas de entorno ignoradas y complétalas con credenciales locales de prueba:
 
 ```bash
 copy compose.authuser.env.example compose.authuser.env
@@ -75,54 +79,25 @@ copy compose.frontend.env.example compose.frontend.env
 docker compose up --build
 ```
 
-Conserva privados los archivos copiados. AuthUser usa `AUTH_DATABASE_URL` y su
-clave privada JWT, Game usa `GAME_DATABASE_URL` y la clave pública JWT
-correspondiente, y el Frontend usa las credenciales de desarrollo de
-IGDB/Twitch. No agregues `AUTH_DATABASE_DIRECT_URL` ni
-`GAME_DATABASE_DIRECT_URL`; son credenciales exclusivas de migración para
-GitHub Actions. Mantén las claves PEM en una sola línea con escapes literales
-`\n`, ya que los backends normalizan esos valores al iniciar.
+Las plantillas contienen únicamente nombres de variables:
 
-Compose espera los endpoints públicos de OpenAPI antes de iniciar los
-dependientes: Frontend queda disponible en `http://localhost:3000`, AuthUser
-en `http://localhost:3001/docs` y Game en `http://localhost:3002/docs`.
-Detén el stack con `docker compose down`; usa `docker compose down -v` solo si
-quieres eliminar intencionalmente los volúmenes de dependencias.
+- `compose.authuser.env`: `AUTH_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PRIVATE_KEY`.
+- `compose.game.env`: `GAME_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PUBLIC_KEY`.
+- `compose.frontend.env`: `IGDB_CLIENT_ID`, `IGDB_CLIENT_SECRET`.
 
-### Revisión de favoritos
+Compose inyecta las URLs y puertos locales de los tres contenedores. Usa los roles runtime de Neon `develop`, no inicia otro contenedor PostgreSQL y no ejecuta migraciones de Prisma. Las variables exclusivas de migración, como `AUTH_DATABASE_DIRECT_URL` y `GAME_DATABASE_DIRECT_URL`, nunca deben incluirse en estos archivos. Conserva privados los archivos copiados y las claves PEM.
 
-La revisión GB-011.06 cubre la redirección del visitante al inicio de sesión,
-las acciones autenticadas de favoritos, los límites del Bearer de Game, el
-fallback del detalle cuando IGDB falla, los textos en inglés y español, la
-persistencia del tema y el diseño responsive del catálogo. Ejecuta la revisión
-automatizada con:
+Detén el stack con `docker compose down`. Usa `docker compose down -v` solo si quieres eliminar intencionalmente los volúmenes locales de dependencias.
+
+## Pruebas y comprobaciones de calidad
 
 ```bash
 pnpm test
-pnpm typecheck
+pnpm format:check
 pnpm lint
+pnpm typecheck
 pnpm build
 ```
-
-La revisión en navegador usa el catálogo público en escritorios y breakpoints
-móviles; el detalle conserva los datos almacenados de la tarjeta cuando IGDB no
-está disponible, y la bandeja autenticada conserva los mismos filtros,
-paginación y patrones de confirmación del catálogo.
-
-## Estructura
-
-- `src/app/` — shell de App Router y fronteras de rutas servidoras.
-- `src/app/api/igdb/` — rutas proxy de IGDB exclusivas del servidor para catálogo, detalle y sugerencias; las credenciales nunca deben entrar en componentes cliente.
-- `src/app/api/twitch/` — rutas reservadas para futuras necesidades de Twitch.
-- `src/features/` — UI orientada al producto y composición de funcionalidades.
-- `src/server/` — clientes de proveedores y código exclusivo del servidor.
-- `src/shared/` — primitivas reutilizables y contratos compartidos.
-
-Las preferencias visuales funcionan sin cuenta: el tema sigue al sistema en la primera visita, las elecciones manuales claro/oscuro persisten en `gamebook.theme` y las elecciones entre inglés/español persisten en `gamebook.language`.
-
-Los nombres de variables de runtime se documentan sin valores: `NEXT_PUBLIC_AUTHUSER_URL`, `NEXT_PUBLIC_GAME_URL`, `IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET`.
-
-El navegador público solo se comunica con el proxy del frontend: `GET /api/igdb/games`, `GET /api/igdb/games/:igdbId`, `GET /api/igdb/games/suggestions?query=...` y `GET /api/igdb/platforms?query=...`. El proxy obtiene y renueva el token de aplicación de Twitch en el servidor, usa endpoints fijos de IGDB y aplica los límites contractuales de cuatro solicitudes por segundo y ocho solicitudes concurrentes.
 
 ## Proyectos relacionados
 
