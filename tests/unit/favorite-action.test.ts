@@ -1,6 +1,10 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
 
 import { FavoriteAction } from "@/features/catalog/favorite-action";
 import { GameCard } from "@/features/catalog/game-card";
@@ -16,30 +20,50 @@ const game = {
   released: "2019-07-30",
 };
 
+const onSave = async () => undefined;
+
 describe("FavoriteAction", () => {
-  it("renders an accessible favorite control for an anonymous visitor", () => {
+  it("routes anonymous visitors to sign in without rendering a tooltip", () => {
     const markup = renderToStaticMarkup(
       createElement(FavoriteAction, {
-        gameId: game.igdbId,
-        gameName: game.name,
+        game,
         messages: messages.en,
+        onSave,
         placement: "card",
         status: "anonymous",
       }),
     );
 
-    expect(markup).toContain('aria-label="Save A Short Hike to favorites"');
+    expect(markup).toContain(
+      'aria-label="Sign in to save A Short Hike to favorites"',
+    );
     expect(markup).toContain('class="favorite-action favorite-action--card"');
-    expect(markup).toContain('viewBox="0 0 24 24"');
-    expect(markup).not.toContain(messages.en.catalog.favorite.prompt);
+    expect(markup).toContain('aria-pressed="false"');
+    expect(markup).not.toContain("favorite-action__prompt");
+  });
+
+  it("renders a direct authenticated save action", () => {
+    const markup = renderToStaticMarkup(
+      createElement(FavoriteAction, {
+        game,
+        messages: messages.en,
+        onSave,
+        placement: "modal",
+        status: "authenticated",
+      }),
+    );
+
+    expect(markup).toContain('aria-label="Save A Short Hike to favorites"');
+    expect(markup).toContain('class="favorite-action favorite-action--modal"');
+    expect(markup).not.toContain("favorite-action__prompt");
   });
 
   it("does not expose a save interaction while the session is loading", () => {
     const markup = renderToStaticMarkup(
       createElement(FavoriteAction, {
-        gameId: game.igdbId,
-        gameName: game.name,
+        game,
         messages: messages.en,
+        onSave,
         placement: "modal",
         status: "loading",
       }),
@@ -47,15 +71,14 @@ describe("FavoriteAction", () => {
 
     expect(markup).toContain('aria-label="Checking your session"');
     expect(markup).toContain("disabled");
-    expect(markup).not.toContain("aria-expanded");
   });
 
-  it("keeps the required anonymous prompt copy in both languages", () => {
-    expect(messages.en.catalog.favorite.prompt).toBe(
-      "To save favorites, you must:",
+  it("keeps the direct-action copy in both languages", () => {
+    expect(messages.en.catalog.favorite.signIn).toBe(
+      "Sign in to save {name} to favorites",
     );
-    expect(messages.es.catalog.favorite.prompt).toBe(
-      "Para guardar en favoritos debes:",
+    expect(messages.es.catalog.favorite.signIn).toBe(
+      "Inicia sesión para guardar {name} en favoritos",
     );
   });
 
@@ -65,6 +88,7 @@ describe("FavoriteAction", () => {
         authStatus: "anonymous",
         game,
         messages: messages.en,
+        onSave,
         onSelect: () => undefined,
       }),
     );
@@ -73,6 +97,7 @@ describe("FavoriteAction", () => {
         authStatus: "anonymous",
         game,
         messages: messages.en,
+        onSave,
         onClose: () => undefined,
       }),
     );

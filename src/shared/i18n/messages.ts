@@ -45,11 +45,11 @@ export const messages = {
         "The start year must be before or equal to the end year.",
       favorite: {
         action: "Save {name} to favorites",
-        dismiss: "Not now",
+        error: "Could not save {name}. Try again.",
         loading: "Checking your session",
-        prompt: "To save favorites, you must:",
-        promptDescription:
-          "Sign in or create an account to keep this game in your personal shelf.",
+        saved: "{name} saved to favorites",
+        saving: "Saving {name} to favorites",
+        signIn: "Sign in to save {name} to favorites",
       },
       detail: {
         open: "Open details for {name}",
@@ -213,11 +213,11 @@ export const messages = {
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",
       favorite: {
         action: "Guardar {name} en favoritos",
-        dismiss: "Ahora no",
+        error: "No se pudo guardar {name}. Inténtalo de nuevo.",
         loading: "Comprobando tu sesión",
-        prompt: "Para guardar en favoritos debes:",
-        promptDescription:
-          "Inicia sesión o crea una cuenta para conservar este juego en tu estantería personal.",
+        saved: "{name} se guardó en favoritos",
+        saving: "Guardando {name} en favoritos",
+        signIn: "Inicia sesión para guardar {name} en favoritos",
       },
       detail: {
         open: "Abrir detalle de {name}",

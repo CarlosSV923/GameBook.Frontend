@@ -12,6 +12,7 @@ import {
   formatGameYear,
 } from "@/features/catalog/game-card-formatting";
 import { formatGameReleaseDate } from "@/features/catalog/game-detail-formatting";
+import type { FavoriteCreateInput } from "@/shared/api/game";
 import type { IgdbGameCard, IgdbGameDetail } from "@/shared/api/igdb";
 import type { Messages } from "@/shared/i18n/messages";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
@@ -19,6 +20,7 @@ import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 type GameDetailModalProps = {
   game: IgdbGameCard;
   messages: Messages;
+  onSave: (game: FavoriteCreateInput) => Promise<void>;
   onClose: () => void;
   authStatus: AuthStatus;
 };
@@ -28,6 +30,7 @@ type DetailStatus = "error" | "loading" | "ready";
 export function GameDetailModal({
   game,
   messages,
+  onSave,
   onClose,
   authStatus,
 }: GameDetailModalProps) {
@@ -171,9 +174,9 @@ export function GameDetailModal({
               <span>{formatGamePlatforms(game.platforms)}</span>
             </p>
             <FavoriteAction
-              gameId={game.igdbId}
-              gameName={game.name}
+              game={game}
               messages={messages}
+              onSave={onSave}
               placement="modal"
               status={authStatus}
             />

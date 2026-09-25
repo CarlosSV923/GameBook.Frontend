@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type MouseEvent,
@@ -10,6 +11,7 @@ import {
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
 import { useAuth } from "@/features/auth/auth-provider";
+import { createGameClient } from "@/features/api/game-client";
 import {
   getNextCatalogOffset,
   mergeCatalogItems,
@@ -21,6 +23,7 @@ import {
 import { GameDetailModal } from "@/features/catalog/game-detail-modal";
 import { GameCard } from "@/features/catalog/game-card";
 import { usePreferences } from "@/features/preferences/preferences-provider";
+import type { FavoriteCreateInput } from "@/shared/api/game";
 import type { IgdbGameCard } from "@/shared/api/igdb";
 import { CatalogState, type CatalogStateKind } from "@/shared/ui/catalog-state";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
@@ -30,7 +33,11 @@ const CATALOG_PAGE_SIZE = 20;
 
 export function CatalogList() {
   const { copy } = usePreferences();
-  const { status: authStatus } = useAuth();
+  const { getAccessToken, signOut, status: authStatus } = useAuth();
+  const gameClient = useMemo(
+    () => createGameClient({ onUnauthorized: signOut }),
+    [signOut],
+  );
   const [items, setItems] = useState<IgdbGameCard[]>([]);
   const [status, setStatus] = useState<CatalogStatus>("loading");
   const [filters, setFilters] = useState<AppliedCatalogFilters>({});
@@ -43,6 +50,19 @@ export function CatalogList() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const activeControllerRef = useRef<AbortController | null>(null);
   const requestVersionRef = useRef(0);
+
+  const saveFavorite = useCallback(
+    async (game: FavoriteCreateInput) => {
+      const token = getAccessToken();
+
+      if (!token) {
+        throw new Error("A valid session is required to save favorites.");
+      }
+
+      await gameClient.createFavorite(token, game);
+    },
+    [gameClient, getAccessToken],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -204,6 +224,7 @@ export function CatalogList() {
                   authStatus={authStatus}
                   game={game}
                   messages={copy}
+                  onSave={saveFavorite}
                   onSelect={() => setSelectedGame(game)}
                 />
               </li>
@@ -255,6 +276,7 @@ export function CatalogList() {
           authStatus={authStatus}
           game={selectedGame}
           messages={copy}
+          onSave={saveFavorite}
           onClose={() => setSelectedGame(null)}
         />
       ) : null}

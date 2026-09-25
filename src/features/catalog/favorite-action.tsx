@@ -1,134 +1,109 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState, type FocusEvent } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import type { AuthStatus } from "@/features/auth/auth-provider";
+import type { FavoriteCreateInput } from "@/shared/api/game";
 import type { Messages } from "@/shared/i18n/messages";
 
 type FavoriteActionProps = {
-  gameId: number;
-  gameName: string;
+  game: FavoriteCreateInput;
   messages: Messages;
+  onSave: (game: FavoriteCreateInput) => Promise<void>;
   placement: "card" | "modal";
   status: AuthStatus;
 };
 
+type SaveState = "error" | "idle" | "saved" | "saving";
+
 export function FavoriteAction({
-  gameId,
-  gameName,
+  game,
   messages,
+  onSave,
   placement,
   status,
 }: FavoriteActionProps) {
-  const [isPromptOpen, setIsPromptOpen] = useState(false);
-  const actionRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [saveState, setSaveState] = useState<SaveState>("idle");
   const isAnonymous = status === "anonymous";
   const isLoading = status === "loading";
-  const promptId = `favorite-prompt-${placement}-${gameId}`;
+  const isSaving = saveState === "saving";
+  const isSaved = saveState === "saved";
   const actionLabel = messages.catalog.favorite.action.replace(
     "{name}",
-    gameName,
+    game.name,
   );
+  const signInLabel = messages.catalog.favorite.signIn.replace(
+    "{name}",
+    game.name,
+  );
+  const savingLabel = messages.catalog.favorite.saving.replace(
+    "{name}",
+    game.name,
+  );
+  const savedLabel = messages.catalog.favorite.saved.replace(
+    "{name}",
+    game.name,
+  );
+  const errorLabel = messages.catalog.favorite.error.replace(
+    "{name}",
+    game.name,
+  );
+  const label = isLoading
+    ? messages.catalog.favorite.loading
+    : isAnonymous
+      ? signInLabel
+      : isSaving
+        ? savingLabel
+        : isSaved
+          ? savedLabel
+          : saveState === "error"
+            ? errorLabel
+            : actionLabel;
 
   const handleAction = () => {
+    if (isLoading || isSaving || isSaved) {
+      return;
+    }
+
     if (isAnonymous) {
-      setIsPromptOpen((open) => !open);
-    }
-  };
-
-  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
-    const nextFocusedElement = event.relatedTarget;
-
-    if (
-      nextFocusedElement instanceof Node &&
-      event.currentTarget.contains(nextFocusedElement)
-    ) {
+      router.push("/login");
       return;
     }
 
-    setIsPromptOpen(false);
+    setSaveState("saving");
+    void onSave(game)
+      .then(() => setSaveState("saved"))
+      .catch(() => setSaveState("error"));
   };
-
-  const handleMouseLeave = () => {
-    if (placement === "card") {
-      setIsPromptOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isPromptOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target;
-
-      if (!(target instanceof Node) || !actionRef.current?.contains(target)) {
-        setIsPromptOpen(false);
-      }
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [isPromptOpen]);
 
   return (
-    <div
-      className={`favorite-action favorite-action--${placement}`}
-      onBlur={handleBlur}
-      onMouseLeave={handleMouseLeave}
-      ref={actionRef}
-    >
+    <div className={`favorite-action favorite-action--${placement}`}>
       <button
-        aria-controls={isAnonymous ? promptId : undefined}
-        aria-expanded={isAnonymous ? isPromptOpen : undefined}
-        aria-label={isLoading ? messages.catalog.favorite.loading : actionLabel}
+        aria-label={label}
+        aria-pressed={isSaved}
         className="favorite-action__button"
-        disabled={isLoading}
+        data-saved={isSaved}
+        data-saving={isSaving}
+        disabled={isLoading || isSaving || isSaved}
         onClick={handleAction}
         type="button"
       >
-        <HeartIcon />
+        <HeartIcon isSaved={isSaved} />
       </button>
-      {isAnonymous && isPromptOpen ? (
-        <div
-          aria-label={messages.catalog.favorite.prompt}
-          className="favorite-action__prompt"
-          id={promptId}
-          role="dialog"
-        >
-          <p className="favorite-action__prompt-title">
-            {messages.catalog.favorite.prompt}
-          </p>
-          <p className="favorite-action__prompt-description">
-            {messages.catalog.favorite.promptDescription}
-          </p>
-          <div className="favorite-action__prompt-actions">
-            <Link className="favorite-action__link" href="/login">
-              {messages.navigation.signIn}
-            </Link>
-            <Link className="favorite-action__link" href="/register">
-              {messages.navigation.createAccount}
-            </Link>
-          </div>
-          <button
-            className="favorite-action__dismiss"
-            onClick={() => setIsPromptOpen(false)}
-            type="button"
-          >
-            {messages.catalog.favorite.dismiss}
-          </button>
-        </div>
+      {saveState === "error" ? (
+        <span className="favorite-action__status" role="alert">
+          {errorLabel}
+        </span>
       ) : null}
     </div>
   );
 }
 
-function HeartIcon() {
+function HeartIcon({ isSaved }: { isSaved: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <svg aria-hidden="true" data-saved={isSaved} viewBox="0 0 24 24">
       <path d="M20.8 8.7c0 5.1-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.8 2.7Z" />
     </svg>
   );
