@@ -28,6 +28,18 @@ export const messages = {
       title: "Find a game worth keeping",
       coverAlt: "Cover art for {name}",
       missingImage: "Cover image unavailable",
+      filters: "Filters",
+      name: "Game name",
+      platform: "Platform",
+      yearFrom: "From year",
+      yearTo: "To year",
+      applyFilters: "Apply filters",
+      clearFilters: "Clear filters",
+      suggestionLabel: "Suggestions",
+      choosePlatform:
+        "Choose a platform suggestion before applying the filter.",
+      invalidYearRange:
+        "The start year must be before or equal to the end year.",
     },
     preferences: {
       eyebrow: "Archive settings",
@@ -51,6 +63,8 @@ export const messages = {
       loading: "Loading catalog",
       retry: "Try again",
       noResults: "No games match these filters.",
+      noResultsTitle: "No games found",
+      noResultsDescription: "Try changing your filters.",
     },
     indexStrip: {
       platforms: "Platforms",
@@ -85,6 +99,17 @@ export const messages = {
       title: "Encuentra un juego que valga la pena conservar",
       coverAlt: "Arte de portada de {name}",
       missingImage: "Imagen de portada no disponible",
+      filters: "Filtros",
+      name: "Nombre del juego",
+      platform: "Plataforma",
+      yearFrom: "Desde año",
+      yearTo: "Hasta año",
+      applyFilters: "Aplicar filtros",
+      clearFilters: "Limpiar filtros",
+      suggestionLabel: "Sugerencias",
+      choosePlatform:
+        "Elige una sugerencia de plataforma antes de aplicar el filtro.",
+      invalidYearRange: "El año inicial debe ser menor o igual al año final.",
     },
     preferences: {
       eyebrow: "Ajustes del archivo",
@@ -108,6 +133,8 @@ export const messages = {
       loading: "Cargando catálogo",
       retry: "Intentar de nuevo",
       noResults: "Ningún juego coincide con estos filtros.",
+      noResultsTitle: "No se encontraron juegos",
+      noResultsDescription: "Prueba a cambiar los filtros.",
     },
     indexStrip: {
       platforms: "Plataformas",
