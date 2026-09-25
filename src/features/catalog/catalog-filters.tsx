@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
 import { usePreferences } from "@/features/preferences/preferences-provider";
@@ -16,24 +16,54 @@ export type AppliedCatalogFilters = {
   yearTo?: number;
 };
 
-type CatalogFiltersProps = {
-  onApply: (filters: AppliedCatalogFilters) => void;
+export type CatalogSuggestion = {
+  id?: number;
+  name: string;
 };
 
-export function CatalogFilters({ onApply }: CatalogFiltersProps) {
+export type CatalogSuggestionProvider = {
+  getGameSuggestions: (
+    query: string,
+    signal?: AbortSignal,
+  ) => Promise<readonly CatalogSuggestion[]>;
+  getPlatformSuggestions: (
+    query: string,
+    signal?: AbortSignal,
+  ) => Promise<readonly CatalogSuggestion[]>;
+};
+
+type CatalogFiltersProps = {
+  heading?: string;
+  onApply: (filters: AppliedCatalogFilters) => void;
+  suggestionProvider?: CatalogSuggestionProvider;
+  eyebrow?: string;
+};
+
+export function CatalogFilters({
+  eyebrow,
+  heading,
+  onApply,
+  suggestionProvider,
+}: CatalogFiltersProps) {
   const { copy } = usePreferences();
+  const defaultSuggestionProvider = useMemo(
+    () => createIgdbSuggestionProvider(),
+    [],
+  );
+  const resolvedSuggestionProvider =
+    suggestionProvider ?? defaultSuggestionProvider;
   const [name, setName] = useState("");
   const [platformQuery, setPlatformQuery] = useState("");
   const [platformId, setPlatformId] = useState<number>();
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
-  const [gameSuggestions, setGameSuggestions] = useState<IgdbGameSuggestion[]>(
+  const [gameSuggestions, setGameSuggestions] = useState<CatalogSuggestion[]>(
     [],
   );
   const [gameSuggestionQuery, setGameSuggestionQuery] = useState("");
   const [selectedGameName, setSelectedGameName] = useState("");
   const [platformSuggestions, setPlatformSuggestions] = useState<
-    IgdbPlatformSuggestion[]
+    CatalogSuggestion[]
   >([]);
   const [platformSuggestionQuery, setPlatformSuggestionQuery] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
@@ -46,11 +76,11 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
 
     const controller = new AbortController();
     const timeout = window.setTimeout(() => {
-      void createIgdbCatalogClient()
+      void resolvedSuggestionProvider
         .getGameSuggestions(query, controller.signal)
         .then((suggestions) => {
           if (!controller.signal.aborted) {
-            setGameSuggestions(suggestions);
+            setGameSuggestions([...suggestions]);
             setGameSuggestionQuery(query);
           }
         })
@@ -61,7 +91,7 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [name]);
+  }, [name, resolvedSuggestionProvider]);
 
   useEffect(() => {
     const query = platformQuery.trim();
@@ -71,11 +101,11 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
 
     const controller = new AbortController();
     const timeout = window.setTimeout(() => {
-      void createIgdbCatalogClient()
+      void resolvedSuggestionProvider
         .getPlatformSuggestions(query, controller.signal)
         .then((suggestions) => {
           if (!controller.signal.aborted) {
-            setPlatformSuggestions(suggestions);
+            setPlatformSuggestions([...suggestions]);
             setPlatformSuggestionQuery(query);
           }
         })
@@ -86,7 +116,7 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [platformQuery]);
+  }, [platformQuery, resolvedSuggestionProvider]);
 
   const applyFilters = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -133,8 +163,10 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
   return (
     <form className="catalog-filters" onSubmit={applyFilters}>
       <div className="catalog-filters__heading">
-        <p className="catalog-filters__kicker">{copy.catalog.eyebrow}</p>
-        <h2>{copy.catalog.filters}</h2>
+        <p className="catalog-filters__kicker">
+          {eyebrow ?? copy.catalog.eyebrow}
+        </p>
+        <h2>{heading ?? copy.catalog.filters}</h2>
       </div>
 
       <div className="catalog-filters__fields">
@@ -174,7 +206,7 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
           }}
           onSelect={(suggestion) => {
             setPlatformQuery(suggestion.name);
-            if ("id" in suggestion) {
+            if (suggestion.id !== undefined) {
               setPlatformId(suggestion.id);
             }
             setPlatformSuggestions([]);
@@ -230,13 +262,38 @@ export function CatalogFilters({ onApply }: CatalogFiltersProps) {
   );
 }
 
+function createIgdbSuggestionProvider(): CatalogSuggestionProvider {
+  return {
+    async getGameSuggestions(query, signal) {
+      const suggestions = await createIgdbCatalogClient().getGameSuggestions(
+        query,
+        signal,
+      );
+      return suggestions.map(toCatalogSuggestion);
+    },
+    async getPlatformSuggestions(query, signal) {
+      const suggestions =
+        await createIgdbCatalogClient().getPlatformSuggestions(query, signal);
+      return suggestions.map(toCatalogSuggestion);
+    },
+  };
+}
+
+function toCatalogSuggestion(
+  suggestion: IgdbGameSuggestion | IgdbPlatformSuggestion,
+): CatalogSuggestion {
+  return "igdbId" in suggestion
+    ? { name: suggestion.name }
+    : { id: suggestion.id, name: suggestion.name };
+}
+
 type SuggestionFieldProps = {
   id: string;
   label: string;
-  suggestions: readonly (IgdbGameSuggestion | IgdbPlatformSuggestion)[];
+  suggestions: readonly CatalogSuggestion[];
   value: string;
   onChange: (value: string) => void;
-  onSelect: (suggestion: IgdbGameSuggestion | IgdbPlatformSuggestion) => void;
+  onSelect: (suggestion: CatalogSuggestion) => void;
 };
 
 function SuggestionField({
@@ -282,12 +339,8 @@ function SuggestionField({
   );
 }
 
-function suggestionKey(
-  suggestion: IgdbGameSuggestion | IgdbPlatformSuggestion,
-): string {
-  return "igdbId" in suggestion
-    ? `game-${suggestion.igdbId}`
-    : `platform-${suggestion.id}`;
+function suggestionKey(suggestion: CatalogSuggestion): string {
+  return `${suggestion.id === undefined ? "game" : "platform"}-${suggestion.name}`;
 }
 
 function parseYear(value: string): number | undefined {
