@@ -10,7 +10,7 @@ The frontend will provide public catalog and game-detail views, authenticated ac
 
 ## Repository status
 
-This repository contains the Next.js App Router foundation and the first visual system. Product features, provider adapters, and deployment are intentionally scheduled as later SDD tasks.
+This repository contains the Next.js App Router foundation, the first visual system, and the server-only IGDB provider adapter. Product views, authenticated experiences, and deployment remain scheduled as later SDD tasks.
 
 ## Local development
 
@@ -31,7 +31,8 @@ pnpm build
 ## Structure
 
 - `src/app/` — App Router shell and server route boundaries.
-- `src/app/api/igdb/` and `src/app/api/twitch/` — reserved server-only routes; credentials never belong in client components.
+- `src/app/api/igdb/` — server-only IGDB proxy routes for catalog, game detail, and suggestions; credentials never belong in client components.
+- `src/app/api/twitch/` — reserved server-only routes for future Twitch concerns.
 - `src/features/` — product-facing UI and feature composition.
 - `src/server/` — provider clients and server-only integration code.
 - `src/shared/` — reusable, framework-aware primitives and shared contracts.
@@ -39,6 +40,8 @@ pnpm build
 Visual preferences are available without an account: the theme follows the system on first visit, manual light/dark choices persist under `gamebook.theme`, and English/Spanish choices persist under `gamebook.language`.
 
 Runtime variable names are documented without values: `NEXT_PUBLIC_AUTHUSER_URL`, `NEXT_PUBLIC_GAME_URL`, `IGDB_CLIENT_ID`, and `IGDB_CLIENT_SECRET`.
+
+The public browser talks only to the frontend proxy: `GET /api/igdb/games`, `GET /api/igdb/games/:igdbId`, `GET /api/igdb/games/suggestions?query=...`, and `GET /api/igdb/platforms?query=...`. The proxy obtains and renews the Twitch application token on the server, uses fixed IGDB endpoints, and applies the contract limits of four requests per second and eight concurrent requests.
 
 ## Related projects
 

@@ -17,10 +17,15 @@ import {
   type IgdbRuntimeConfig,
 } from "@/server/igdb/igdb-runtime-config";
 import { createTwitchApplicationTokenProvider } from "@/server/igdb/twitch-token-client";
+import {
+  sharedIgdbRequestLimiter,
+  type IgdbRequestLimiter,
+} from "@/server/igdb/igdb-request-limiter";
 
 type IgdbClientOptions = {
   config?: IgdbRuntimeConfig;
   fetcher?: Fetcher;
+  requestLimiter?: IgdbRequestLimiter;
   tokenProvider?: ApplicationTokenProvider;
 };
 
@@ -46,6 +51,7 @@ const detailFields = [
 export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
   const config = options.config ?? getIgdbRuntimeConfig();
   const fetcher = options.fetcher ?? fetch;
+  const requestLimiter = options.requestLimiter ?? sharedIgdbRequestLimiter;
   const tokenProvider =
     options.tokenProvider ??
     createTwitchApplicationTokenProvider(config, fetcher);
@@ -57,15 +63,17 @@ export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
       let response: Response;
 
       try {
-        response = await fetcher(`${config.apiBaseUrl}/${endpoint}`, {
-          body: query,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Client-ID": config.clientId,
-            "Content-Type": "text/plain",
-          },
-          method: "POST",
-        });
+        response = await requestLimiter.schedule(() =>
+          fetcher(`${config.apiBaseUrl}/${endpoint}`, {
+            body: query,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Client-ID": config.clientId,
+              "Content-Type": "text/plain",
+            },
+            method: "POST",
+          }),
+        );
       } catch {
         throw new IgdbClientError(
           "IGDB_UNAVAILABLE",
