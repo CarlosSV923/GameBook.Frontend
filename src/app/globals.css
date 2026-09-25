@@ -66,6 +66,11 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
 button {
   font: inherit;
 }
@@ -482,10 +487,11 @@ h2 {
 
 @media (max-width: 720px) {
   .catalog-navbar__inner {
-    grid-template-columns: 1fr auto;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 4px;
     width: min(100% - 32px, 560px);
-    min-height: 68px;
+    min-height: 0;
+    padding: 14px 0 12px;
   }
 
   .catalog-brand__tagline {
@@ -493,14 +499,16 @@ h2 {
   }
 
   .catalog-navbar__links {
-    grid-column: 1 / -1;
-    grid-row: 2;
+    grid-column: 1;
+    grid-row: 3;
     justify-content: flex-start;
-    padding-bottom: 12px;
+    padding-top: 4px;
   }
 
   .account-links {
-    justify-content: flex-end;
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
   }
 
   .home-shell {
