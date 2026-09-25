@@ -140,6 +140,59 @@ button:focus-visible {
   gap: 8px;
 }
 
+.catalog-navbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.preference-icon-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+  border-right: 1px solid var(--border-soft);
+}
+
+.preference-icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  color: var(--ink-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.preference-icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.preference-icon-button:hover {
+  color: var(--ink);
+  background: var(--paper-inset);
+  border-color: var(--border);
+}
+
+.preference-icon-button:active {
+  transform: scale(0.94);
+}
+
 .catalog-navbar__link,
 .account-links__secondary,
 .account-links__primary {
@@ -513,48 +566,6 @@ h2 {
   }
 }
 
-.preference-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 32px;
-  align-items: end;
-  padding: 24px;
-  background: var(--paper-raised);
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  box-shadow: var(--shadow-raised);
-}
-
-.preference-panel__intro p:last-child {
-  max-width: 34ch;
-  margin-bottom: 0;
-  color: var(--ink-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.preference-panel__groups {
-  display: grid;
-  gap: 16px;
-}
-
-.preference-group {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.preference-group legend {
-  margin-bottom: 8px;
-  color: var(--ink-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
 .segmented-control {
   display: flex;
   gap: 8px;
@@ -613,10 +624,14 @@ h2 {
     padding-top: 4px;
   }
 
-  .account-links {
+  .catalog-navbar__actions {
     grid-column: 1;
     grid-row: 2;
     justify-content: flex-start;
+  }
+
+  .account-links {
+    flex-wrap: wrap;
   }
 
   .home-shell {
@@ -639,18 +654,14 @@ h2 {
     gap: 16px;
     padding: 20px;
   }
-
-  .preference-panel {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .segmented-control__option,
   .catalog-state--loading .catalog-state__marker,
   .game-card,
-  .game-card__image {
+  .game-card__image,
+  .preference-icon-button {
     transition: none;
     animation: none;
   }

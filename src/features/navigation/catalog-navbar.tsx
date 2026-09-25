@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { usePreferences } from "@/features/preferences/preferences-provider";
+import { PreferenceIconControls } from "@/features/preferences/preference-controls";
 
 type CatalogNavbarProps = {
   authState?: "authenticated" | "anonymous";
@@ -34,27 +35,30 @@ export function CatalogNavbar({ authState = "anonymous" }: CatalogNavbarProps) {
           </Link>
         </nav>
 
-        <nav aria-label={copy.navigation.account} className="account-links">
-          {authState === "anonymous" ? (
-            <>
-              <Link className="account-links__secondary" href="/login">
-                {copy.navigation.signIn}
-              </Link>
-              <Link className="account-links__primary" href="/register">
-                {copy.navigation.createAccount}
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link className="account-links__secondary" href="/profile">
-                {copy.navigation.profile}
-              </Link>
-              <Link className="account-links__primary" href="/favorites">
-                {copy.navigation.favorites}
-              </Link>
-            </>
-          )}
-        </nav>
+        <div className="catalog-navbar__actions">
+          <PreferenceIconControls />
+          <nav aria-label={copy.navigation.account} className="account-links">
+            {authState === "anonymous" ? (
+              <>
+                <Link className="account-links__secondary" href="/login">
+                  {copy.navigation.signIn}
+                </Link>
+                <Link className="account-links__primary" href="/register">
+                  {copy.navigation.createAccount}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="account-links__secondary" href="/profile">
+                  {copy.navigation.profile}
+                </Link>
+                <Link className="account-links__primary" href="/favorites">
+                  {copy.navigation.favorites}
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
       </div>
     </header>
   );

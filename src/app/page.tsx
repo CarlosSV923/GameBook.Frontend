@@ -2,7 +2,6 @@
 
 import { AppShell } from "@/features/layout/app-shell";
 import { CatalogList } from "@/features/catalog/catalog-list";
-import { PreferenceControls } from "@/features/preferences/preference-controls";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 
 export default function Home() {
@@ -11,7 +10,6 @@ export default function Home() {
       <main className="home-shell">
         <HomeIntro />
         <CatalogPreview />
-        <PreferenceControls />
       </main>
     </AppShell>
   );

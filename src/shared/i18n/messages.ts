@@ -40,6 +40,10 @@ export const messages = {
       dark: "Dark",
       english: "English",
       spanish: "Español",
+      switchToDark: "Switch to dark mode",
+      switchToLight: "Switch to light mode",
+      switchToSpanish: "Switch to Spanish",
+      switchToEnglish: "Switch to English",
     },
     states: {
       errorDescription:
@@ -94,6 +98,10 @@ export const messages = {
       dark: "Oscuro",
       english: "English",
       spanish: "Español",
+      switchToDark: "Cambiar al modo oscuro",
+      switchToLight: "Cambiar al modo claro",
+      switchToSpanish: "Cambiar a español",
+      switchToEnglish: "Cambiar a inglés",
     },
     states: {
       errorDescription:
