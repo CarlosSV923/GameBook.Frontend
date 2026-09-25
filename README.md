@@ -10,7 +10,7 @@ The frontend will provide public catalog and game-detail views, authenticated ac
 
 ## Repository status
 
-This repository contains the Next.js App Router foundation. Product features, visual tokens, provider adapters, and deployment are intentionally scheduled as later SDD tasks.
+This repository contains the Next.js App Router foundation and the first visual system. Product features, provider adapters, and deployment are intentionally scheduled as later SDD tasks.
 
 ## Local development
 
@@ -35,6 +35,8 @@ pnpm build
 - `src/features/` — product-facing UI and feature composition.
 - `src/server/` — provider clients and server-only integration code.
 - `src/shared/` — reusable, framework-aware primitives and shared contracts.
+
+Visual preferences are available without an account: the theme follows the system on first visit, manual light/dark choices persist under `gamebook.theme`, and English/Spanish choices persist under `gamebook.language`.
 
 Runtime variable names are documented without values: `NEXT_PUBLIC_AUTHUSER_URL`, `NEXT_PUBLIC_GAME_URL`, `IGDB_CLIENT_ID`, and `IGDB_CLIENT_SECRET`.
 
