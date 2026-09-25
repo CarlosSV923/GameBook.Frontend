@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 import {
   formatGamePlatforms,
@@ -15,6 +18,7 @@ type GameCardProps = {
 };
 
 export function GameCard({ game, messages, onSelect }: GameCardProps) {
+  const [imageUrl, setImageUrl] = useState(game.imageUrl);
   const titleId = `game-card-${game.igdbId}`;
   const coverAlt = messages.catalog.coverAlt.replace("{name}", game.name);
 
@@ -27,21 +31,28 @@ export function GameCard({ game, messages, onSelect }: GameCardProps) {
         type="button"
       >
         <span className="game-card__media">
-          {game.imageUrl ? (
+          {imageUrl ? (
             <Image
               alt={coverAlt}
               className="game-card__image"
               fill
+              onError={() => setImageUrl(null)}
               sizes="(max-width: 480px) 100vw, (max-width: 720px) 40vw, (max-width: 980px) 30vw, 20vw"
-              src={game.imageUrl}
+              src={imageUrl}
             />
           ) : (
             <span
-              aria-hidden="true"
+              aria-label={messages.catalog.missingImage}
               className="game-card__fallback"
               title={messages.catalog.missingImage}
+              role="img"
             >
-              <span>{game.name.slice(0, 1).toUpperCase()}</span>
+              <span aria-hidden="true">
+                {game.name.slice(0, 1).toUpperCase()}
+              </span>
+              <span className="game-card__fallback-label">
+                {messages.catalog.missingImage}
+              </span>
             </span>
           )}
         </span>

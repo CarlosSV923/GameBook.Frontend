@@ -668,6 +668,8 @@ h2 {
 .game-card__fallback {
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 10px;
   width: 100%;
   height: 100%;
   color: var(--copper-strong);
@@ -675,6 +677,19 @@ h2 {
   border-left: 3px solid var(--copper);
   font-family: var(--font-editorial);
   font-size: 2.75rem;
+}
+
+.game-card__fallback-label,
+.game-detail-modal__fallback-label {
+  max-width: 12ch;
+  color: var(--ink-muted);
+  font-family: var(--font-interface);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .game-card__content {
@@ -794,6 +809,8 @@ h2 {
 .game-detail-modal__fallback {
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 12px;
   width: 100%;
   height: 100%;
   color: var(--copper-strong);
@@ -801,6 +818,10 @@ h2 {
   border-left: 3px solid var(--copper);
   font-family: var(--font-editorial);
   font-size: 3.5rem;
+}
+
+.game-detail-modal__fallback-label {
+  max-width: 14ch;
 }
 
 .game-detail-modal__heading {
@@ -962,6 +983,38 @@ h2 {
   object-fit: cover;
 }
 
+.game-detail-modal__screenshot-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+.igdb-attribution {
+  margin: 0;
+  padding: 14px 24px 18px;
+  color: var(--ink-muted);
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.igdb-attribution a {
+  color: var(--copper-strong);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.igdb-attribution a:hover {
+  color: var(--ink);
+}
+
 .text-button {
   min-height: 44px;
   margin-top: 20px;
@@ -1093,6 +1146,11 @@ h2 {
 
   .game-detail-modal__body {
     padding: 20px 16px;
+  }
+
+  .igdb-attribution {
+    padding-right: 16px;
+    padding-left: 16px;
   }
 }
 

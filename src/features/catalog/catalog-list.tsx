@@ -22,6 +22,7 @@ import { GameCard } from "@/features/catalog/game-card";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 import type { IgdbGameCard } from "@/shared/api/igdb";
 import { CatalogState, type CatalogStateKind } from "@/shared/ui/catalog-state";
+import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
 type CatalogStatus = CatalogStateKind | "ready";
 const CATALOG_PAGE_SIZE = 20;
@@ -245,6 +246,7 @@ export function CatalogList() {
           </div>
         </>
       )}
+      <IgdbAttribution messages={copy} />
       {selectedGame ? (
         <GameDetailModal
           game={selectedGame}
