@@ -240,13 +240,16 @@ button:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 64px;
-  width: min(100% - 48px, 1120px);
+  width: 100%;
   margin: 0 auto;
   padding: 72px 0 96px;
 }
 
 .home-intro {
-  max-width: 760px;
+  width: 100%;
+  padding: 40px max(24px, calc((100% - 1120px) / 2));
+  background: var(--paper-raised);
+  border-block: 1px solid var(--border-soft);
 }
 
 .eyebrow {
@@ -296,6 +299,11 @@ h2 {
   font-size: 1rem;
   line-height: 1.6;
   text-wrap: pretty;
+}
+
+.catalog-preview {
+  width: min(100% - 48px, 1120px);
+  margin: 0 auto;
 }
 
 .auth-page {
@@ -1402,8 +1410,15 @@ h2 {
 
   .home-shell {
     gap: 48px;
-    width: min(100% - 32px, 560px);
     padding: 48px 0 64px;
+  }
+
+  .home-intro {
+    padding: 32px 16px;
+  }
+
+  .catalog-preview {
+    width: min(100% - 32px, 560px);
   }
 
   .auth-page {
