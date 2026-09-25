@@ -19,9 +19,11 @@ import {
 import { mergeCatalogItems } from "@/features/catalog/catalog-pagination";
 import { GameDetailModal } from "@/features/catalog/game-detail-modal";
 import { GameCard } from "@/features/catalog/game-card";
+import { toFavoriteSnapshot } from "@/features/favorites/favorite-snapshot";
 import { getNextFavoritePage } from "@/features/favorites/favorites-pagination";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 import type { Favorite } from "@/shared/api/game";
+import type { IgdbGameDetail } from "@/shared/api/igdb";
 import { CatalogState, type CatalogStateKind } from "@/shared/ui/catalog-state";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
@@ -262,6 +264,29 @@ export function FavoritesList() {
     [gameClient, getAccessToken, hasNext, items.length],
   );
 
+  const syncFavoriteSnapshot = useCallback(
+    async (detail: IgdbGameDetail) => {
+      const token = requireAccessToken(getAccessToken);
+      const updatedFavorite = await gameClient.updateFavoriteSnapshot(
+        token,
+        detail.igdbId,
+        toFavoriteSnapshot(detail),
+      );
+
+      setItems((currentItems) =>
+        currentItems.map((item) =>
+          item.igdbId === updatedFavorite.igdbId ? updatedFavorite : item,
+        ),
+      );
+      setSelectedGame((currentGame) =>
+        currentGame?.igdbId === updatedFavorite.igdbId
+          ? updatedFavorite
+          : currentGame,
+      );
+    },
+    [gameClient, getAccessToken],
+  );
+
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== "",
   );
@@ -341,9 +366,11 @@ export function FavoritesList() {
         <GameDetailModal
           authStatus="authenticated"
           game={selectedGame}
+          key={selectedGame.igdbId}
           messages={copy}
           onClose={() => setSelectedGame(null)}
           onDelete={deleteFavorite}
+          onDetailLoaded={syncFavoriteSnapshot}
         />
       ) : null}
     </>

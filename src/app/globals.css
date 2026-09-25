@@ -1404,6 +1404,22 @@ h2 {
   line-height: 1.55;
 }
 
+.game-detail-modal__sync {
+  margin: 0 0 20px;
+  padding: 10px 12px;
+  color: var(--ink-secondary);
+  background: var(--paper-inset);
+  border-left: 3px solid var(--copper);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.game-detail-modal__sync--error {
+  color: var(--ink);
+  border-left-color: var(--danger);
+}
+
 .game-detail-modal__error {
   padding: 16px;
   background: var(--paper-inset);
