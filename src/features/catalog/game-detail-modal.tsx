@@ -24,23 +24,27 @@ type GameDetailModalProps = {
   game: IgdbGameCard;
   messages: Messages;
   onDelete?: (igdbId: number) => Promise<void>;
+  onDetailLoaded?: (detail: IgdbGameDetail) => Promise<void>;
   onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onClose: () => void;
   authStatus: AuthStatus;
 };
 
 type DetailStatus = "error" | "loading" | "ready";
+type SnapshotStatus = "error" | "idle" | "syncing" | "updated";
 
 export function GameDetailModal({
   game,
   messages,
   onDelete,
+  onDetailLoaded,
   onSave,
   onClose,
   authStatus,
 }: GameDetailModalProps) {
   const [detail, setDetail] = useState<IgdbGameDetail | null>(null);
   const [status, setStatus] = useState<DetailStatus>("loading");
+  const [snapshotStatus, setSnapshotStatus] = useState<SnapshotStatus>("idle");
   const [coverUrl, setCoverUrl] = useState(game.imageUrl);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -58,6 +62,21 @@ export function GameDetailModal({
 
         setDetail(nextDetail);
         setStatus(nextDetail ? "ready" : "error");
+
+        if (nextDetail && onDetailLoaded) {
+          setSnapshotStatus("syncing");
+          void onDetailLoaded(nextDetail)
+            .then(() => {
+              if (isActive) {
+                setSnapshotStatus("updated");
+              }
+            })
+            .catch(() => {
+              if (isActive) {
+                setSnapshotStatus("error");
+              }
+            });
+        }
       })
       .catch(() => {
         if (isActive && !controller.signal.aborted) {
@@ -69,7 +88,7 @@ export function GameDetailModal({
       isActive = false;
       controller.abort();
     };
-  }, [game.igdbId]);
+  }, [game.igdbId, onDetailLoaded]);
 
   useEffect(() => {
     const previousActiveElement =
@@ -217,6 +236,24 @@ export function GameDetailModal({
               <h3>{messages.catalog.detail.errorTitle}</h3>
               <p>{messages.catalog.detail.errorDescription}</p>
             </div>
+          ) : null}
+          {snapshotStatus === "syncing" ? (
+            <p className="game-detail-modal__sync" role="status">
+              {messages.catalog.detail.syncing}
+            </p>
+          ) : null}
+          {snapshotStatus === "updated" ? (
+            <p className="game-detail-modal__sync" role="status">
+              {messages.catalog.detail.updated}
+            </p>
+          ) : null}
+          {snapshotStatus === "error" ? (
+            <p
+              className="game-detail-modal__sync game-detail-modal__sync--error"
+              role="alert"
+            >
+              {messages.catalog.detail.syncError}
+            </p>
           ) : null}
           {status === "ready" && detail ? (
             <DetailContent detail={detail} messages={messages} />

@@ -90,6 +90,10 @@ export const messages = {
         noGenres: "No genres are available.",
         noDevelopers: "No developers are available.",
         screenshotAlt: "Screenshot {number} from {name}",
+        syncError:
+          "The details loaded, but your personal shelf could not be updated.",
+        syncing: "Updating your personal shelf",
+        updated: "Your personal shelf is up to date",
       },
     },
     auth: {
@@ -280,6 +284,10 @@ export const messages = {
         noGenres: "No hay géneros disponibles.",
         noDevelopers: "No hay desarrolladores disponibles.",
         screenshotAlt: "Captura {number} de {name}",
+        syncError:
+          "El detalle se cargó, pero no se pudo actualizar tu estantería personal.",
+        syncing: "Actualizando tu estantería personal",
+        updated: "Tu estantería personal está actualizada",
       },
     },
     auth: {
