@@ -68,26 +68,19 @@ Los endpoints locales son:
 
 El frontend soporta registro, inicio de sesión, acceso a sesión/perfil, cambio y revocación de contraseña, listado y filtrado de favoritos, sugerencias, sincronización de instantáneas y eliminación mediante esos servicios.
 
-## Docker Compose local
+## Ejecución local individual
 
-`compose.yaml` es el punto de entrada de desarrollo para los tres repositorios hermanos. Desde el repositorio frontend, copia las plantillas de entorno ignoradas y complétalas con credenciales locales de prueba:
+Este repositorio se ejecuta de forma independiente con el servidor de desarrollo de Next.js; no requiere orquestación de contenedores. Para probar los flujos autenticados, inicia AuthUser y Game por separado en sus propios repositorios y configura las cuatro variables del frontend indicadas arriba.
+
+Desde este repositorio:
 
 ```bash
-copy compose.authuser.env.example compose.authuser.env
-copy compose.game.env.example compose.game.env
-copy compose.frontend.env.example compose.frontend.env
-docker compose up --build
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-Las plantillas contienen únicamente nombres de variables:
-
-- `compose.authuser.env`: `AUTH_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PRIVATE_KEY`.
-- `compose.game.env`: `GAME_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PUBLIC_KEY`.
-- `compose.frontend.env`: `IGDB_CLIENT_ID`, `IGDB_CLIENT_SECRET`.
-
-Compose inyecta las URLs y puertos locales de los tres contenedores. Usa los roles runtime de Neon `develop`, no inicia otro contenedor PostgreSQL y no ejecuta migraciones de Prisma. Las variables exclusivas de migración, como `AUTH_DATABASE_DIRECT_URL` y `GAME_DATABASE_DIRECT_URL`, nunca deben incluirse en estos archivos. Conserva privados los archivos copiados y las claves PEM.
-
-Detén el stack con `docker compose down`. Usa `docker compose down -v` solo si quieres eliminar intencionalmente los volúmenes locales de dependencias.
+Usa `pnpm start` después de crear un build de producción con `pnpm build`. El frontend permanece disponible en `http://localhost:3000`; AuthUser y Game documentan sus propios comandos de inicio y documentación local de API en sus repositorios.
 
 ## Pruebas y comprobaciones de calidad
 

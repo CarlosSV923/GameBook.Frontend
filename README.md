@@ -68,26 +68,19 @@ The local service endpoints are:
 
 The frontend supports registration, login, session/profile access, password change and revocation, favorite listing, filtering, suggestions, snapshot synchronization, and deletion through those services.
 
-## Local Docker Compose
+## Individual local execution
 
-`compose.yaml` is the development entry point for the three sibling repositories. From the frontend repository, copy the ignored environment templates and fill them with local test credentials:
+This repository runs independently with the Next.js development server; no container orchestration is required. To exercise authenticated flows, start AuthUser and Game separately in their own repositories and configure the four frontend variables listed above.
+
+From this repository:
 
 ```bash
-copy compose.authuser.env.example compose.authuser.env
-copy compose.game.env.example compose.game.env
-copy compose.frontend.env.example compose.frontend.env
-docker compose up --build
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-The templates contain variable names only:
-
-- `compose.authuser.env`: `AUTH_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PRIVATE_KEY`.
-- `compose.game.env`: `GAME_DATABASE_URL`, `JWT_AUDIENCE`, `JWT_ISSUER`, `JWT_PUBLIC_KEY`.
-- `compose.frontend.env`: `IGDB_CLIENT_ID`, `IGDB_CLIENT_SECRET`.
-
-Compose injects the local service URLs and ports for the three containers. It uses the Neon `develop` runtime roles, does not start a second PostgreSQL container, and does not run Prisma migrations. Migration-only variables such as `AUTH_DATABASE_DIRECT_URL` and `GAME_DATABASE_DIRECT_URL` must never be placed in these files. Keep copied environment files and PEM keys private.
-
-Stop the stack with `docker compose down`. Use `docker compose down -v` only when intentionally removing the local dependency volumes.
+Use `pnpm start` after creating a production build with `pnpm build`. The frontend remains available at `http://localhost:3000`; AuthUser and Game expose their own startup instructions and local API documentation in their repositories.
 
 ## Tests and quality checks
 
