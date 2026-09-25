@@ -58,6 +58,15 @@ describe("IGDB catalog browser client", () => {
     );
   });
 
+  it("serializes the requested page limit and offset", async () => {
+    const { fetcher, requests } = createMockFetcher([{ body: page }]);
+    const client = createIgdbCatalogClient({ fetcher });
+
+    await client.listCatalog({ limit: 20, offset: 40 });
+
+    expect(requests[0].url).toBe("/api/igdb/games?limit=20&offset=40");
+  });
+
   it("requests validated game and platform suggestions", async () => {
     const { fetcher, requests } = createMockFetcher([
       { body: [{ igdbId: 42, name: "The Game" }] },
