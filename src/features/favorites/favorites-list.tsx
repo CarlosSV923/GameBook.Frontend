@@ -245,6 +245,23 @@ export function FavoritesList() {
     void loadNextPage();
   };
 
+  const deleteFavorite = useCallback(
+    async (igdbId: number) => {
+      const token = requireAccessToken(getAccessToken);
+      await gameClient.deleteFavorite(token, igdbId);
+      setItems((currentItems) =>
+        currentItems.filter((item) => item.igdbId !== igdbId),
+      );
+      if (items.length === 1 && !hasNext) {
+        setStatus("empty");
+      }
+      setSelectedGame((currentGame) =>
+        currentGame?.igdbId === igdbId ? null : currentGame,
+      );
+    },
+    [gameClient, getAccessToken, hasNext, items.length],
+  );
+
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== "",
   );
@@ -273,6 +290,7 @@ export function FavoritesList() {
                   authStatus="authenticated"
                   game={game}
                   messages={copy}
+                  onDelete={deleteFavorite}
                   onSelect={() => setSelectedGame(game)}
                 />
               </li>
@@ -325,6 +343,7 @@ export function FavoritesList() {
           game={selectedGame}
           messages={copy}
           onClose={() => setSelectedGame(null)}
+          onDelete={deleteFavorite}
         />
       ) : null}
     </>

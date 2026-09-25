@@ -5,7 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
 import type { AuthStatus } from "@/features/auth/auth-provider";
-import { FavoriteAction } from "@/features/catalog/favorite-action";
+import {
+  FavoriteAction,
+  FavoriteDeleteAction,
+} from "@/features/catalog/favorite-action";
 import {
   formatGamePlatforms,
   formatGameRating,
@@ -20,6 +23,7 @@ import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 type GameDetailModalProps = {
   game: IgdbGameCard;
   messages: Messages;
+  onDelete?: (igdbId: number) => Promise<void>;
   onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onClose: () => void;
   authStatus: AuthStatus;
@@ -30,6 +34,7 @@ type DetailStatus = "error" | "loading" | "ready";
 export function GameDetailModal({
   game,
   messages,
+  onDelete,
   onSave,
   onClose,
   authStatus,
@@ -173,7 +178,14 @@ export function GameDetailModal({
               <span aria-hidden="true">•</span>
               <span>{formatGamePlatforms(game.platforms)}</span>
             </p>
-            {onSave ? (
+            {onDelete ? (
+              <FavoriteDeleteAction
+                game={game}
+                messages={messages}
+                onDelete={onDelete}
+                placement="modal"
+              />
+            ) : onSave ? (
               <FavoriteAction
                 game={game}
                 messages={messages}

@@ -4,7 +4,10 @@ import Image from "next/image";
 import { useState } from "react";
 
 import type { AuthStatus } from "@/features/auth/auth-provider";
-import { FavoriteAction } from "@/features/catalog/favorite-action";
+import {
+  FavoriteAction,
+  FavoriteDeleteAction,
+} from "@/features/catalog/favorite-action";
 import {
   formatGamePlatforms,
   formatGameRating,
@@ -17,6 +20,7 @@ import type { Messages } from "@/shared/i18n/messages";
 type GameCardProps = {
   game: IgdbGameCardData;
   messages: Messages;
+  onDelete?: (igdbId: number) => Promise<void>;
   onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onSelect: () => void;
   authStatus: AuthStatus;
@@ -26,6 +30,7 @@ export function GameCard({
   authStatus,
   game,
   messages,
+  onDelete,
   onSave,
   onSelect,
 }: GameCardProps) {
@@ -98,7 +103,14 @@ export function GameCard({
           </span>
         </span>
       </button>
-      {onSave ? (
+      {onDelete ? (
+        <FavoriteDeleteAction
+          game={game}
+          messages={messages}
+          onDelete={onDelete}
+          placement="card"
+        />
+      ) : onSave ? (
         <FavoriteAction
           game={game}
           messages={messages}

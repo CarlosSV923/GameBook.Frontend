@@ -943,6 +943,11 @@ h2 {
   transform: translateY(-2px);
 }
 
+.game-card:focus-within {
+  position: relative;
+  z-index: 4;
+}
+
 .game-card__trigger {
   display: block;
   width: 100%;
@@ -1164,6 +1169,101 @@ h2 {
   box-shadow: var(--shadow-raised);
   font-size: 0.6875rem;
   line-height: 1.35;
+}
+
+.favorite-action__confirmation {
+  position: relative;
+  z-index: 5;
+  width: min(220px, calc(100vw - 32px));
+  padding: 12px;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  box-shadow: var(--shadow-raised);
+}
+
+.favorite-action--card .favorite-action__confirmation {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+}
+
+.favorite-action--modal .favorite-action__confirmation {
+  margin-top: 8px;
+}
+
+.favorite-action__confirmation p {
+  margin: 0 0 10px;
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.favorite-action__confirmation-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.favorite-action__cancel,
+.favorite-action__confirm {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  font-family: var(--font-interface);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.favorite-action__cancel {
+  color: var(--ink-secondary);
+  background: transparent;
+}
+
+.favorite-action__confirm {
+  color: var(--paper);
+  background: var(--slate);
+  border-color: var(--slate);
+}
+
+.favorite-action__cancel:hover,
+.favorite-action__cancel:focus-visible {
+  color: var(--ink);
+  border-color: var(--copper);
+}
+
+.favorite-action__confirm:hover,
+.favorite-action__confirm:focus-visible {
+  background: var(--copper-strong);
+  border-color: var(--copper-strong);
+}
+
+.favorite-action__cancel:focus-visible,
+.favorite-action__confirm:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.favorite-action__cancel:disabled,
+.favorite-action__confirm:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.favorite-action__confirmation .favorite-action__status {
+  position: static;
+  display: block;
+  width: auto;
+  max-width: none;
+  margin-top: 8px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .game-detail-modal {

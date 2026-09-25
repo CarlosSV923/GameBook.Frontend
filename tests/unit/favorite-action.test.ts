@@ -6,7 +6,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-import { FavoriteAction } from "@/features/catalog/favorite-action";
+import {
+  FavoriteAction,
+  FavoriteDeleteAction,
+} from "@/features/catalog/favorite-action";
 import { GameCard } from "@/features/catalog/game-card";
 import { GameDetailModal } from "@/features/catalog/game-detail-modal";
 import { messages } from "@/shared/i18n/messages";
@@ -21,6 +24,7 @@ const game = {
 };
 
 const onSave = async () => undefined;
+const onDelete = async () => undefined;
 
 describe("FavoriteAction", () => {
   it("routes anonymous visitors to sign in without rendering a tooltip", () => {
@@ -73,6 +77,22 @@ describe("FavoriteAction", () => {
     expect(markup).toContain("disabled");
   });
 
+  it("renders a contextual delete action without a save tooltip", () => {
+    const markup = renderToStaticMarkup(
+      createElement(FavoriteDeleteAction, {
+        game,
+        messages: messages.en,
+        onDelete,
+        placement: "card",
+      }),
+    );
+
+    expect(markup).toContain('aria-label="Remove A Short Hike from favorites"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).not.toContain("favorite-action__prompt");
+    expect(markup).not.toContain("Sign in");
+  });
+
   it("keeps the direct-action copy in both languages", () => {
     expect(messages.en.catalog.favorite.signIn).toBe(
       "Sign in to save {name} to favorites",
@@ -104,5 +124,31 @@ describe("FavoriteAction", () => {
 
     expect(cardMarkup).toContain("favorite-action--card");
     expect(modalMarkup).toContain("favorite-action--modal");
+
+    const favoriteCardMarkup = renderToStaticMarkup(
+      createElement(GameCard, {
+        authStatus: "authenticated",
+        game,
+        messages: messages.en,
+        onDelete,
+        onSelect: () => undefined,
+      }),
+    );
+    const favoriteModalMarkup = renderToStaticMarkup(
+      createElement(GameDetailModal, {
+        authStatus: "authenticated",
+        game,
+        messages: messages.en,
+        onClose: () => undefined,
+        onDelete,
+      }),
+    );
+
+    expect(favoriteCardMarkup).toContain(
+      'aria-label="Remove A Short Hike from favorites"',
+    );
+    expect(favoriteModalMarkup).toContain(
+      'aria-label="Remove A Short Hike from favorites"',
+    );
   });
 });
