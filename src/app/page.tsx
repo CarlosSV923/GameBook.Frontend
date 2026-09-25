@@ -1,9 +1,8 @@
 "use client";
 
 import { AppShell } from "@/features/layout/app-shell";
-import { PreferenceControls } from "@/features/preferences/preference-controls";
+import { CatalogList } from "@/features/catalog/catalog-list";
 import { usePreferences } from "@/features/preferences/preferences-provider";
-import { CatalogState } from "@/shared/ui/catalog-state";
 
 export default function Home() {
   return (
@@ -11,7 +10,6 @@ export default function Home() {
       <main className="home-shell">
         <HomeIntro />
         <CatalogPreview />
-        <PreferenceControls />
       </main>
     </AppShell>
   );
@@ -30,20 +28,9 @@ function HomeIntro() {
 }
 
 function CatalogPreview() {
-  const { copy } = usePreferences();
-
   return (
-    <section
-      aria-labelledby="catalog-title"
-      className="catalog-preview"
-      id="catalog"
-    >
-      <div className="catalog-preview__heading">
-        <p className="eyebrow">{copy.catalog.eyebrow}</p>
-        <h2 id="catalog-title">{copy.catalog.title}</h2>
-        <p>{copy.catalog.description}</p>
-      </div>
-      <CatalogState kind="empty" messages={copy} />
+    <section className="catalog-preview" id="catalog">
+      <CatalogList />
     </section>
   );
 }

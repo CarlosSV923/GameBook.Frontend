@@ -140,6 +140,59 @@ button:focus-visible {
   gap: 8px;
 }
 
+.catalog-navbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.preference-icon-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+  border-right: 1px solid var(--border-soft);
+}
+
+.preference-icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  color: var(--ink-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.preference-icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.preference-icon-button:hover {
+  color: var(--ink);
+  background: var(--paper-inset);
+  border-color: var(--border);
+}
+
+.preference-icon-button:active {
+  transform: scale(0.94);
+}
+
 .catalog-navbar__link,
 .account-links__secondary,
 .account-links__primary {
@@ -240,34 +293,7 @@ h2 {
 }
 
 .catalog-preview {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
-  gap: 48px;
-  align-items: start;
   scroll-margin-top: 32px;
-}
-
-.catalog-preview__heading {
-  max-width: 36ch;
-  padding-top: 8px;
-}
-
-.catalog-preview__heading h2 {
-  max-width: 14ch;
-  margin-bottom: 16px;
-  font-family: var(--font-editorial);
-  font-size: clamp(1.7rem, 3vw, 2.25rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
-}
-
-.catalog-preview__heading p:last-child {
-  margin-bottom: 0;
-  color: var(--ink-secondary);
-  font-size: 0.9375rem;
-  line-height: 1.55;
-  text-wrap: pretty;
 }
 
 .index-strip {
@@ -378,6 +404,123 @@ h2 {
   animation: state-pulse 1.2s ease-in-out infinite alternate;
 }
 
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-card {
+  min-width: 0;
+  transition: transform 160ms ease-out;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+}
+
+.game-card__media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--paper-inset);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  box-shadow: var(--shadow-raised);
+}
+
+.game-card__image {
+  object-fit: cover;
+  transition: transform 220ms ease-out;
+}
+
+.game-card:hover .game-card__image {
+  transform: scale(1.025);
+}
+
+.game-card__fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--copper-strong);
+  background: var(--paper-inset);
+  border-left: 3px solid var(--copper);
+  font-family: var(--font-editorial);
+  font-size: 2.75rem;
+}
+
+.game-card__content {
+  min-width: 0;
+  padding: 12px 2px 0;
+}
+
+.game-card h3 {
+  display: -webkit-box;
+  min-height: 2.4em;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-interface);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-wrap: pretty;
+}
+
+.game-card__details {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.game-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.game-card__rating--missing {
+  color: var(--ink-muted);
+}
+
+.game-card__rating svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--copper);
+  stroke: var(--copper);
+  stroke-linejoin: round;
+  stroke-width: 1.25;
+}
+
+.game-card__subline {
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.game-card__platforms {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .text-button {
   min-height: 44px;
   margin-top: 20px;
@@ -403,48 +546,6 @@ h2 {
   to {
     opacity: 0.9;
   }
-}
-
-.preference-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 32px;
-  align-items: end;
-  padding: 24px;
-  background: var(--paper-raised);
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  box-shadow: var(--shadow-raised);
-}
-
-.preference-panel__intro p:last-child {
-  max-width: 34ch;
-  margin-bottom: 0;
-  color: var(--ink-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.preference-panel__groups {
-  display: grid;
-  gap: 16px;
-}
-
-.preference-group {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.preference-group legend {
-  margin-bottom: 8px;
-  color: var(--ink-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1.3;
-  text-transform: uppercase;
 }
 
 .segmented-control {
@@ -505,10 +606,14 @@ h2 {
     padding-top: 4px;
   }
 
-  .account-links {
+  .catalog-navbar__actions {
     grid-column: 1;
     grid-row: 2;
     justify-content: flex-start;
+  }
+
+  .account-links {
+    flex-wrap: wrap;
   }
 
   .home-shell {
@@ -517,9 +622,8 @@ h2 {
     padding: 48px 0 64px;
   }
 
-  .catalog-preview {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .catalog-state {
@@ -527,16 +631,26 @@ h2 {
     gap: 16px;
     padding: 20px;
   }
+}
 
-  .preference-panel {
+@media (max-width: 980px) and (min-width: 721px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .segmented-control__option,
-  .catalog-state--loading .catalog-state__marker {
+  .catalog-state--loading .catalog-state__marker,
+  .game-card,
+  .game-card__image,
+  .preference-icon-button {
     transition: none;
     animation: none;
   }

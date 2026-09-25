@@ -10,7 +10,7 @@ El frontend ofrecerá las vistas públicas del catálogo y los detalles de juego
 
 ## Estado del repositorio
 
-Este repositorio contiene la base de Next.js con App Router, el primer sistema visual y el adaptador de IGDB exclusivo del servidor. Las vistas de producto, las experiencias autenticadas y el despliegue siguen programados como tareas SDD posteriores.
+Este repositorio contiene la base de Next.js con App Router, el primer sistema visual, el adaptador de IGDB exclusivo del servidor y la vista inicial de tarjetas del catálogo público. Los filtros, el detalle, las experiencias autenticadas y el despliegue siguen programados como tareas SDD posteriores.
 
 ## Desarrollo local
 
