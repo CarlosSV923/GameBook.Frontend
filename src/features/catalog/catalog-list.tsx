@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
+import {
+  CatalogFilters,
+  type AppliedCatalogFilters,
+} from "@/features/catalog/catalog-filters";
 import { GameCard } from "@/features/catalog/game-card";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 import type { IgdbGameCard } from "@/shared/api/igdb";
@@ -14,6 +18,7 @@ export function CatalogList() {
   const { copy } = usePreferences();
   const [items, setItems] = useState<IgdbGameCard[]>([]);
   const [status, setStatus] = useState<CatalogStatus>("loading");
+  const [filters, setFilters] = useState<AppliedCatalogFilters>({});
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
@@ -21,7 +26,7 @@ export function CatalogList() {
     let isActive = true;
 
     void createIgdbCatalogClient()
-      .listCatalog(controller.signal)
+      .listCatalog(filters, controller.signal)
       .then((page) => {
         if (!isActive) {
           return;
@@ -40,7 +45,13 @@ export function CatalogList() {
       isActive = false;
       controller.abort();
     };
-  }, [retryKey]);
+  }, [filters, retryKey]);
+
+  const applyFilters = (nextFilters: AppliedCatalogFilters) => {
+    setItems([]);
+    setStatus("loading");
+    setFilters(nextFilters);
+  };
 
   const retryCatalog = () => {
     setItems([]);
@@ -48,23 +59,29 @@ export function CatalogList() {
     setRetryKey((key) => key + 1);
   };
 
-  if (status !== "ready") {
-    return (
-      <CatalogState
-        kind={status}
-        messages={copy}
-        onRetry={status === "error" ? retryCatalog : undefined}
-      />
-    );
-  }
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value !== undefined && value !== "",
+  );
 
   return (
-    <ul aria-label={copy.catalog.title} className="catalog-grid">
-      {items.map((game) => (
-        <li key={game.igdbId}>
-          <GameCard game={game} messages={copy} />
-        </li>
-      ))}
-    </ul>
+    <>
+      <CatalogFilters onApply={applyFilters} />
+      {status !== "ready" ? (
+        <CatalogState
+          emptyMode={hasActiveFilters ? "noResults" : "initial"}
+          kind={status}
+          messages={copy}
+          onRetry={status === "error" ? retryCatalog : undefined}
+        />
+      ) : (
+        <ul aria-label={copy.catalog.title} className="catalog-grid">
+          {items.map((game) => (
+            <li key={game.igdbId}>
+              <GameCard game={game} messages={copy} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }

@@ -41,4 +41,40 @@ describe("IGDB catalog browser client", () => {
       status: 502,
     });
   });
+
+  it("serializes combined filters for the server proxy", async () => {
+    const { fetcher, requests } = createMockFetcher([{ body: page }]);
+    const client = createIgdbCatalogClient({ fetcher });
+
+    await client.listCatalog({
+      name: " zelda ",
+      platformId: 6,
+      yearFrom: 2010,
+      yearTo: 2020,
+    });
+
+    expect(requests[0].url).toBe(
+      "/api/igdb/games?limit=20&name=zelda&platformId=6&yearFrom=2010&yearTo=2020",
+    );
+  });
+
+  it("requests validated game and platform suggestions", async () => {
+    const { fetcher, requests } = createMockFetcher([
+      { body: [{ igdbId: 42, name: "The Game" }] },
+      { body: [{ id: 6, name: "PC" }] },
+    ]);
+    const client = createIgdbCatalogClient({ fetcher });
+
+    await expect(client.getGameSuggestions("the game")).resolves.toEqual([
+      { igdbId: 42, name: "The Game" },
+    ]);
+    await expect(client.getPlatformSuggestions("pc")).resolves.toEqual([
+      { id: 6, name: "PC" },
+    ]);
+
+    expect(requests.map((request) => request.url)).toEqual([
+      "/api/igdb/games/suggestions?query=the%20game",
+      "/api/igdb/platforms?query=pc",
+    ]);
+  });
 });

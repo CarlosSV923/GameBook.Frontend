@@ -5,16 +5,28 @@ import { IndexStrip } from "@/shared/ui/index-strip";
 export type CatalogStateKind = "empty" | "error" | "loading";
 
 type CatalogStateProps = {
+  emptyMode?: "initial" | "noResults";
   kind: CatalogStateKind;
   messages: Messages;
   onRetry?: () => void;
 };
 
-export function CatalogState({ kind, messages, onRetry }: CatalogStateProps) {
+export function CatalogState({
+  emptyMode = "initial",
+  kind,
+  messages,
+  onRetry,
+}: CatalogStateProps) {
   const content = {
     empty: {
-      description: messages.catalog.emptyDescription,
-      title: messages.catalog.emptyTitle,
+      description:
+        emptyMode === "noResults"
+          ? messages.states.noResultsDescription
+          : messages.catalog.emptyDescription,
+      title:
+        emptyMode === "noResults"
+          ? messages.states.noResultsTitle
+          : messages.catalog.emptyTitle,
     },
     error: {
       description: messages.states.errorDescription,
