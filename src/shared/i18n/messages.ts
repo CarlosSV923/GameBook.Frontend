@@ -88,6 +88,25 @@ export const messages = {
         success: "The sign-in request was completed.",
         title: "Sign in to GameBook.",
       },
+      profile: {
+        accountDetails: "Account details",
+        currentPassword: "Current password",
+        description:
+          "Keep your account details close and change the password when you need to.",
+        email: "Email address",
+        fullName: "Full name",
+        loading: "Checking your session",
+        newPassword: "New password",
+        passwordChangedNotice:
+          "Your password changed. Sign in again to continue.",
+        passwordDescription:
+          "Changing your password signs you out everywhere and requires a new sign in.",
+        passwordTitle: "Change password",
+        required: "Sign in to view your profile.",
+        submit: "Change password",
+        submitting: "Changing password",
+        success: "Password changed. Sign in again to continue.",
+      },
       register: {
         alternate: "Already have an account?",
         alternateAction: "Sign in",
@@ -227,6 +246,25 @@ export const messages = {
         submitting: "Iniciando sesión",
         success: "La solicitud de inicio de sesión se completó.",
         title: "Inicia sesión en GameBook.",
+      },
+      profile: {
+        accountDetails: "Datos de la cuenta",
+        currentPassword: "Contraseña actual",
+        description:
+          "Conserva cerca los datos de tu cuenta y cambia la contraseña cuando lo necesites.",
+        email: "Correo electrónico",
+        fullName: "Nombre completo",
+        loading: "Comprobando tu sesión",
+        newPassword: "Nueva contraseña",
+        passwordChangedNotice:
+          "Tu contraseña cambió. Inicia sesión de nuevo para continuar.",
+        passwordDescription:
+          "Cambiar tu contraseña cerrará todas las sesiones y exigirá un nuevo inicio de sesión.",
+        passwordTitle: "Cambiar contraseña",
+        required: "Inicia sesión para ver tu perfil.",
+        submit: "Cambiar contraseña",
+        submitting: "Cambiando contraseña",
+        success: "Contraseña cambiada. Inicia sesión de nuevo para continuar.",
       },
       register: {
         alternate: "¿Ya tienes una cuenta?",

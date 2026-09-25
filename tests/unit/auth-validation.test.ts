@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   isValidPassword,
+  validateChangePasswordForm,
   validateLoginForm,
   validateRegisterForm,
 } from "@/features/auth/auth-validation";
@@ -46,5 +47,17 @@ describe("auth form validation", () => {
     expect(
       validateLoginForm({ email: "", password: "" }, validationMessages),
     ).toEqual({ email: "required", password: "required" });
+  });
+
+  it("validates the current password and new password policy", () => {
+    expect(
+      validateChangePasswordForm(
+        { currentPassword: "", newPassword: "weak" },
+        { newPassword: "password rules", required: "required" },
+      ),
+    ).toEqual({
+      currentPassword: "required",
+      newPassword: "password rules",
+    });
   });
 });
