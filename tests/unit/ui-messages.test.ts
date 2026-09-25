@@ -8,6 +8,9 @@ describe("GameBook UI message catalog", () => {
     expect(Object.keys(messages.en.navigation)).toEqual(
       Object.keys(messages.es.navigation),
     );
+    expect(Object.keys(messages.en.home)).toEqual(
+      Object.keys(messages.es.home),
+    );
     expect(Object.keys(messages.en.catalog)).toEqual(
       Object.keys(messages.es.catalog),
     );
@@ -35,9 +38,23 @@ describe("GameBook UI message catalog", () => {
     expect(Object.keys(messages.en.states)).toEqual(
       Object.keys(messages.es.states),
     );
+    expect(Object.keys(messages.en.preferences)).toEqual(
+      Object.keys(messages.es.preferences),
+    );
     expect(Object.keys(messages.en.indexStrip)).toEqual(
       Object.keys(messages.es.indexStrip),
     );
+  });
+
+  it("keeps every translated leaf present and non-empty in both languages", () => {
+    const englishLeaves = collectMessageLeaves(messages.en);
+    const spanishLeaves = collectMessageLeaves(messages.es);
+
+    expect(Object.keys(spanishLeaves).sort()).toEqual(
+      Object.keys(englishLeaves).sort(),
+    );
+    expect(Object.values(englishLeaves).every(isNonEmptyMessage)).toBe(true);
+    expect(Object.values(spanishLeaves).every(isNonEmptyMessage)).toBe(true);
   });
 
   it("does not leave user-facing base-state messages blank", () => {
@@ -78,3 +95,30 @@ describe("GameBook UI message catalog", () => {
     expect(messages.es.catalog.attributionLink).toBe("IGDB");
   });
 });
+
+function collectMessageLeaves(
+  value: Record<string, unknown>,
+  prefix = "",
+): Record<string, string> {
+  return Object.entries(value).reduce<Record<string, string>>(
+    (leaves, [key, child]) => {
+      const path = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof child === "string") {
+        leaves[path] = child;
+        return leaves;
+      }
+
+      Object.assign(
+        leaves,
+        collectMessageLeaves(child as Record<string, unknown>, path),
+      );
+      return leaves;
+    },
+    {},
+  );
+}
+
+function isNonEmptyMessage(message: string): boolean {
+  return message.trim().length > 0;
+}
