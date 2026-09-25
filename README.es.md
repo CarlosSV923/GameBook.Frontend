@@ -28,6 +28,21 @@ pnpm typecheck
 pnpm build
 ```
 
+### Integración local con AuthUser
+
+Ejecuta `GameBook.Microservice.AuthUser` en `http://localhost:3001` y permite
+el origen exacto del Frontend con `CORS_ALLOWED_ORIGINS=http://localhost:3000`.
+Añade la siguiente variable local ignorada en `.env`:
+
+```bash
+NEXT_PUBLIC_AUTHUSER_URL=http://localhost:3001
+```
+
+Reinicia el servidor de desarrollo de Next.js después de cambiar una variable
+`NEXT_PUBLIC_`. El Frontend soporta entonces localmente el flujo de registro,
+inicio de sesión, sesión, perfil y revocación por cambio de contraseña sin
+exponer secretos de AuthUser.
+
 ## Estructura
 
 - `src/app/` — shell de App Router y fronteras de rutas servidoras.
