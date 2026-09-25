@@ -3,6 +3,7 @@ import {
   requestJson,
   resolveBaseUrl,
   type Fetcher,
+  type RequestJsonOptions,
 } from "@/shared/api/http";
 import type {
   AuthUserClient,
@@ -17,6 +18,7 @@ import type {
 type AuthUserClientOptions = {
   baseUrl?: string;
   fetcher?: Fetcher;
+  onUnauthorized?: RequestJsonOptions["onUnauthorized"];
 };
 
 const jsonHeaders = {
@@ -36,14 +38,19 @@ export function createAuthUserClient(
 
   return {
     async changeMyPassword(token, input: ChangePasswordInput) {
-      await requestJson<null>(fetcher, `${baseUrl()}/v1/users/me/password`, {
-        body: JSON.stringify(input),
-        headers: {
-          ...jsonHeaders,
-          Authorization: requireBearerToken(token),
+      await requestJson<null>(
+        fetcher,
+        `${baseUrl()}/v1/users/me/password`,
+        {
+          body: JSON.stringify(input),
+          headers: {
+            ...jsonHeaders,
+            Authorization: requireBearerToken(token),
+          },
+          method: "PATCH",
         },
-        method: "PATCH",
-      });
+        options,
+      );
     },
 
     getCurrentSession(token: string) {
@@ -57,15 +64,21 @@ export function createAuthUserClient(
           },
           method: "GET",
         },
+        options,
       );
     },
 
     login(input: LoginUserInput) {
-      return requestJson<LoginResponse>(fetcher, `${baseUrl()}/v1/auth/login`, {
-        body: JSON.stringify(input),
-        headers: jsonHeaders,
-        method: "POST",
-      });
+      return requestJson<LoginResponse>(
+        fetcher,
+        `${baseUrl()}/v1/auth/login`,
+        {
+          body: JSON.stringify(input),
+          headers: jsonHeaders,
+          method: "POST",
+        },
+        options,
+      );
     },
 
     register(input: RegisterUserInput) {
@@ -77,6 +90,7 @@ export function createAuthUserClient(
           headers: jsonHeaders,
           method: "POST",
         },
+        options,
       );
     },
   };

@@ -206,6 +206,12 @@ button:focus-visible {
   white-space: nowrap;
 }
 
+.account-links__button {
+  color: var(--ink-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+
 .catalog-navbar__link,
 .account-links__secondary {
   color: var(--ink-secondary);

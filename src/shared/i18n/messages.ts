@@ -16,6 +16,7 @@ export const messages = {
       primary: "Primary navigation",
       profile: "Profile",
       signIn: "Sign in",
+      signOut: "Sign out",
       tagline: "Game archive / field guide",
     },
     catalog: {
@@ -176,6 +177,7 @@ export const messages = {
       primary: "Navegación principal",
       profile: "Perfil",
       signIn: "Iniciar sesión",
+      signOut: "Cerrar sesión",
       tagline: "Archivo de juegos / guía de campo",
     },
     catalog: {
