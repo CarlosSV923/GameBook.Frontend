@@ -43,6 +43,22 @@ Reinicia el servidor de desarrollo de Next.js después de cambiar una variable
 inicio de sesión, sesión, perfil y revocación por cambio de contraseña sin
 exponer secretos de AuthUser.
 
+### Integración local con Game
+
+Ejecuta `GameBook.Microservice.Game` en `http://localhost:3002`, configura su
+`.env` ignorado con `AUTHUSER_URL=http://localhost:3001` y el origen exacto del
+navegador `CORS_ALLOWED_ORIGINS=http://localhost:3000`, y añade la siguiente
+variable local ignorada en el Frontend:
+
+```bash
+NEXT_PUBLIC_GAME_URL=http://localhost:3002
+```
+
+Reinicia el servidor de desarrollo de Next.js después de cambiar
+`NEXT_PUBLIC_GAME_URL`. La vista autenticada de favoritos enviará el mismo JWT
+de AuthUser a Game para listar, filtrar, sugerir, sincronizar instantáneas y
+eliminar favoritos.
+
 ## Estructura
 
 - `src/app/` — shell de App Router y fronteras de rutas servidoras.
