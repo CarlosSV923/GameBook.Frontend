@@ -61,6 +61,52 @@ export const messages = {
         screenshotAlt: "Screenshot {number} from {name}",
       },
     },
+    auth: {
+      fields: {
+        email: "Email address",
+        fullName: "Full name",
+        password: "Password",
+        passwordConfirmation: "Confirm password",
+        passwordHint:
+          "At least 8 characters, including one uppercase letter, one number, and one special character.",
+      },
+      errors: {
+        duplicateEmail: "That email address is already registered.",
+        generic: "The request could not be completed. Try again.",
+        invalidCredentials: "The email or password is incorrect.",
+        unavailable: "The account service is temporarily unavailable.",
+      },
+      login: {
+        alternate: "Need an account?",
+        alternateAction: "Create account",
+        description:
+          "Sign in to keep your own shelf of games. The public catalog remains open without an account.",
+        eyebrow: "Return to your archive",
+        registeredNotice: "Your account is ready. Sign in to continue.",
+        submit: "Sign in",
+        submitting: "Signing in",
+        success: "The sign-in request was completed.",
+        title: "Sign in to GameBook.",
+      },
+      register: {
+        alternate: "Already have an account?",
+        alternateAction: "Sign in",
+        description:
+          "Create a personal shelf for the games you want to keep close.",
+        eyebrow: "Open a personal shelf",
+        submit: "Create account",
+        submitting: "Creating account",
+        success: "Account created. Continue with sign in.",
+        title: "Create your GameBook account.",
+      },
+      validation: {
+        email: "Enter a valid email address.",
+        fullName: "Enter your full name.",
+        password: "Use the password rules shown below.",
+        passwordConfirmation: "Passwords must match.",
+        required: "This field is required.",
+      },
+    },
     preferences: {
       eyebrow: "Archive settings",
       title: "Reading preferences",
@@ -153,6 +199,52 @@ export const messages = {
         noGenres: "No hay géneros disponibles.",
         noDevelopers: "No hay desarrolladores disponibles.",
         screenshotAlt: "Captura {number} de {name}",
+      },
+    },
+    auth: {
+      fields: {
+        email: "Correo electrónico",
+        fullName: "Nombre completo",
+        password: "Contraseña",
+        passwordConfirmation: "Confirma la contraseña",
+        passwordHint:
+          "Al menos 8 caracteres, con una mayúscula, un número y un carácter especial.",
+      },
+      errors: {
+        duplicateEmail: "Ese correo electrónico ya está registrado.",
+        generic: "No se pudo completar la solicitud. Inténtalo de nuevo.",
+        invalidCredentials: "El correo o la contraseña no son correctos.",
+        unavailable: "El servicio de cuentas no está disponible temporalmente.",
+      },
+      login: {
+        alternate: "¿Necesitas una cuenta?",
+        alternateAction: "Crear cuenta",
+        description:
+          "Inicia sesión para conservar tu estantería de juegos. El catálogo público sigue disponible sin cuenta.",
+        eyebrow: "Vuelve a tu archivo",
+        registeredNotice: "Tu cuenta está lista. Inicia sesión para continuar.",
+        submit: "Iniciar sesión",
+        submitting: "Iniciando sesión",
+        success: "La solicitud de inicio de sesión se completó.",
+        title: "Inicia sesión en GameBook.",
+      },
+      register: {
+        alternate: "¿Ya tienes una cuenta?",
+        alternateAction: "Iniciar sesión",
+        description:
+          "Crea una estantería personal para los juegos que quieres conservar.",
+        eyebrow: "Abre una estantería personal",
+        submit: "Crear cuenta",
+        submitting: "Creando cuenta",
+        success: "Cuenta creada. Continúa con el inicio de sesión.",
+        title: "Crea tu cuenta de GameBook.",
+      },
+      validation: {
+        email: "Escribe un correo electrónico válido.",
+        fullName: "Escribe tu nombre completo.",
+        password: "Usa las reglas de contraseña mostradas abajo.",
+        passwordConfirmation: "Las contraseñas deben coincidir.",
+        required: "Este campo es obligatorio.",
       },
     },
     preferences: {
