@@ -41,13 +41,14 @@ The frontend is available at `http://localhost:3000` by default.
 
 ## Runtime variables
 
-Create a private, ignored `.env` file. The variable names required by the frontend are listed below without values:
+Copy `.env.example` to a private, ignored `.env` file and fill only the local values. The template contains the variable names required by the frontend without values:
 
 ```dotenv
 IGDB_CLIENT_ID=
 IGDB_CLIENT_SECRET=
 NEXT_PUBLIC_AUTHUSER_URL=
 NEXT_PUBLIC_GAME_URL=
+PORT=
 ```
 
 `IGDB_CLIENT_ID` and `IGDB_CLIENT_SECRET` are read only by server-side code. The two `NEXT_PUBLIC_` variables are the base URLs used by browser clients and must not contain the `/v1` suffix. Do not commit `.env` files or credentials. Restart the Next.js development server after changing a `NEXT_PUBLIC_` variable.
@@ -72,7 +73,7 @@ The frontend supports registration, login, session/profile access, password chan
 
 This repository runs independently with the Next.js development server; no container orchestration is required. To exercise authenticated flows, start AuthUser and Game separately in their own repositories and configure the four frontend variables listed above.
 
-From this repository:
+From this repository, after copying `.env.example` to `.env`:
 
 ```bash
 corepack enable
