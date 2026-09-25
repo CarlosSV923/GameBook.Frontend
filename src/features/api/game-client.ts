@@ -3,6 +3,7 @@ import {
   requestJson,
   resolveBaseUrl,
   type Fetcher,
+  type RequestJsonOptions,
 } from "@/shared/api/http";
 import type {
   Favorite,
@@ -18,6 +19,7 @@ import type {
 type GameClientOptions = {
   baseUrl?: string;
   fetcher?: Fetcher;
+  onUnauthorized?: RequestJsonOptions["onUnauthorized"];
 };
 
 const jsonHeaders = {
@@ -40,18 +42,28 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
 
   return {
     createFavorite(token: string, input: FavoriteCreateInput) {
-      return requestJson<Favorite>(fetcher, `${baseUrl()}/v1/favorites`, {
-        body: JSON.stringify(input),
-        headers: authenticatedHeaders(token),
-        method: "POST",
-      });
+      return requestJson<Favorite>(
+        fetcher,
+        `${baseUrl()}/v1/favorites`,
+        {
+          body: JSON.stringify(input),
+          headers: authenticatedHeaders(token),
+          method: "POST",
+        },
+        options,
+      );
     },
 
     async deleteFavorite(token: string, igdbId: number) {
-      await requestJson<null>(fetcher, `${baseUrl()}/v1/favorites/${igdbId}`, {
-        headers: authenticatedHeaders(token),
-        method: "DELETE",
-      });
+      await requestJson<null>(
+        fetcher,
+        `${baseUrl()}/v1/favorites/${igdbId}`,
+        {
+          headers: authenticatedHeaders(token),
+          method: "DELETE",
+        },
+        options,
+      );
     },
 
     listFavorites(token: string, filters: FavoriteFilters = {}) {
@@ -66,10 +78,15 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
       const queryString = query.toString();
       const url = `${baseUrl()}/v1/favorites${queryString ? `?${queryString}` : ""}`;
 
-      return requestJson<FavoritePage>(fetcher, url, {
-        headers: authenticatedHeaders(token),
-        method: "GET",
-      });
+      return requestJson<FavoritePage>(
+        fetcher,
+        url,
+        {
+          headers: authenticatedHeaders(token),
+          method: "GET",
+        },
+        options,
+      );
     },
 
     suggestFavorites(
@@ -91,6 +108,7 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
           headers: authenticatedHeaders(token),
           method: "GET",
         },
+        options,
       );
     },
 
@@ -107,6 +125,7 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
           headers: authenticatedHeaders(token),
           method: "PATCH",
         },
+        options,
       );
     },
   };

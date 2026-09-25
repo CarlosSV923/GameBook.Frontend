@@ -1,5 +1,9 @@
 export type Fetcher = (input: string, init?: RequestInit) => Promise<Response>;
 
+export type RequestJsonOptions = {
+  onUnauthorized?: () => void;
+};
+
 export type ApiErrorDetail = {
   field: string;
   reason: string;
@@ -56,6 +60,7 @@ export async function requestJson<T>(
   fetcher: Fetcher,
   url: string,
   init: RequestInit,
+  options: RequestJsonOptions = {},
 ): Promise<T> {
   let response: Response;
 
@@ -72,6 +77,10 @@ export async function requestJson<T>(
   const body = await readResponseBody(response);
 
   if (!response.ok) {
+    if (response.status === 401) {
+      options.onUnauthorized?.();
+    }
+
     const payload = isApiErrorPayload(body) ? body : {};
     throw new ApiClientError(response.status, payload);
   }

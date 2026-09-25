@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/features/auth/auth-provider";
 import { usePreferences } from "@/features/preferences/preferences-provider";
@@ -12,9 +13,15 @@ type CatalogNavbarProps = {
 
 export function CatalogNavbar({ authState = "anonymous" }: CatalogNavbarProps) {
   const { copy } = usePreferences();
-  const { status } = useAuth();
+  const router = useRouter();
+  const { signOut, status } = useAuth();
   const resolvedAuthState =
     status === "authenticated" ? "authenticated" : authState;
+
+  const handleSignOut = () => {
+    signOut();
+    router.push("/");
+  };
 
   return (
     <header className="catalog-navbar">
@@ -56,6 +63,13 @@ export function CatalogNavbar({ authState = "anonymous" }: CatalogNavbarProps) {
                 <Link className="account-links__primary" href="/favorites">
                   {copy.navigation.favorites}
                 </Link>
+                <button
+                  className="account-links__secondary account-links__button"
+                  onClick={handleSignOut}
+                  type="button"
+                >
+                  {copy.navigation.signOut}
+                </button>
               </>
             )}
           </nav>

@@ -7,6 +7,7 @@ import {
   SessionStorageUnavailableError,
   writeAccessToken,
 } from "@/shared/auth/session-storage";
+import { sessionStatusCheckIntervalMs } from "@/features/auth/auth-provider";
 
 function createStorage() {
   const values = new Map<string, string>();
@@ -26,6 +27,11 @@ function createStorage() {
 }
 
 describe("auth session storage", () => {
+  it("revalidates the opaque token before the one-hour contract expires", () => {
+    expect(sessionStatusCheckIntervalMs).toBe(30_000);
+    expect(sessionStatusCheckIntervalMs).toBeLessThan(60 * 60 * 1000);
+  });
+
   it("stores and reads only the opaque access token in the session storage key", () => {
     const storage = createStorage();
 

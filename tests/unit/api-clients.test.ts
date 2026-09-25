@@ -119,4 +119,30 @@ describe("Game client", () => {
     );
     expect(requests[4].method).toBe("DELETE");
   });
+
+  it("notifies the session owner when a protected request returns 401", async () => {
+    const { fetcher } = createMockFetcher([
+      {
+        body: {
+          code: "TOKEN_EXPIRED",
+          message: "Authentication is no longer valid.",
+        },
+        status: 401,
+      },
+    ]);
+    let unauthorizedCalls = 0;
+    const client = createGameClient({
+      baseUrl: "https://game.example.test",
+      fetcher,
+      onUnauthorized: () => {
+        unauthorizedCalls += 1;
+      },
+    });
+
+    await expect(client.listFavorites("jwt-token")).rejects.toMatchObject({
+      code: "TOKEN_EXPIRED",
+      status: 401,
+    });
+    expect(unauthorizedCalls).toBe(1);
+  });
 });

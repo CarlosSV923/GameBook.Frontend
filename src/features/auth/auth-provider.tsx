@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -38,6 +39,8 @@ export type AuthContextValue = {
   refreshSession: () => Promise<boolean>;
 };
 
+export const sessionStatusCheckIntervalMs = 30_000;
+
 type AuthProviderProps = {
   children: ReactNode;
   client?: AuthUserClient;
@@ -46,20 +49,24 @@ type AuthProviderProps = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children, client }: AuthProviderProps) {
-  const authClient = useMemo(() => client ?? createAuthUserClient(), [client]);
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<UserIdentity | null>(null);
+  const userRef = useRef<UserIdentity | null>(null);
 
   const clearSession = useCallback(() => {
     clearAccessToken();
+    userRef.current = null;
     setUser(null);
     setStatus("anonymous");
   }, []);
+
+  const authClient = useMemo(() => client ?? createAuthUserClient(), [client]);
 
   const refreshSession = useCallback(async (): Promise<boolean> => {
     const token = readAccessToken();
 
     if (!token) {
+      userRef.current = null;
       setUser(null);
       setStatus("anonymous");
       return false;
@@ -67,19 +74,24 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
 
     try {
       const response = await authClient.getCurrentSession(token);
+      userRef.current = response.user;
       setUser(response.user);
       setStatus("authenticated");
       return true;
     } catch (error) {
       if (shouldDiscardToken(error)) {
-        clearAccessToken();
+        clearSession();
+        return false;
       }
 
-      setUser(null);
-      setStatus("anonymous");
+      if (!userRef.current) {
+        setUser(null);
+        setStatus("anonymous");
+      }
+
       return false;
     }
-  }, [authClient]);
+  }, [authClient, clearSession]);
 
   const signIn = useCallback(
     async (input: LoginUserInput): Promise<LoginResponse> => {
@@ -90,11 +102,13 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
         const session = await authClient.getCurrentSession(
           response.accessToken,
         );
+        userRef.current = session.user;
         setUser(session.user);
         setStatus("authenticated");
         return response;
       } catch (error) {
         clearAccessToken();
+        userRef.current = null;
         setUser(null);
         setStatus("anonymous");
         throw error;
@@ -112,8 +126,16 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
         throw new ApiClientError(401, { code: "TOKEN_MISSING" });
       }
 
-      await authClient.changeMyPassword(token, input);
-      clearSession();
+      try {
+        await authClient.changeMyPassword(token, input);
+        clearSession();
+      } catch (error) {
+        if (shouldDiscardToken(error)) {
+          clearSession();
+        }
+
+        throw error;
+      }
     },
     [authClient, clearSession],
   );
@@ -135,6 +157,18 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       active = false;
     };
   }, [refreshSession]);
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void refreshSession();
+    }, sessionStatusCheckIntervalMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshSession, status]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
