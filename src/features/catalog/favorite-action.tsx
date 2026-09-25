@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState, type FocusEvent } from "react";
 
 import type { AuthStatus } from "@/features/auth/auth-provider";
 import type { Messages } from "@/shared/i18n/messages";
@@ -22,6 +22,7 @@ export function FavoriteAction({
   status,
 }: FavoriteActionProps) {
   const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const actionRef = useRef<HTMLDivElement>(null);
   const isAnonymous = status === "anonymous";
   const isLoading = status === "loading";
   const promptId = `favorite-prompt-${placement}-${gameId}`;
@@ -36,8 +37,43 @@ export function FavoriteAction({
     }
   };
 
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const nextFocusedElement = event.relatedTarget;
+
+    if (
+      nextFocusedElement instanceof Node &&
+      event.currentTarget.contains(nextFocusedElement)
+    ) {
+      return;
+    }
+
+    setIsPromptOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isPromptOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Node) || !actionRef.current?.contains(target)) {
+        setIsPromptOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isPromptOpen]);
+
   return (
-    <div className={`favorite-action favorite-action--${placement}`}>
+    <div
+      className={`favorite-action favorite-action--${placement}`}
+      onBlur={handleBlur}
+      ref={actionRef}
+    >
       <button
         aria-controls={isAnonymous ? promptId : undefined}
         aria-expanded={isAnonymous ? isPromptOpen : undefined}

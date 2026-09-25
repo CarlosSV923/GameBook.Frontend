@@ -882,6 +882,16 @@ h2 {
   min-width: 120px;
 }
 
+.catalog-grid > li {
+  position: relative;
+  z-index: 0;
+}
+
+.catalog-grid > li:hover,
+.catalog-grid > li:focus-within {
+  z-index: 2;
+}
+
 .game-card {
   position: relative;
   min-width: 0;
