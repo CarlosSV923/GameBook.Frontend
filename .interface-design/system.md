@@ -1,10 +1,10 @@
 # GameBook — Sistema visual
 
-Estado: implementado en GB-006.03 a partir de la dirección aprobada en GB-006.01.
+Estado: implementado en GB-006.03 y ampliado en GB-006.05 a partir de la dirección aprobada en GB-006.01.
 
 ## Dirección
 
-GameBook se expresa como un archivo de juegos / guía de campo: editorial, técnico y tranquilo. La firma visual es la tira de índice inspirada en un lomo de libro; las futuras fichas, catálogos y colecciones deben conservar esa lectura de archivo. Esta tarea establece la base visual y las preferencias; no introduce todavía la navegación ni las tarjetas del catálogo.
+GameBook se expresa como un archivo de juegos / guía de campo: editorial, técnico y tranquilo. La firma visual es la tira de índice inspirada en un lomo de libro; las futuras fichas, catálogos y colecciones deben conservar esa lectura de archivo. La navegación, el estado vacío del catálogo y los controles de preferencias ya usan esta lectura; las tarjetas funcionales llegarán con las tareas de catálogo y favoritos.
 
 ## Tokens
 
@@ -36,6 +36,10 @@ GameBook se expresa como un archivo de juegos / guía de campo: editorial, técn
 ## Patrones a conservar
 
 - Preferencias agrupadas con `fieldset`/`legend` y botones nativos con `aria-pressed`.
+- `SegmentedControl` — grupo accesible reutilizable para elecciones mutuamente excluyentes; botones de 44 px mínimos, `aria-pressed` y tokens `paper-inset`/`slate`.
+- `CatalogNavbar` — barra superior de 76 px en escritorio, marca editorial con tira de cobre, navegación principal centrada y acciones de cuenta a la derecha; en móvil se apila en dos filas.
+- `IndexStrip` — franja vertical de archivo con puntuación, año y plataformas; acompaña estados y futuras fichas sin depender de hover.
+- `CatalogState` — patrón común para `loading`, `empty` y `error`, con mensaje traducido, tira de índice y acción de reintento cuando corresponde.
 - Estados seleccionados comunicados por tono, texto y `aria-pressed`, no solo por color.
 - Respetar `prefers-reduced-motion`; animar solo color, opacidad o transformación breve.
 - Aplicar tokens semánticos en vez de hexágonos repetidos al construir componentes posteriores.
