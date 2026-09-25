@@ -28,19 +28,8 @@ function HomeIntro() {
 }
 
 function CatalogPreview() {
-  const { copy } = usePreferences();
-
   return (
-    <section
-      aria-labelledby="catalog-title"
-      className="catalog-preview"
-      id="catalog"
-    >
-      <div className="catalog-preview__heading">
-        <p className="eyebrow">{copy.catalog.eyebrow}</p>
-        <h2 id="catalog-title">{copy.catalog.title}</h2>
-        <p>{copy.catalog.description}</p>
-      </div>
+    <section className="catalog-preview" id="catalog">
       <CatalogList />
     </section>
   );
