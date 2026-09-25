@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type FocusEvent } from "react";
 
 import type { AuthStatus } from "@/features/auth/auth-provider";
 import type { FavoriteCreateInput } from "@/shared/api/game";
+import { ApiClientError } from "@/shared/api/http";
 import type { Messages } from "@/shared/i18n/messages";
 
 type FavoriteActionProps = {
@@ -15,7 +16,16 @@ type FavoriteActionProps = {
   status: AuthStatus;
 };
 
-type SaveState = "error" | "idle" | "saved" | "saving";
+type SaveState = "duplicate" | "error" | "idle" | "saved" | "saving";
+
+type FavoriteDeleteActionProps = {
+  game: FavoriteCreateInput;
+  messages: Messages;
+  onDelete: (igdbId: number) => Promise<void>;
+  placement: "card" | "modal";
+};
+
+type DeleteState = "confirming" | "error" | "idle" | "removing";
 
 export function FavoriteAction({
   game,
@@ -50,6 +60,10 @@ export function FavoriteAction({
     "{name}",
     game.name,
   );
+  const duplicateLabel = messages.catalog.favorite.duplicate.replace(
+    "{name}",
+    game.name,
+  );
   const label = isLoading
     ? messages.catalog.favorite.loading
     : isAnonymous
@@ -58,9 +72,11 @@ export function FavoriteAction({
         ? savingLabel
         : isSaved
           ? savedLabel
-          : saveState === "error"
-            ? errorLabel
-            : actionLabel;
+          : saveState === "duplicate"
+            ? duplicateLabel
+            : saveState === "error"
+              ? errorLabel
+              : actionLabel;
 
   const handleAction = () => {
     if (isLoading || isSaving || isSaved) {
@@ -75,7 +91,14 @@ export function FavoriteAction({
     setSaveState("saving");
     void onSave(game)
       .then(() => setSaveState("saved"))
-      .catch(() => setSaveState("error"));
+      .catch((error: unknown) =>
+        setSaveState(
+          error instanceof ApiClientError &&
+            error.code === "FAVORITE_ALREADY_EXISTS"
+            ? "duplicate"
+            : "error",
+        ),
+      );
   };
 
   return (
@@ -92,10 +115,97 @@ export function FavoriteAction({
       >
         <HeartIcon isSaved={isSaved} />
       </button>
-      {saveState === "error" ? (
+      {saveState === "error" || saveState === "duplicate" ? (
         <span className="favorite-action__status" role="alert">
-          {errorLabel}
+          {saveState === "duplicate" ? duplicateLabel : errorLabel}
         </span>
+      ) : null}
+    </div>
+  );
+}
+
+export function FavoriteDeleteAction({
+  game,
+  messages,
+  onDelete,
+  placement,
+}: FavoriteDeleteActionProps) {
+  const [deleteState, setDeleteState] = useState<DeleteState>("idle");
+  const copy = messages.catalog.favorite;
+  const name = game.name;
+  const actionLabel = copy.removeAction.replace("{name}", name);
+  const removingLabel = copy.removing.replace("{name}", name);
+  const errorLabel = copy.removeError.replace("{name}", name);
+  const isConfirming = deleteState === "confirming";
+  const isRemoving = deleteState === "removing";
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (
+      isConfirming &&
+      !event.currentTarget.contains(event.relatedTarget as Node | null)
+    ) {
+      setDeleteState("idle");
+    }
+  };
+
+  const confirmDelete = () => {
+    if (isRemoving) {
+      return;
+    }
+
+    setDeleteState("removing");
+    void onDelete(game.igdbId)
+      .then(() => setDeleteState("idle"))
+      .catch(() => setDeleteState("error"));
+  };
+
+  return (
+    <div
+      className={`favorite-action favorite-action--${placement}`}
+      onBlur={handleBlur}
+    >
+      <button
+        aria-expanded={isConfirming}
+        aria-label={actionLabel}
+        className="favorite-action__button"
+        data-saved="true"
+        disabled={isRemoving}
+        onClick={() => setDeleteState("confirming")}
+        type="button"
+      >
+        <HeartIcon isSaved />
+      </button>
+      {isConfirming || isRemoving || deleteState === "error" ? (
+        <div
+          aria-label={copy.removeConfirm}
+          className="favorite-action__confirmation"
+          role="group"
+        >
+          <p>{copy.removeConfirmDescription.replace("{name}", name)}</p>
+          <div className="favorite-action__confirmation-actions">
+            <button
+              className="favorite-action__cancel"
+              disabled={isRemoving}
+              onClick={() => setDeleteState("idle")}
+              type="button"
+            >
+              {copy.removeCancel}
+            </button>
+            <button
+              className="favorite-action__confirm"
+              disabled={isRemoving}
+              onClick={confirmDelete}
+              type="button"
+            >
+              {isRemoving ? removingLabel : copy.removeConfirmAction}
+            </button>
+          </div>
+          {deleteState === "error" ? (
+            <span className="favorite-action__status" role="alert">
+              {errorLabel}
+            </span>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );
