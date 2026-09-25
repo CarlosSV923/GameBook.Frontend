@@ -437,6 +437,114 @@ h2 {
   color: var(--ink);
 }
 
+.profile-page {
+  width: min(100% - 48px, 960px);
+  margin: 0 auto;
+  padding: 72px 0 96px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-card {
+  min-width: 0;
+  padding: 28px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+}
+
+.profile-card--identity {
+  background: var(--paper-inset);
+}
+
+.profile-card--security {
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+.profile-card h1,
+.profile-card h2 {
+  margin-bottom: 14px;
+}
+
+.profile-card h1 {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+.profile-card h2 {
+  font-size: clamp(1.6rem, 4vw, 2.25rem);
+}
+
+.profile-card__description {
+  margin: 0;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.profile-identity {
+  display: grid;
+  gap: 18px;
+  margin: 36px 0 0;
+}
+
+.profile-identity div {
+  display: grid;
+  gap: 6px;
+}
+
+.profile-identity dt {
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.profile-identity dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+
+.profile-form {
+  margin-top: 28px;
+}
+
+.profile-state {
+  width: min(100%, 620px);
+  margin: 0 auto;
+  padding: 28px;
+  background: var(--paper-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  box-shadow: var(--shadow-raised);
+}
+
+.profile-state p:not(.eyebrow) {
+  margin: 0;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+}
+
+.profile-state a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 20px;
+  color: var(--copper-strong);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .catalog-preview {
   scroll-margin-top: 32px;
 }
@@ -1297,7 +1405,20 @@ h2 {
     padding: 48px 0 64px;
   }
 
+  .profile-page {
+    width: min(100% - 32px, 560px);
+    padding: 48px 0 64px;
+  }
+
   .auth-panel {
+    padding: 24px 20px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
     padding: 24px 20px;
   }
 

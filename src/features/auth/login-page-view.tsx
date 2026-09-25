@@ -9,10 +9,14 @@ import { usePreferences } from "@/features/preferences/preferences-provider";
 import type { LoginUserInput, RegisterUserInput } from "@/shared/api/auth-user";
 
 type LoginPageViewProps = {
+  passwordChanged: boolean;
   registered: boolean;
 };
 
-export function LoginPageView({ registered }: LoginPageViewProps) {
+export function LoginPageView({
+  passwordChanged,
+  registered,
+}: LoginPageViewProps) {
   const { copy } = usePreferences();
   const router = useRouter();
   const { signIn } = useAuth();
@@ -32,7 +36,13 @@ export function LoginPageView({ registered }: LoginPageViewProps) {
     <AppShell>
       <AuthForm
         mode="login"
-        notice={registered ? copy.auth.login.registeredNotice : undefined}
+        notice={
+          registered
+            ? copy.auth.login.registeredNotice
+            : passwordChanged
+              ? copy.auth.profile.passwordChangedNotice
+              : undefined
+        }
         onSubmit={login}
       />
     </AppShell>

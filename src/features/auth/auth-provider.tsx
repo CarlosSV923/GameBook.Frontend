@@ -13,6 +13,7 @@ import {
 import { createAuthUserClient } from "@/features/api/auth-user-client";
 import type {
   AuthUserClient,
+  ChangePasswordInput,
   LoginResponse,
   LoginUserInput,
   UserIdentity,
@@ -31,6 +32,7 @@ export type AuthContextValue = {
   user: UserIdentity | null;
   isAuthenticated: boolean;
   getAccessToken: () => string | null;
+  changePassword: (input: ChangePasswordInput) => Promise<void>;
   signIn: (input: LoginUserInput) => Promise<LoginResponse>;
   signOut: () => void;
   refreshSession: () => Promise<boolean>;
@@ -101,6 +103,21 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
     [authClient],
   );
 
+  const changePassword = useCallback(
+    async (input: ChangePasswordInput): Promise<void> => {
+      const token = readAccessToken();
+
+      if (!token) {
+        clearSession();
+        throw new ApiClientError(401, { code: "TOKEN_MISSING" });
+      }
+
+      await authClient.changeMyPassword(token, input);
+      clearSession();
+    },
+    [authClient, clearSession],
+  );
+
   const signOut = useCallback(() => {
     clearSession();
   }, [clearSession]);
@@ -122,6 +139,7 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
   const value = useMemo<AuthContextValue>(
     () => ({
       getAccessToken: () => readAccessToken(),
+      changePassword,
       isAuthenticated: status === "authenticated",
       refreshSession,
       signIn,
@@ -129,7 +147,7 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       status,
       user,
     }),
-    [refreshSession, signIn, signOut, status, user],
+    [changePassword, refreshSession, signIn, signOut, status, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

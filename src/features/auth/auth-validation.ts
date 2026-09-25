@@ -15,6 +15,17 @@ export type LoginFormValues = {
   password: string;
 };
 
+export type ChangePasswordFormValues = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type ChangePasswordField = "currentPassword" | "newPassword";
+
+export type ChangePasswordFieldErrors = Partial<
+  Record<ChangePasswordField, string>
+>;
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateRegisterForm(
@@ -67,6 +78,23 @@ export function validateLoginForm(
 
   if (!values.password) {
     errors.password = messages.required;
+  }
+
+  return errors;
+}
+
+export function validateChangePasswordForm(
+  values: ChangePasswordFormValues,
+  messages: { newPassword: string; required: string },
+): ChangePasswordFieldErrors {
+  const errors: ChangePasswordFieldErrors = {};
+
+  if (!values.currentPassword) {
+    errors.currentPassword = messages.required;
+  }
+
+  if (!isValidPassword(values.newPassword)) {
+    errors.newPassword = messages.newPassword;
   }
 
   return errors;

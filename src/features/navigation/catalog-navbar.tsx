@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { useAuth } from "@/features/auth/auth-provider";
 import { usePreferences } from "@/features/preferences/preferences-provider";
 import { PreferenceIconControls } from "@/features/preferences/preference-controls";
 
@@ -11,6 +12,9 @@ type CatalogNavbarProps = {
 
 export function CatalogNavbar({ authState = "anonymous" }: CatalogNavbarProps) {
   const { copy } = usePreferences();
+  const { status } = useAuth();
+  const resolvedAuthState =
+    status === "authenticated" ? "authenticated" : authState;
 
   return (
     <header className="catalog-navbar">
@@ -30,15 +34,12 @@ export function CatalogNavbar({ authState = "anonymous" }: CatalogNavbarProps) {
           <Link className="catalog-navbar__link" href="/#catalog">
             {copy.navigation.catalog}
           </Link>
-          <Link className="catalog-navbar__link" href="/favorites">
-            {copy.navigation.favorites}
-          </Link>
         </nav>
 
         <div className="catalog-navbar__actions">
           <PreferenceIconControls />
           <nav aria-label={copy.navigation.account} className="account-links">
-            {authState === "anonymous" ? (
+            {resolvedAuthState === "anonymous" ? (
               <>
                 <Link className="account-links__secondary" href="/login">
                   {copy.navigation.signIn}

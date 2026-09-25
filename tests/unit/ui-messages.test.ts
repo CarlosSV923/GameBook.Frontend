@@ -23,6 +23,9 @@ describe("GameBook UI message catalog", () => {
     expect(Object.keys(messages.en.auth.login)).toEqual(
       Object.keys(messages.es.auth.login),
     );
+    expect(Object.keys(messages.en.auth.profile)).toEqual(
+      Object.keys(messages.es.auth.profile),
+    );
     expect(Object.keys(messages.en.auth.register)).toEqual(
       Object.keys(messages.es.auth.register),
     );
