@@ -17,7 +17,7 @@ import type { Messages } from "@/shared/i18n/messages";
 type GameCardProps = {
   game: IgdbGameCardData;
   messages: Messages;
-  onSave: (game: FavoriteCreateInput) => Promise<void>;
+  onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onSelect: () => void;
   authStatus: AuthStatus;
 };
@@ -98,13 +98,15 @@ export function GameCard({
           </span>
         </span>
       </button>
-      <FavoriteAction
-        game={game}
-        messages={messages}
-        onSave={onSave}
-        placement="card"
-        status={authStatus}
-      />
+      {onSave ? (
+        <FavoriteAction
+          game={game}
+          messages={messages}
+          onSave={onSave}
+          placement="card"
+          status={authStatus}
+        />
+      ) : null}
     </article>
   );
 }

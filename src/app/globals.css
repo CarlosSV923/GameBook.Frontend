@@ -302,6 +302,57 @@ h2 {
   text-wrap: pretty;
 }
 
+.favorites-page {
+  width: min(100% - 48px, 1120px);
+  margin: 0 auto;
+  padding: 72px 0 96px;
+}
+
+.favorites-page__header {
+  max-width: 760px;
+  margin-bottom: 40px;
+}
+
+.favorites-page__header h1 {
+  max-width: none;
+  margin-bottom: 16px;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+}
+
+.favorites-page__header p:last-child {
+  max-width: 52ch;
+  margin-bottom: 0;
+  color: var(--ink-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.favorites-required {
+  width: min(100%, 620px);
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--paper-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  box-shadow: var(--shadow-raised);
+}
+
+.favorites-required p:not(.eyebrow) {
+  margin-bottom: 0;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+}
+
+.favorites-required a {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--copper-strong);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .auth-page {
   width: min(100% - 48px, 960px);
   margin: 0 auto;
@@ -1501,6 +1552,11 @@ h2 {
     padding: 48px 0 64px;
   }
 
+  .favorites-page {
+    width: min(100% - 32px, 560px);
+    padding: 48px 0 64px;
+  }
+
   .auth-page {
     width: min(100% - 32px, 560px);
     padding: 48px 0 64px;
@@ -1512,6 +1568,10 @@ h2 {
   }
 
   .auth-panel {
+    padding: 24px 20px;
+  }
+
+  .favorites-required {
     padding: 24px 20px;
   }
 

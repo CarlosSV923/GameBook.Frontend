@@ -66,7 +66,11 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
       );
     },
 
-    listFavorites(token: string, filters: FavoriteFilters = {}) {
+    listFavorites(
+      token: string,
+      filters: FavoriteFilters = {},
+      signal?: AbortSignal,
+    ) {
       const query = new URLSearchParams();
 
       for (const [key, value] of Object.entries(filters)) {
@@ -84,6 +88,7 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
         {
           headers: authenticatedHeaders(token),
           method: "GET",
+          signal,
         },
         options,
       );
@@ -94,6 +99,7 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
       type: SuggestionType,
       query: string,
       limit?: number,
+      signal?: AbortSignal,
     ) {
       const params = new URLSearchParams({ q: query, type });
 
@@ -107,6 +113,7 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
         {
           headers: authenticatedHeaders(token),
           method: "GET",
+          signal,
         },
         options,
       );

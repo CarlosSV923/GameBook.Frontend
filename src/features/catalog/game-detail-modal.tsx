@@ -20,7 +20,7 @@ import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 type GameDetailModalProps = {
   game: IgdbGameCard;
   messages: Messages;
-  onSave: (game: FavoriteCreateInput) => Promise<void>;
+  onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onClose: () => void;
   authStatus: AuthStatus;
 };
@@ -173,13 +173,15 @@ export function GameDetailModal({
               <span aria-hidden="true">•</span>
               <span>{formatGamePlatforms(game.platforms)}</span>
             </p>
-            <FavoriteAction
-              game={game}
-              messages={messages}
-              onSave={onSave}
-              placement="modal"
-              status={authStatus}
-            />
+            {onSave ? (
+              <FavoriteAction
+                game={game}
+                messages={messages}
+                onSave={onSave}
+                placement="modal"
+                status={authStatus}
+              />
+            ) : null}
           </div>
           <button
             aria-label={messages.catalog.detail.close}

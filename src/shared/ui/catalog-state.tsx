@@ -5,6 +5,7 @@ import { IndexStrip } from "@/shared/ui/index-strip";
 export type CatalogStateKind = "empty" | "error" | "loading";
 
 type CatalogStateProps = {
+  context?: "catalog" | "favorites";
   emptyMode?: "initial" | "noResults";
   kind: CatalogStateKind;
   messages: Messages;
@@ -12,29 +13,41 @@ type CatalogStateProps = {
 };
 
 export function CatalogState({
+  context = "catalog",
   emptyMode = "initial",
   kind,
   messages,
   onRetry,
 }: CatalogStateProps) {
+  const sectionCopy =
+    context === "favorites" ? messages.favorites : messages.catalog;
   const content = {
     empty: {
       description:
         emptyMode === "noResults"
           ? messages.states.noResultsDescription
-          : messages.catalog.emptyDescription,
+          : sectionCopy.emptyDescription,
       title:
         emptyMode === "noResults"
           ? messages.states.noResultsTitle
-          : messages.catalog.emptyTitle,
+          : sectionCopy.emptyTitle,
     },
     error: {
-      description: messages.states.errorDescription,
-      title: messages.states.errorTitle,
+      description:
+        context === "favorites"
+          ? messages.favorites.errorDescription
+          : messages.states.errorDescription,
+      title:
+        context === "favorites"
+          ? messages.favorites.errorTitle
+          : messages.states.errorTitle,
     },
     loading: {
-      description: messages.catalog.description,
-      title: messages.states.loading,
+      description: sectionCopy.description,
+      title:
+        context === "favorites"
+          ? messages.favorites.loading
+          : messages.states.loading,
     },
   }[kind];
 
@@ -46,7 +59,7 @@ export function CatalogState({
     >
       <IndexStrip labels={messages.indexStrip} />
       <div className="catalog-state__content">
-        <p className="catalog-state__kicker">{messages.catalog.eyebrow}</p>
+        <p className="catalog-state__kicker">{sectionCopy.eyebrow}</p>
         <h3>{content.title}</h3>
         <p>{content.description}</p>
         {kind === "error" && onRetry ? (

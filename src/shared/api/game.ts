@@ -57,12 +57,14 @@ export interface GameClient {
   listFavorites(
     token: string,
     filters?: FavoriteFilters,
+    signal?: AbortSignal,
   ): Promise<FavoritePage>;
   suggestFavorites(
     token: string,
     type: SuggestionType,
     query: string,
     limit?: number,
+    signal?: AbortSignal,
   ): Promise<SuggestionPage>;
   updateFavoriteSnapshot(
     token: string,

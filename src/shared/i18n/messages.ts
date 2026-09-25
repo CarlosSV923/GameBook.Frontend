@@ -19,6 +19,20 @@ export const messages = {
       signOut: "Sign out",
       tagline: "Game archive / field guide",
     },
+    favorites: {
+      description:
+        "Your saved games stay close, ready to revisit without leaving your archive.",
+      emptyDescription:
+        "Save a game from the public catalog and it will return here as part of your personal shelf.",
+      emptyTitle: "Your personal shelf is waiting.",
+      errorDescription:
+        "Your personal shelf could not be reached. Try again without losing your filters.",
+      errorTitle: "Your favorites are temporarily unavailable.",
+      eyebrow: "Personal shelf",
+      loading: "Loading your favorites",
+      required: "Sign in to view your favorite games.",
+      title: "Favorite games",
+    },
     catalog: {
       description:
         "Search the archive by name, platform, or launch year when the catalog is connected.",
@@ -187,6 +201,20 @@ export const messages = {
       signIn: "Iniciar sesión",
       signOut: "Cerrar sesión",
       tagline: "Archivo de juegos / guía de campo",
+    },
+    favorites: {
+      description:
+        "Tus juegos guardados permanecen cerca, listos para volver a ellos sin salir de tu archivo.",
+      emptyDescription:
+        "Guarda un juego desde el catálogo público y volverá aquí como parte de tu estantería personal.",
+      emptyTitle: "Tu estantería personal está esperando.",
+      errorDescription:
+        "No se pudo acceder a tu estantería personal. Inténtalo de nuevo sin perder tus filtros.",
+      errorTitle: "Tus favoritos no están disponibles temporalmente.",
+      eyebrow: "Estantería personal",
+      loading: "Cargando tus favoritos",
+      required: "Inicia sesión para ver tus juegos favoritos.",
+      title: "Juegos favoritos",
     },
     catalog: {
       description:
