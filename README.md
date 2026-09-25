@@ -42,6 +42,21 @@ Restart the Next.js development server after changing a `NEXT_PUBLIC_` variable.
 The Frontend then supports the local register, login, session, profile and
 password-revocation flow without exposing AuthUser secrets.
 
+### Local Game integration
+
+Run `GameBook.Microservice.Game` on `http://localhost:3002`, configure its
+ignored `.env` with `AUTHUSER_URL=http://localhost:3001` and the exact browser
+origin `CORS_ALLOWED_ORIGINS=http://localhost:3000`, then add the following
+ignored Frontend variable:
+
+```bash
+NEXT_PUBLIC_GAME_URL=http://localhost:3002
+```
+
+Restart the Next.js development server after changing `NEXT_PUBLIC_GAME_URL`.
+The authenticated favorites view then sends the same AuthUser JWT to Game for
+listing, filtering, suggestions, snapshot synchronization and deletion.
+
 ## Structure
 
 - `src/app/` — App Router shell and server route boundaries.
