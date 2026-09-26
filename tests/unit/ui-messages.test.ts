@@ -94,6 +94,13 @@ describe("GameBook UI message catalog", () => {
     expect(messages.en.catalog.attributionLink).toBe("IGDB");
     expect(messages.es.catalog.attributionLink).toBe("IGDB");
   });
+
+  it("uses concise search actions in both languages", () => {
+    expect(messages.en.catalog.applyFilters).toBe("Search");
+    expect(messages.en.catalog.clearFilters).toBe("Clear");
+    expect(messages.es.catalog.applyFilters).toBe("Buscar");
+    expect(messages.es.catalog.clearFilters).toBe("Limpiar");
+  });
 });
 
 function collectMessageLeaves(

@@ -183,6 +183,13 @@ button:focus-visible {
   stroke-width: 1.8;
 }
 
+.preference-language-code {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
 .preference-icon-button:hover {
   color: var(--ink);
   background: var(--paper-inset);
@@ -692,7 +699,7 @@ h2 {
 
 .catalog-filter-suggestions {
   position: absolute;
-  z-index: 2;
+  z-index: 6;
   top: calc(100% + 4px);
   right: 0;
   left: 0;

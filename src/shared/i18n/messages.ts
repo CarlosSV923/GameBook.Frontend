@@ -50,8 +50,8 @@ export const messages = {
       platform: "Platform",
       yearFrom: "From year",
       yearTo: "To year",
-      applyFilters: "Apply filters",
-      clearFilters: "Clear filters",
+      applyFilters: "Search",
+      clearFilters: "Clear",
       suggestionLabel: "Suggestions",
       choosePlatform:
         "Choose a platform suggestion before applying the filter.",
@@ -245,8 +245,8 @@ export const messages = {
       platform: "Plataforma",
       yearFrom: "Desde año",
       yearTo: "Hasta año",
-      applyFilters: "Aplicar filtros",
-      clearFilters: "Limpiar filtros",
+      applyFilters: "Buscar",
+      clearFilters: "Limpiar",
       suggestionLabel: "Sugerencias",
       choosePlatform:
         "Elige una sugerencia de plataforma antes de aplicar el filtro.",
