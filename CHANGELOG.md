@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.2.0...gamebook-frontend-v0.3.0) (2026-09-26)
+
+
+### Features
+
+* indicate suggestion searches ([133db88](https://github.com/CarlosSV923/GameBook.Frontend/commit/133db88bd0574d78f9f166ced0332e4fa6f5ac9e))
+* show backend loading states and retry reads ([56da45c](https://github.com/CarlosSV923/GameBook.Frontend/commit/56da45c4c0022e9b21cbccacd5420708d8f0433a))
+
+
+### Bug Fixes
+
+* expand home introduction layout ([6a028ce](https://github.com/CarlosSV923/GameBook.Frontend/commit/6a028ce8a260d2563d1f2c04ce8808a5af97f7cc))
+* hide incomplete IGDB games ([39cda98](https://github.com/CarlosSV923/GameBook.Frontend/commit/39cda98f216677cbcdd6248579740389ba767e02))
+* improve suggestion and password controls ([854f379](https://github.com/CarlosSV923/GameBook.Frontend/commit/854f3790d76d8f60fbf2ff144d766e4faaa7787d))
+* refine catalog filter controls ([c7b3ab1](https://github.com/CarlosSV923/GameBook.Frontend/commit/c7b3ab189013e6d89762912f1cfc2043fe918bba))
+
 ## [0.2.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.1.0...gamebook-frontend-v0.2.0) (2026-09-26)
 
 
