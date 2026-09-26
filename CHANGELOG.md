@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.3.0...gamebook-frontend-v0.4.0) (2026-09-26)
+
+
+### Features
+
+* add account deactivation controls ([ca937b7](https://github.com/CarlosSV923/GameBook.Frontend/commit/ca937b7a8475b997c292890f4aa0f57144ea56d2))
+
 ## [0.3.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.2.0...gamebook-frontend-v0.3.0) (2026-09-26)
 
 
