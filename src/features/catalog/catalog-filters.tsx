@@ -339,16 +339,28 @@ function SuggestionField({
   const isOpen = hasSuggestions || (isFocused && isLoading);
 
   return (
-    <div className="catalog-filter-field catalog-filter-field--suggestion">
+    <div
+      className="catalog-filter-field catalog-filter-field--suggestion"
+      onBlur={(event) => {
+        const nextTarget = event.relatedTarget;
+        if (
+          nextTarget !== null &&
+          event.currentTarget.contains(nextTarget as Node)
+        ) {
+          return;
+        }
+
+        setIsFocused(false);
+      }}
+      onFocus={() => setIsFocused(true)}
+    >
       <label htmlFor={id}>{label}</label>
       <input
         aria-autocomplete="list"
         aria-busy={isLoading}
         aria-controls={`${id}-suggestions`}
         aria-expanded={isOpen}
-        onBlur={() => window.setTimeout(() => setIsFocused(false), 0)}
         onChange={(event) => onChange(event.target.value)}
-        onFocus={() => setIsFocused(true)}
         role="combobox"
         value={value}
         id={id}
@@ -382,6 +394,11 @@ function SuggestionField({
             >
               <button
                 onClick={() => {
+                  onSelect(suggestion);
+                  setIsFocused(false);
+                }}
+                onMouseDown={(event) => {
+                  event.preventDefault();
                   onSelect(suggestion);
                   setIsFocused(false);
                 }}
