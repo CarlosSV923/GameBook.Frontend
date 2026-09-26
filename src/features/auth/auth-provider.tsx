@@ -34,6 +34,7 @@ export type AuthContextValue = {
   isAuthenticated: boolean;
   getAccessToken: () => string | null;
   changePassword: (input: ChangePasswordInput) => Promise<void>;
+  disableAccount: () => Promise<void>;
   signIn: (input: LoginUserInput) => Promise<LoginResponse>;
   signOut: () => void;
   refreshSession: () => Promise<boolean>;
@@ -140,6 +141,26 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
     [authClient, clearSession],
   );
 
+  const disableAccount = useCallback(async (): Promise<void> => {
+    const token = readAccessToken();
+
+    if (!token) {
+      clearSession();
+      throw new ApiClientError(401, { code: "TOKEN_MISSING" });
+    }
+
+    try {
+      await authClient.disableMyAccount(token);
+      clearSession();
+    } catch (error) {
+      if (shouldDiscardToken(error)) {
+        clearSession();
+      }
+
+      throw error;
+    }
+  }, [authClient, clearSession]);
+
   const signOut = useCallback(() => {
     clearSession();
   }, [clearSession]);
@@ -174,6 +195,7 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
     () => ({
       getAccessToken: () => readAccessToken(),
       changePassword,
+      disableAccount,
       isAuthenticated: status === "authenticated",
       refreshSession,
       signIn,
@@ -181,7 +203,15 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       status,
       user,
     }),
-    [changePassword, refreshSession, signIn, signOut, status, user],
+    [
+      changePassword,
+      disableAccount,
+      refreshSession,
+      signIn,
+      signOut,
+      status,
+      user,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
