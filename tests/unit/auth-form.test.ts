@@ -23,6 +23,8 @@ describe("AuthForm", () => {
     expect(markup).toContain('id="register-password-confirmation"');
     expect((markup.match(/ required/g) ?? []).length).toBe(4);
     expect(markup).toContain('type="password"');
+    expect((markup.match(/auth-form__password-toggle/g) ?? []).length).toBe(2);
+    expect((markup.match(/aria-label="Show password"/g) ?? []).length).toBe(2);
     expect(markup).toContain("At least 8 characters");
   });
 
@@ -44,5 +46,7 @@ describe("AuthForm", () => {
     expect(markup).toContain('id="login-email"');
     expect(markup).not.toContain('id="register-full-name"');
     expect(markup).not.toContain('id="register-password-confirmation"');
+    expect((markup.match(/auth-form__password-toggle/g) ?? []).length).toBe(1);
+    expect(markup).toContain('aria-label="Show password"');
   });
 });

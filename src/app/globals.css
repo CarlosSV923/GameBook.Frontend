@@ -437,6 +437,55 @@ h2 {
   border-color: var(--danger);
 }
 
+.auth-form__password-control {
+  position: relative;
+}
+
+.auth-form__password-control input {
+  padding-right: 52px;
+}
+
+.auth-form__password-toggle {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  place-items: center;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    color 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+.auth-form__password-toggle:hover,
+.auth-form__password-toggle[aria-pressed="true"] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--slate) 12%, transparent);
+}
+
+.auth-form__password-toggle:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -3px;
+}
+
+.auth-form__password-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
 .auth-form__hint,
 .auth-form__field-error {
   font-size: 0.75rem;

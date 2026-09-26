@@ -101,6 +101,13 @@ describe("GameBook UI message catalog", () => {
     expect(messages.es.catalog.applyFilters).toBe("Buscar");
     expect(messages.es.catalog.clearFilters).toBe("Limpiar");
   });
+
+  it("provides translated password visibility actions", () => {
+    expect(messages.en.auth.fields.showPassword).toBe("Show password");
+    expect(messages.en.auth.fields.hidePassword).toBe("Hide password");
+    expect(messages.es.auth.fields.showPassword).toBe("Mostrar contraseña");
+    expect(messages.es.auth.fields.hidePassword).toBe("Ocultar contraseña");
+  });
 });
 
 function collectMessageLeaves(

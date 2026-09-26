@@ -104,6 +104,8 @@ export const messages = {
         passwordConfirmation: "Confirm password",
         passwordHint:
           "At least 8 characters, including one uppercase letter, one number, and one special character.",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
       },
       errors: {
         duplicateEmail: "That email address is already registered.",
@@ -298,6 +300,8 @@ export const messages = {
         passwordConfirmation: "Confirma la contraseña",
         passwordHint:
           "Al menos 8 caracteres, con una mayúscula, un número y un carácter especial.",
+        showPassword: "Mostrar contraseña",
+        hidePassword: "Ocultar contraseña",
       },
       errors: {
         duplicateEmail: "Ese correo electrónico ya está registrado.",
