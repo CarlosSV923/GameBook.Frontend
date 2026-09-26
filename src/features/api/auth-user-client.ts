@@ -53,6 +53,21 @@ export function createAuthUserClient(
       );
     },
 
+    async disableMyAccount(token: string) {
+      await requestJson<null>(
+        fetcher,
+        `${baseUrl()}/v1/users/me`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: requireBearerToken(token),
+          },
+          method: "DELETE",
+        },
+        options,
+      );
+    },
+
     getCurrentSession(token: string) {
       return requestJson<SessionResponse>(
         fetcher,
