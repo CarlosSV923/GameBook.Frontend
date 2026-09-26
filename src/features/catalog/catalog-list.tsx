@@ -238,6 +238,7 @@ export function CatalogList() {
           <div aria-live="polite" className="catalog-pagination">
             {isLoadingMore ? (
               <p className="catalog-pagination__status" role="status">
+                <span aria-hidden="true" className="loading-spinner" />
                 {copy.states.loadingMore}
               </p>
             ) : null}

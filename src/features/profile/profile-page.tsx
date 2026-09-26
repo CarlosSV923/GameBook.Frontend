@@ -174,11 +174,19 @@ function ChangePasswordCard() {
         ) : null}
 
         <button
+          aria-busy={submitting}
           className="catalog-filter-button auth-form__submit"
           disabled={submitting}
           type="submit"
         >
-          {submitting ? copy.auth.profile.submitting : copy.auth.profile.submit}
+          {submitting ? (
+            <>
+              <span aria-hidden="true" className="loading-spinner" />
+              {copy.auth.profile.submitting}
+            </>
+          ) : (
+            copy.auth.profile.submit
+          )}
         </button>
       </form>
     </section>

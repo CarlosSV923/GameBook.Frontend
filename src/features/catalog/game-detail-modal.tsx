@@ -228,6 +228,7 @@ export function GameDetailModal({
         <div aria-live="polite" className="game-detail-modal__body">
           {status === "loading" ? (
             <p className="game-detail-modal__status" role="status">
+              <span aria-hidden="true" className="loading-spinner" />
               {messages.catalog.detail.loading}
             </p>
           ) : null}
@@ -239,6 +240,7 @@ export function GameDetailModal({
           ) : null}
           {snapshotStatus === "syncing" ? (
             <p className="game-detail-modal__sync" role="status">
+              <span aria-hidden="true" className="loading-spinner" />
               {messages.catalog.detail.syncing}
             </p>
           ) : null}

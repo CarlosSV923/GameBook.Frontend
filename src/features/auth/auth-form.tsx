@@ -171,11 +171,19 @@ export function AuthForm({ mode, notice, onSubmit }: AuthFormProps) {
           ) : null}
 
           <button
+            aria-busy={status === "submitting"}
             className="catalog-filter-button auth-form__submit"
             disabled={status === "submitting"}
             type="submit"
           >
-            {status === "submitting" ? content.submitting : content.submit}
+            {status === "submitting" ? (
+              <>
+                <span aria-hidden="true" className="loading-spinner" />
+                {content.submitting}
+              </>
+            ) : (
+              content.submit
+            )}
           </button>
         </form>
 
