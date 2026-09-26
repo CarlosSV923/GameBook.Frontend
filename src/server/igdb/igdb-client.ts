@@ -7,6 +7,7 @@ import {
   type IgdbCatalogFilters,
   type IgdbCatalogPage,
   type IgdbClient,
+  type IgdbGameCard,
   type IgdbGameDetail,
   type IgdbGameSuggestion,
   type IgdbPlatformSuggestion,
@@ -52,6 +53,14 @@ const detailFields = [
   "release_dates.d",
   "screenshots.image_id",
 ].join(",");
+
+const completeCatalogGameWhere = [
+  "name != null",
+  "cover != null",
+  "first_release_date != null",
+  "total_rating != null",
+  "platforms != null",
+];
 
 export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
   const config = options.config ?? getIgdbRuntimeConfig();
@@ -133,10 +142,12 @@ export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
         "games",
         buildGamesQuery({ ...filters, limit, offset }),
       );
-      const cards = body.map((value) => normalizeGameCard(value));
+      const cards = body
+        .map((value) => normalizeGameCard(value))
+        .filter(isCompleteCatalogGame);
 
       return {
-        hasNext: cards.length > limit,
+        hasNext: body.length > limit,
         items: cards.slice(0, limit),
         limit,
         offset,
@@ -172,16 +183,13 @@ export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
 
       const body = await postQuery(
         "games",
-        `fields id,name; search "${escapeSearchTerm(normalizedQuery)}"; limit 10;`,
+        `fields ${catalogFields}; search "${escapeSearchTerm(normalizedQuery)}"; where ${completeCatalogGameWhere.join(" & ")}; limit 10;`,
       );
 
-      return body.map((value) => {
-        const record = asRecord(value);
-        const igdbId = readPositiveInteger(record.id, "game ID");
-        const name = readRequiredString(record.name, "game name");
-
-        return { igdbId, name };
-      });
+      return body
+        .map((value) => normalizeGameCard(value))
+        .filter(isCompleteCatalogGame)
+        .map(({ igdbId, name }) => ({ igdbId, name }));
     },
 
     async getPlatformSuggestions(
@@ -209,9 +217,7 @@ export function buildGamesQuery(filters: IgdbCatalogFilters): string {
   const offset = Math.max(0, Math.trunc(filters.offset ?? 0));
   const where: string[] = [];
 
-  if (!name) {
-    where.push("total_rating != null");
-  }
+  where.push(...completeCatalogGameWhere);
 
   if (filters.platformId !== undefined) {
     where.push(`platforms = ${Math.trunc(filters.platformId)}`);
@@ -273,6 +279,15 @@ function normalizeGameCard(value: unknown) {
     rating: readRating(record.total_rating),
     released: readReleaseDate(record.first_release_date),
   };
+}
+
+function isCompleteCatalogGame(game: IgdbGameCard): boolean {
+  return (
+    game.imageUrl !== null &&
+    game.rating !== null &&
+    game.released !== null &&
+    game.platforms.length > 0
+  );
 }
 
 function normalizeGameDetail(value: unknown): IgdbGameDetail {

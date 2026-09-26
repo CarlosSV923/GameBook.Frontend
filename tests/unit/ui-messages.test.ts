@@ -94,6 +94,27 @@ describe("GameBook UI message catalog", () => {
     expect(messages.en.catalog.attributionLink).toBe("IGDB");
     expect(messages.es.catalog.attributionLink).toBe("IGDB");
   });
+
+  it("uses concise search actions in both languages", () => {
+    expect(messages.en.catalog.applyFilters).toBe("Search");
+    expect(messages.en.catalog.clearFilters).toBe("Clear");
+    expect(messages.es.catalog.applyFilters).toBe("Buscar");
+    expect(messages.es.catalog.clearFilters).toBe("Limpiar");
+  });
+
+  it("describes suggestion searches in both languages", () => {
+    expect(messages.en.catalog.searchingSuggestions).toBe(
+      "Searching suggestions…",
+    );
+    expect(messages.es.catalog.searchingSuggestions).toBe("Buscando opciones…");
+  });
+
+  it("provides translated password visibility actions", () => {
+    expect(messages.en.auth.fields.showPassword).toBe("Show password");
+    expect(messages.en.auth.fields.hidePassword).toBe("Hide password");
+    expect(messages.es.auth.fields.showPassword).toBe("Mostrar contraseña");
+    expect(messages.es.auth.fields.hidePassword).toBe("Ocultar contraseña");
+  });
 });
 
 function collectMessageLeaves(

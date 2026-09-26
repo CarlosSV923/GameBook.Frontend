@@ -50,7 +50,11 @@ describe("IGDB query adapter", () => {
     expect(query).toContain("first_release_date < 1735689600");
     expect(query).toContain("limit 21");
     expect(query).toContain("offset 10");
-    expect(query).not.toContain("total_rating != null");
+    expect(query).toContain("name != null");
+    expect(query).toContain("cover != null");
+    expect(query).toContain("first_release_date != null");
+    expect(query).toContain("total_rating != null");
+    expect(query).toContain("platforms != null");
 
     const defaultQuery = buildGamesQuery({});
     expect(defaultQuery).toContain("total_rating != null");
@@ -95,6 +99,46 @@ describe("IGDB client", () => {
       "Bearer application-token",
     );
     expect(token.calls).toEqual([false]);
+  });
+
+  it("excludes incomplete games from the catalog and name suggestions", async () => {
+    const incompleteGame = {
+      ...rawGame,
+      cover: undefined,
+      id: 43,
+      name: "Incomplete game",
+    };
+    const { fetcher, requests } = createMockFetcher([
+      { body: [rawGame, incompleteGame] },
+      { body: [rawGame, incompleteGame] },
+    ]);
+    const client = createIgdbClient({
+      config,
+      fetcher,
+      tokenProvider: createMockTokenProvider().provider,
+    });
+
+    await expect(client.getCatalog({ limit: 20 })).resolves.toMatchObject({
+      items: [
+        {
+          igdbId: 42,
+          name: "Game",
+        },
+      ],
+    });
+    await expect(client.getGameSuggestions("game")).resolves.toEqual([
+      { igdbId: 42, name: "Game" },
+    ]);
+
+    expect(requests[0].body).toContain(
+      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
+    );
+    expect(requests[1].body).toContain(
+      "fields id,name,first_release_date,cover.image_id,total_rating,platforms.id,platforms.name",
+    );
+    expect(requests[1].body).toContain(
+      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
+    );
   });
 
   it("refreshes the application token once after an IGDB auth failure", async () => {

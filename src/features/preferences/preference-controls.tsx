@@ -39,12 +39,13 @@ export function PreferenceIconControls() {
         title={languageLabel}
         type="button"
       >
-        <GlobeIcon />
+        <span aria-hidden="true" className="preference-language-code">
+          {nextLanguage.toUpperCase()}
+        </span>
       </button>
     </div>
   );
 }
-
 function ThemeIcon({ theme }: { theme: "light" | "dark" }) {
   return theme === "light" ? (
     <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -54,15 +55,6 @@ function ThemeIcon({ theme }: { theme: "light" | "dark" }) {
   ) : (
     <svg aria-hidden="true" viewBox="0 0 24 24">
       <path d="M20.8 15.1A8.7 8.7 0 0 1 8.9 3.2 8.8 8.8 0 1 0 20.8 15.1Z" />
-    </svg>
-  );
-}
-
-function GlobeIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c2.4 2.4 3.6 5.4 3.6 9S14.4 18.6 12 21M12 3C9.6 5.4 8.4 8.4 8.4 12s1.2 6.6 3.6 9" />
     </svg>
   );
 }

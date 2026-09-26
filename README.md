@@ -39,6 +39,12 @@ pnpm dev
 
 The frontend is available at `http://localhost:3000` by default.
 
+## Production deployment
+
+The public GameBook frontend is deployed on Vercel at [`https://gamebook-frontend.vercel.app`](https://gamebook-frontend.vercel.app). Its production service dependencies are AuthUser at [`https://gamebook-microservice-authuser.onrender.com`](https://gamebook-microservice-authuser.onrender.com) and Game at [`https://gamebook-microservice-game.onrender.com`](https://gamebook-microservice-game.onrender.com). AuthUser and Game expose their production Swagger UI at [`/docs`](https://gamebook-microservice-authuser.onrender.com/docs) and [`/docs`](https://gamebook-microservice-game.onrender.com/docs), respectively.
+
+Production credentials remain server/provider configuration and are never committed to this repository.
+
 ## Runtime variables
 
 Copy `.env.example` to a private, ignored `.env` file and fill only the local values. The template contains the variable names required by the frontend without values:
