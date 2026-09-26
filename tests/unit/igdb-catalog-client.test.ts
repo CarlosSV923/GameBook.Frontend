@@ -106,14 +106,17 @@ describe("IGDB catalog browser client", () => {
   });
 
   it("preserves an unavailable-detail error for the favorite modal fallback", async () => {
-    const { fetcher } = createMockFetcher([
-      {
-        body: {
-          code: "IGDB_UNAVAILABLE",
-          message: "The IGDB service is unavailable.",
-        },
-        status: 503,
+    const unavailableResponse = {
+      body: {
+        code: "IGDB_UNAVAILABLE",
+        message: "The IGDB service is unavailable.",
       },
+      status: 503,
+    };
+    const { fetcher } = createMockFetcher([
+      unavailableResponse,
+      unavailableResponse,
+      unavailableResponse,
     ]);
     const client = createIgdbCatalogClient({ fetcher });
 

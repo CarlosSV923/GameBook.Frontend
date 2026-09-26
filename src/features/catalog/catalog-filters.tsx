@@ -61,11 +61,15 @@ export function CatalogFilters({
     [],
   );
   const [gameSuggestionQuery, setGameSuggestionQuery] = useState("");
+  const [isLoadingGameSuggestions, setIsLoadingGameSuggestions] =
+    useState(false);
   const [selectedGameName, setSelectedGameName] = useState("");
   const [platformSuggestions, setPlatformSuggestions] = useState<
     CatalogSuggestion[]
   >([]);
   const [platformSuggestionQuery, setPlatformSuggestionQuery] = useState("");
+  const [isLoadingPlatformSuggestions, setIsLoadingPlatformSuggestions] =
+    useState(false);
   const [validationMessage, setValidationMessage] = useState("");
 
   useEffect(() => {
@@ -82,9 +86,14 @@ export function CatalogFilters({
           if (!controller.signal.aborted) {
             setGameSuggestions([...suggestions]);
             setGameSuggestionQuery(query);
+            setIsLoadingGameSuggestions(false);
           }
         })
-        .catch(() => undefined);
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setIsLoadingGameSuggestions(false);
+          }
+        });
     }, 250);
 
     return () => {
@@ -107,9 +116,14 @@ export function CatalogFilters({
           if (!controller.signal.aborted) {
             setPlatformSuggestions([...suggestions]);
             setPlatformSuggestionQuery(query);
+            setIsLoadingPlatformSuggestions(false);
           }
         })
-        .catch(() => undefined);
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setIsLoadingPlatformSuggestions(false);
+          }
+        });
     }, 250);
 
     return () => {
@@ -140,6 +154,8 @@ export function CatalogFilters({
     setValidationMessage("");
     setGameSuggestions([]);
     setPlatformSuggestions([]);
+    setIsLoadingGameSuggestions(false);
+    setIsLoadingPlatformSuggestions(false);
     onApply({
       name: name.trim() || undefined,
       platformId,
@@ -156,6 +172,8 @@ export function CatalogFilters({
     setYearTo("");
     setGameSuggestions([]);
     setPlatformSuggestions([]);
+    setIsLoadingGameSuggestions(false);
+    setIsLoadingPlatformSuggestions(false);
     setValidationMessage("");
     onApply({});
   };
@@ -179,15 +197,19 @@ export function CatalogFilters({
               ? gameSuggestions
               : []
           }
+          isLoading={isLoadingGameSuggestions}
+          loadingLabel={copy.catalog.searchingSuggestions}
           value={name}
           onChange={(value) => {
             setName(value);
             setSelectedGameName("");
+            setIsLoadingGameSuggestions(value.trim().length >= 2);
           }}
           onSelect={(suggestion) => {
             setName(suggestion.name);
             setSelectedGameName(suggestion.name);
             setGameSuggestions([]);
+            setIsLoadingGameSuggestions(false);
           }}
         />
         <SuggestionField
@@ -199,10 +221,13 @@ export function CatalogFilters({
               ? platformSuggestions
               : []
           }
+          isLoading={isLoadingPlatformSuggestions}
+          loadingLabel={copy.catalog.searchingSuggestions}
           value={platformQuery}
           onChange={(value) => {
             setPlatformQuery(value);
             setPlatformId(undefined);
+            setIsLoadingPlatformSuggestions(value.trim().length >= 2);
           }}
           onSelect={(suggestion) => {
             setPlatformQuery(suggestion.name);
@@ -210,6 +235,7 @@ export function CatalogFilters({
               setPlatformId(suggestion.id);
             }
             setPlatformSuggestions([]);
+            setIsLoadingPlatformSuggestions(false);
           }}
         />
         <label className="catalog-filter-field" htmlFor="catalog-year-from">
@@ -289,7 +315,9 @@ function toCatalogSuggestion(
 
 type SuggestionFieldProps = {
   id: string;
+  isLoading: boolean;
   label: string;
+  loadingLabel: string;
   suggestions: readonly CatalogSuggestion[];
   value: string;
   onChange: (value: string) => void;
@@ -298,24 +326,48 @@ type SuggestionFieldProps = {
 
 function SuggestionField({
   id,
+  isLoading,
   label,
+  loadingLabel,
   suggestions,
   value,
   onChange,
   onSelect,
 }: SuggestionFieldProps) {
+  const [isFocused, setIsFocused] = useState(false);
+  const hasSuggestions = isFocused && suggestions.length > 0;
+  const isOpen = hasSuggestions || (isFocused && isLoading);
+
   return (
     <div className="catalog-filter-field catalog-filter-field--suggestion">
       <label htmlFor={id}>{label}</label>
       <input
         aria-autocomplete="list"
+        aria-busy={isLoading}
         aria-controls={`${id}-suggestions`}
+        aria-expanded={isOpen}
+        onBlur={() => window.setTimeout(() => setIsFocused(false), 0)}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={() => setIsFocused(true)}
+        role="combobox"
         value={value}
         id={id}
         type="search"
       />
-      {suggestions.length > 0 ? (
+      {isOpen && isLoading ? (
+        <div
+          aria-live="polite"
+          className="catalog-filter-suggestions catalog-filter-suggestions--loading"
+          id={`${id}-suggestions`}
+          role="status"
+        >
+          <span
+            aria-hidden="true"
+            className="catalog-filter-suggestions__spinner"
+          />
+          <span>{loadingLabel}</span>
+        </div>
+      ) : hasSuggestions ? (
         <ul
           className="catalog-filter-suggestions"
           id={`${id}-suggestions`}
@@ -328,7 +380,13 @@ function SuggestionField({
               key={suggestionKey(suggestion)}
               role="option"
             >
-              <button onClick={() => onSelect(suggestion)} type="button">
+              <button
+                onClick={() => {
+                  onSelect(suggestion);
+                  setIsFocused(false);
+                }}
+                type="button"
+              >
                 {suggestion.name}
               </button>
             </li>

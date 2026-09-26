@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
+import { PasswordInput } from "@/features/auth/password-input";
 import { ApiClientError } from "@/shared/api/http";
 import type { Messages } from "@/shared/i18n/messages";
 import { usePreferences } from "@/features/preferences/preferences-provider";
@@ -170,11 +171,19 @@ export function AuthForm({ mode, notice, onSubmit }: AuthFormProps) {
           ) : null}
 
           <button
+            aria-busy={status === "submitting"}
             className="catalog-filter-button auth-form__submit"
             disabled={status === "submitting"}
             type="submit"
           >
-            {status === "submitting" ? content.submitting : content.submit}
+            {status === "submitting" ? (
+              <>
+                <span aria-hidden="true" className="loading-spinner" />
+                {content.submitting}
+              </>
+            ) : (
+              content.submit
+            )}
           </button>
         </form>
 
@@ -215,20 +224,32 @@ function AuthField({
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <label className="auth-form__field" htmlFor={id}>
-      <span>{label}</span>
-      <input
-        aria-describedby={describedBy}
-        aria-invalid={Boolean(error)}
-        autoComplete={autoComplete}
-        id={id}
-        inputMode={inputMode}
-        name={id}
-        onChange={(event) => onChange(event.target.value)}
-        required
-        type={type}
-        value={value}
-      />
+    <div className="auth-form__field">
+      <label htmlFor={id}>{label}</label>
+      {type === "password" ? (
+        <PasswordInput
+          ariaInvalid={Boolean(error)}
+          autoComplete={autoComplete}
+          describedBy={describedBy}
+          id={id}
+          name={id}
+          onChange={onChange}
+          value={value}
+        />
+      ) : (
+        <input
+          aria-describedby={describedBy}
+          aria-invalid={Boolean(error)}
+          autoComplete={autoComplete}
+          id={id}
+          inputMode={inputMode}
+          name={id}
+          onChange={(event) => onChange(event.target.value)}
+          required
+          type={type}
+          value={value}
+        />
+      )}
       {hint ? (
         <span className="auth-form__hint" id={hintId}>
           {hint}
@@ -239,7 +260,7 @@ function AuthField({
           {error}
         </span>
       ) : null}
-    </label>
+    </div>
   );
 }
 

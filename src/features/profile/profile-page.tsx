@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { useAuth } from "@/features/auth/auth-provider";
+import { PasswordInput } from "@/features/auth/password-input";
 import {
   type ChangePasswordFieldErrors,
   validateChangePasswordForm,
@@ -173,11 +174,19 @@ function ChangePasswordCard() {
         ) : null}
 
         <button
+          aria-busy={submitting}
           className="catalog-filter-button auth-form__submit"
           disabled={submitting}
           type="submit"
         >
-          {submitting ? copy.auth.profile.submitting : copy.auth.profile.submit}
+          {submitting ? (
+            <>
+              <span aria-hidden="true" className="loading-spinner" />
+              {copy.auth.profile.submitting}
+            </>
+          ) : (
+            copy.auth.profile.submit
+          )}
         </button>
       </form>
     </section>
@@ -208,18 +217,16 @@ function PasswordField({
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <label className="auth-form__field" htmlFor={id}>
-      <span>{label}</span>
-      <input
-        aria-describedby={describedBy}
-        aria-invalid={Boolean(error)}
+    <div className="auth-form__field">
+      <label htmlFor={id}>{label}</label>
+      <PasswordInput
+        ariaInvalid={Boolean(error)}
         autoComplete={autoComplete}
+        describedBy={describedBy}
         id={id}
         minLength={id === "profile-new-password" ? 8 : 1}
         name={id}
-        onChange={(event) => onChange(event.target.value)}
-        required
-        type="password"
+        onChange={onChange}
         value={value}
       />
       {hint ? (
@@ -232,7 +239,7 @@ function PasswordField({
           {error}
         </span>
       ) : null}
-    </label>
+    </div>
   );
 }
 

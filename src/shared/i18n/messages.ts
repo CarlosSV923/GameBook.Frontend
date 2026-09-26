@@ -50,9 +50,10 @@ export const messages = {
       platform: "Platform",
       yearFrom: "From year",
       yearTo: "To year",
-      applyFilters: "Apply filters",
-      clearFilters: "Clear filters",
+      applyFilters: "Search",
+      clearFilters: "Clear",
       suggestionLabel: "Suggestions",
+      searchingSuggestions: "Searching suggestions…",
       choosePlatform:
         "Choose a platform suggestion before applying the filter.",
       invalidYearRange:
@@ -104,6 +105,8 @@ export const messages = {
         passwordConfirmation: "Confirm password",
         passwordHint:
           "At least 8 characters, including one uppercase letter, one number, and one special character.",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
       },
       errors: {
         duplicateEmail: "That email address is already registered.",
@@ -245,9 +248,10 @@ export const messages = {
       platform: "Plataforma",
       yearFrom: "Desde año",
       yearTo: "Hasta año",
-      applyFilters: "Aplicar filtros",
-      clearFilters: "Limpiar filtros",
+      applyFilters: "Buscar",
+      clearFilters: "Limpiar",
       suggestionLabel: "Sugerencias",
+      searchingSuggestions: "Buscando opciones…",
       choosePlatform:
         "Elige una sugerencia de plataforma antes de aplicar el filtro.",
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",
@@ -298,6 +302,8 @@ export const messages = {
         passwordConfirmation: "Confirma la contraseña",
         passwordHint:
           "Al menos 8 caracteres, con una mayúscula, un número y un carácter especial.",
+        showPassword: "Mostrar contraseña",
+        hidePassword: "Ocultar contraseña",
       },
       errors: {
         duplicateEmail: "Ese correo electrónico ya está registrado.",

@@ -113,7 +113,14 @@ export function FavoriteAction({
         onClick={handleAction}
         type="button"
       >
-        <HeartIcon isSaved={isSaved} />
+        {isSaving ? (
+          <span
+            aria-hidden="true"
+            className="loading-spinner loading-spinner--small"
+          />
+        ) : (
+          <HeartIcon isSaved={isSaved} />
+        )}
       </button>
       {saveState === "error" || saveState === "duplicate" ? (
         <span className="favorite-action__status" role="alert">
@@ -192,12 +199,23 @@ export function FavoriteDeleteAction({
               {copy.removeCancel}
             </button>
             <button
+              aria-busy={isRemoving}
               className="favorite-action__confirm"
               disabled={isRemoving}
               onClick={confirmDelete}
               type="button"
             >
-              {isRemoving ? removingLabel : copy.removeConfirmAction}
+              {isRemoving ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="loading-spinner loading-spinner--small"
+                  />
+                  {removingLabel}
+                </>
+              ) : (
+                copy.removeConfirmAction
+              )}
             </button>
           </div>
           {deleteState === "error" ? (
