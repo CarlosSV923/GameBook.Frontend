@@ -360,6 +360,7 @@ function SuggestionField({
         aria-busy={isLoading}
         aria-controls={`${id}-suggestions`}
         aria-expanded={isOpen}
+        autoComplete="off"
         onChange={(event) => onChange(event.target.value)}
         role="combobox"
         value={value}
