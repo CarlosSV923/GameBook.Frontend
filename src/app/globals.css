@@ -252,10 +252,6 @@ button:focus-visible {
   padding: 72px 0 96px;
 }
 
-.home-intro {
-  max-width: 760px;
-}
-
 .eyebrow {
   margin: 0 0 16px;
   color: var(--copper-strong);
@@ -301,7 +297,6 @@ h2 {
 }
 
 .home-intro__description {
-  max-width: 52ch;
   margin-bottom: 0;
   color: var(--ink-secondary);
   font-size: 1rem;
