@@ -106,6 +106,10 @@ export const messages = {
           "At least 8 characters, including one uppercase letter, one number, and one special character.",
       },
       errors: {
+        disabledAccount:
+          "This account is disabled. Use another account or create a new one.",
+        disabledEmail:
+          "This email belongs to a disabled account. Use another email.",
         duplicateEmail: "That email address is already registered.",
         generic: "The request could not be completed. Try again.",
         invalidCredentials: "The email or password is incorrect.",
@@ -124,7 +128,15 @@ export const messages = {
         title: "Sign in to GameBook.",
       },
       profile: {
+        accountDisabled: "Your account is disabled. Returning to the catalog.",
         accountDetails: "Account details",
+        disableAccount: "Disable account",
+        disableAccountCancel: "Keep account",
+        disableAccountConfirm:
+          "Disable this account? Your account and favorites will be kept, but you will not be able to sign in or use this email again.",
+        disableAccountDescription:
+          "This permanently disables access to the account for the MVP. Your account and favorites will be retained, but the account cannot be reactivated.",
+        disablingAccount: "Disabling account",
         currentPassword: "Current password",
         description:
           "Keep your account details close and change the password when you need to.",
@@ -300,6 +312,10 @@ export const messages = {
           "Al menos 8 caracteres, con una mayúscula, un número y un carácter especial.",
       },
       errors: {
+        disabledAccount:
+          "Esta cuenta está deshabilitada. Usa otra cuenta o crea una nueva.",
+        disabledEmail:
+          "Este correo pertenece a una cuenta deshabilitada. Usa otro correo.",
         duplicateEmail: "Ese correo electrónico ya está registrado.",
         generic: "No se pudo completar la solicitud. Inténtalo de nuevo.",
         invalidCredentials: "El correo o la contraseña no son correctos.",
@@ -318,7 +334,15 @@ export const messages = {
         title: "Inicia sesión en GameBook.",
       },
       profile: {
+        accountDisabled: "Tu cuenta está deshabilitada. Volverás al catálogo.",
         accountDetails: "Datos de la cuenta",
+        disableAccount: "Deshabilitar cuenta",
+        disableAccountCancel: "Conservar cuenta",
+        disableAccountConfirm:
+          "¿Deshabilitar esta cuenta? Tu cuenta y tus favoritos se conservarán, pero no podrás iniciar sesión ni usar de nuevo este correo.",
+        disableAccountDescription:
+          "Esto deshabilita permanentemente el acceso durante el MVP. Tu cuenta y tus favoritos se conservarán, pero la cuenta no podrá reactivarse.",
+        disablingAccount: "Deshabilitando cuenta",
         currentPassword: "Contraseña actual",
         description:
           "Conserva cerca los datos de tu cuenta y cambia la contraseña cuando lo necesites.",

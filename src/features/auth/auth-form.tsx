@@ -85,7 +85,7 @@ export function AuthForm({ mode, notice, onSubmit }: AuthFormProps) {
       await onSubmit(input);
       setStatus("success");
     } catch (error) {
-      const result = getRequestError(error, copy);
+      const result = getRequestError(error, copy, mode);
       setFieldErrors(result.fieldErrors);
       setFormError(result.formError);
       setStatus("error");
@@ -246,6 +246,7 @@ function AuthField({
 function getRequestError(
   error: unknown,
   copy: Messages,
+  mode: AuthMode,
 ): { fieldErrors: AuthFieldErrors; formError: string } {
   if (!(error instanceof ApiClientError)) {
     return { fieldErrors: {}, formError: copy.auth.errors.generic };
@@ -260,6 +261,15 @@ function getRequestError(
 
   if (error.code === "INVALID_CREDENTIALS") {
     return { fieldErrors: {}, formError: copy.auth.errors.invalidCredentials };
+  }
+
+  if (error.code === "ACCOUNT_DISABLED") {
+    return mode === "register"
+      ? {
+          fieldErrors: { email: copy.auth.errors.disabledEmail },
+          formError: "",
+        }
+      : { fieldErrors: {}, formError: copy.auth.errors.disabledAccount };
   }
 
   if (error.status === 0 || error.status >= 500) {

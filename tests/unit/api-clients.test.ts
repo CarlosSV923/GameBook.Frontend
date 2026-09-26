@@ -26,6 +26,7 @@ describe("AuthUser client", () => {
         },
       },
       { status: 204 },
+      { status: 204 },
     ]);
     const client = createAuthUserClient({
       baseUrl: "https://auth.example.test/",
@@ -47,14 +48,18 @@ describe("AuthUser client", () => {
       currentPassword: "correct-horse",
       newPassword: "new-correct-horse",
     });
+    await client.disableMyAccount("jwt-token");
 
-    expect(requests).toHaveLength(4);
+    expect(requests).toHaveLength(5);
     expect(requests[0].url).toBe("https://auth.example.test/v1/auth/register");
     expect(requests[0].headers.get("authorization")).toBeNull();
     expect(requests[1].headers.get("authorization")).toBeNull();
     expect(requests[2].headers.get("authorization")).toBe("Bearer jwt-token");
     expect(requests[3].headers.get("authorization")).toBe("Bearer jwt-token");
     expect(requests[3].method).toBe("PATCH");
+    expect(requests[4].headers.get("authorization")).toBe("Bearer jwt-token");
+    expect(requests[4].method).toBe("DELETE");
+    expect(requests[4].url).toBe("https://auth.example.test/v1/users/me");
   });
 });
 

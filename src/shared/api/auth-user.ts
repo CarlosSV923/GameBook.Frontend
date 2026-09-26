@@ -35,6 +35,7 @@ export type SessionResponse = UserResponse;
 
 export interface AuthUserClient {
   changeMyPassword(token: string, input: ChangePasswordInput): Promise<void>;
+  disableMyAccount(token: string): Promise<void>;
   getCurrentSession(token: string): Promise<SessionResponse>;
   login(input: LoginUserInput): Promise<LoginResponse>;
   register(input: RegisterUserInput): Promise<UserResponse>;

@@ -527,6 +527,12 @@ h2 {
   box-shadow: var(--shadow-raised);
 }
 
+.profile-card--danger {
+  grid-column: 1 / -1;
+  background: color-mix(in srgb, var(--danger) 5%, var(--paper-raised));
+  border-color: color-mix(in srgb, var(--danger) 35%, var(--border-soft));
+}
+
 .profile-card h1,
 .profile-card h2 {
   margin-bottom: 14px;
@@ -577,6 +583,96 @@ h2 {
 
 .profile-form {
   margin-top: 28px;
+}
+
+.profile-danger__trigger,
+.profile-danger__cancel,
+.profile-danger__confirm {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  font-family: var(--font-interface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.profile-danger__trigger {
+  margin-top: 24px;
+  color: var(--danger);
+  background: transparent;
+}
+
+.profile-danger__trigger:hover,
+.profile-danger__trigger:focus-visible {
+  color: var(--paper-raised);
+  background: var(--danger);
+}
+
+.profile-danger__confirmation {
+  max-width: 680px;
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--paper-inset);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+}
+
+.profile-danger__confirmation p {
+  margin: 0;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.profile-danger__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.profile-danger__cancel {
+  color: var(--ink-secondary);
+  background: transparent;
+  border-color: var(--border);
+}
+
+.profile-danger__confirm {
+  color: var(--paper-raised);
+  background: var(--danger);
+}
+
+.profile-danger__cancel:hover,
+.profile-danger__cancel:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink-secondary);
+}
+
+.profile-danger__confirm:hover,
+.profile-danger__confirm:focus-visible {
+  filter: brightness(0.9);
+}
+
+.profile-danger__cancel:focus-visible,
+.profile-danger__confirm:focus-visible,
+.profile-danger__trigger:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.profile-danger__cancel:disabled,
+.profile-danger__confirm:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.profile-danger__error {
+  margin-top: 12px !important;
+  color: var(--danger) !important;
 }
 
 .profile-state {

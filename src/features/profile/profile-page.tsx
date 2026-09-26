@@ -73,9 +73,92 @@ export function ProfilePage() {
           </section>
 
           <ChangePasswordCard />
+          <AccountDeactivationCard />
         </div>
       </main>
     </AppShell>
+  );
+}
+
+type AccountDeactivationState = "confirming" | "error" | "idle" | "submitting";
+
+function AccountDeactivationCard() {
+  const { copy } = usePreferences();
+  const { disableAccount } = useAuth();
+  const router = useRouter();
+  const [state, setState] = useState<AccountDeactivationState>("idle");
+
+  const handleConfirm = async () => {
+    setState("submitting");
+
+    try {
+      await disableAccount();
+      router.replace("/");
+    } catch {
+      setState("error");
+    }
+  };
+
+  const isConfirming = state !== "idle";
+
+  return (
+    <section
+      aria-labelledby="profile-disable-account-title"
+      className="profile-card profile-card--danger"
+    >
+      <p className="eyebrow">{copy.auth.profile.disableAccount}</p>
+      <h2 id="profile-disable-account-title">
+        {copy.auth.profile.disableAccount}
+      </h2>
+      <p className="profile-card__description">
+        {copy.auth.profile.disableAccountDescription}
+      </p>
+
+      {!isConfirming ? (
+        <button
+          className="profile-danger__trigger"
+          onClick={() => setState("confirming")}
+          type="button"
+        >
+          {copy.auth.profile.disableAccount}
+        </button>
+      ) : null}
+
+      {isConfirming ? (
+        <div
+          aria-live="polite"
+          className="profile-danger__confirmation"
+          role="alert"
+        >
+          <p>{copy.auth.profile.disableAccountConfirm}</p>
+          <div className="profile-danger__actions">
+            <button
+              className="profile-danger__cancel"
+              disabled={state === "submitting"}
+              onClick={() => setState("idle")}
+              type="button"
+            >
+              {copy.auth.profile.disableAccountCancel}
+            </button>
+            <button
+              className="profile-danger__confirm"
+              disabled={state === "submitting"}
+              onClick={() => void handleConfirm()}
+              type="button"
+            >
+              {state === "submitting"
+                ? copy.auth.profile.disablingAccount
+                : copy.auth.profile.disableAccount}
+            </button>
+          </div>
+          {state === "error" ? (
+            <p className="profile-danger__error" role="alert">
+              {copy.auth.errors.generic}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
 
