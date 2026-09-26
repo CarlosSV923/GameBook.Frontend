@@ -53,6 +53,7 @@ export const messages = {
       applyFilters: "Search",
       clearFilters: "Clear",
       suggestionLabel: "Suggestions",
+      searchingSuggestions: "Searching suggestions…",
       choosePlatform:
         "Choose a platform suggestion before applying the filter.",
       invalidYearRange:
@@ -250,6 +251,7 @@ export const messages = {
       applyFilters: "Buscar",
       clearFilters: "Limpiar",
       suggestionLabel: "Sugerencias",
+      searchingSuggestions: "Buscando opciones…",
       choosePlatform:
         "Elige una sugerencia de plataforma antes de aplicar el filtro.",
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",

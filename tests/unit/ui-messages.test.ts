@@ -102,6 +102,13 @@ describe("GameBook UI message catalog", () => {
     expect(messages.es.catalog.clearFilters).toBe("Limpiar");
   });
 
+  it("describes suggestion searches in both languages", () => {
+    expect(messages.en.catalog.searchingSuggestions).toBe(
+      "Searching suggestions…",
+    );
+    expect(messages.es.catalog.searchingSuggestions).toBe("Buscando opciones…");
+  });
+
   it("provides translated password visibility actions", () => {
     expect(messages.en.auth.fields.showPassword).toBe("Show password");
     expect(messages.en.auth.fields.hidePassword).toBe("Hide password");
