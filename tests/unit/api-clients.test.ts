@@ -7,11 +7,13 @@ import { createMockFetcher } from "@/shared/api/mocks";
 describe("AuthUser client", () => {
   it("keeps public calls unauthenticated and sends Bearer only to protected calls", async () => {
     const { fetcher, requests } = createMockFetcher([
+      { body: { status: "ok" } },
       {
         body: {
           user: { email: "user@example.com", fullName: "Ada", id: "user-1" },
         },
       },
+      { body: { status: "ok" } },
       {
         body: {
           accessToken: "jwt-token",
@@ -20,12 +22,15 @@ describe("AuthUser client", () => {
           user: { email: "user@example.com", fullName: "Ada", id: "user-1" },
         },
       },
+      { body: { status: "ok" } },
       {
         body: {
           user: { email: "user@example.com", fullName: "Ada", id: "user-1" },
         },
       },
+      { body: { status: "ok" } },
       { status: 204 },
+      { body: { status: "ok" } },
       { status: 204 },
     ]);
     const client = createAuthUserClient({
@@ -50,16 +55,32 @@ describe("AuthUser client", () => {
     });
     await client.disableMyAccount("jwt-token");
 
-    expect(requests).toHaveLength(5);
-    expect(requests[0].url).toBe("https://auth.example.test/v1/auth/register");
-    expect(requests[0].headers.get("authorization")).toBeNull();
-    expect(requests[1].headers.get("authorization")).toBeNull();
-    expect(requests[2].headers.get("authorization")).toBe("Bearer jwt-token");
-    expect(requests[3].headers.get("authorization")).toBe("Bearer jwt-token");
-    expect(requests[3].method).toBe("PATCH");
-    expect(requests[4].headers.get("authorization")).toBe("Bearer jwt-token");
-    expect(requests[4].method).toBe("DELETE");
-    expect(requests[4].url).toBe("https://auth.example.test/v1/users/me");
+    expect(requests).toHaveLength(10);
+    expect(requests.filter(({ url }) => url.endsWith("/health"))).toHaveLength(
+      5,
+    );
+    const serviceRequests = requests.filter(
+      ({ url }) => !url.endsWith("/health"),
+    );
+    expect(serviceRequests[0].url).toBe(
+      "https://auth.example.test/v1/auth/register",
+    );
+    expect(serviceRequests[0].headers.get("authorization")).toBeNull();
+    expect(serviceRequests[1].headers.get("authorization")).toBeNull();
+    expect(serviceRequests[2].headers.get("authorization")).toBe(
+      "Bearer jwt-token",
+    );
+    expect(serviceRequests[3].headers.get("authorization")).toBe(
+      "Bearer jwt-token",
+    );
+    expect(serviceRequests[3].method).toBe("PATCH");
+    expect(serviceRequests[4].headers.get("authorization")).toBe(
+      "Bearer jwt-token",
+    );
+    expect(serviceRequests[4].method).toBe("DELETE");
+    expect(serviceRequests[4].url).toBe(
+      "https://auth.example.test/v1/users/me",
+    );
   });
 });
 
@@ -74,6 +95,7 @@ describe("Game client", () => {
       released: "2024-01-01",
     };
     const { fetcher, requests } = createMockFetcher([
+      { body: { status: "ok" } },
       {
         body: {
           hasNext: false,
@@ -83,9 +105,13 @@ describe("Game client", () => {
           total: 1,
         },
       },
+      { body: { status: "ok" } },
       { body: favorite },
+      { body: { status: "ok" } },
       { body: { items: [], query: "pla", type: "platform" } },
+      { body: { status: "ok" } },
       { body: favorite },
+      { body: { status: "ok" } },
       { status: 204 },
     ]);
     const client = createGameClient({
@@ -106,31 +132,38 @@ describe("Game client", () => {
     await client.updateFavoriteSnapshot("jwt-token", 42, { rating: 90 });
     await client.deleteFavorite("jwt-token", 42);
 
-    expect(requests).toHaveLength(5);
-    for (const request of requests) {
+    expect(requests).toHaveLength(10);
+    expect(requests.filter(({ url }) => url.endsWith("/health"))).toHaveLength(
+      5,
+    );
+    const serviceRequests = requests.filter(
+      ({ url }) => !url.endsWith("/health"),
+    );
+    for (const request of serviceRequests) {
       expect(request.headers.get("authorization")).toBe("Bearer jwt-token");
     }
 
-    expect(requests.every((request) => !request.url.includes("userId"))).toBe(
-      true,
-    );
+    expect(
+      serviceRequests.every((request) => !request.url.includes("userId")),
+    ).toBe(true);
 
-    const listUrl = new URL(requests[0].url);
+    const listUrl = new URL(serviceRequests[0].url);
     expect(listUrl.pathname).toBe("/v1/favorites");
     expect(listUrl.searchParams.get("platformId")).toBe("6");
     expect(listUrl.searchParams.get("yearFrom")).toBe("2020");
     expect(listUrl.searchParams.get("yearTo")).toBe("2024");
-    expect(requests[1].method).toBe("POST");
-    expect(requests[2].url).toContain("type=platform");
-    expect(requests[2].url).toContain("limit=5");
-    expect(requests[3].url).toBe(
+    expect(serviceRequests[1].method).toBe("POST");
+    expect(serviceRequests[2].url).toContain("type=platform");
+    expect(serviceRequests[2].url).toContain("limit=5");
+    expect(serviceRequests[3].url).toBe(
       "https://game.example.test/v1/favorites/42/snapshot",
     );
-    expect(requests[4].method).toBe("DELETE");
+    expect(serviceRequests[4].method).toBe("DELETE");
   });
 
   it("notifies the session owner when a protected request returns 401", async () => {
     const { fetcher } = createMockFetcher([
+      { body: { status: "ok" } },
       {
         body: {
           code: "TOKEN_EXPIRED",
