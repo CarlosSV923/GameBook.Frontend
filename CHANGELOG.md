@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.4.0...gamebook-frontend-v0.4.1) (2026-09-27)
+
+
+### Bug Fixes
+
+* disable browser autocomplete in catalog filters ([2ed3ba9](https://github.com/CarlosSV923/GameBook.Frontend/commit/2ed3ba9b5fd88a2353292ebc8db5ec6856264a4d))
+* preserve filter suggestion selection ([fd30838](https://github.com/CarlosSV923/GameBook.Frontend/commit/fd3083876cfd719886fa08cf516bd7e92a21f754))
+* preserve filter suggestion selection ([3b57bcb](https://github.com/CarlosSV923/GameBook.Frontend/commit/3b57bcbed67481103f561f3bfc433428ea41443c))
+
 ## [0.4.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.3.0...gamebook-frontend-v0.4.0) (2026-09-26)
 
 
