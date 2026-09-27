@@ -5,6 +5,7 @@ import {
   type Fetcher,
   type RequestJsonOptions,
 } from "@/shared/api/http";
+import { waitForServiceHealth } from "@/shared/api/healthcheck";
 import type {
   Favorite,
   FavoriteCreateInput,
@@ -39,34 +40,39 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
     ...jsonHeaders,
     Authorization: requireBearerToken(token),
   });
+  const requestOptions = { ...options, retry: false };
 
   return {
-    createFavorite(token: string, input: FavoriteCreateInput) {
+    async createFavorite(token: string, input: FavoriteCreateInput) {
+      const serviceUrl = baseUrl();
+      await waitForServiceHealth(fetcher, serviceUrl);
       return requestJson<Favorite>(
         fetcher,
-        `${baseUrl()}/v1/favorites`,
+        `${serviceUrl}/v1/favorites`,
         {
           body: JSON.stringify(input),
           headers: authenticatedHeaders(token),
           method: "POST",
         },
-        options,
+        requestOptions,
       );
     },
 
     async deleteFavorite(token: string, igdbId: number) {
+      const serviceUrl = baseUrl();
+      await waitForServiceHealth(fetcher, serviceUrl);
       await requestJson<null>(
         fetcher,
-        `${baseUrl()}/v1/favorites/${igdbId}`,
+        `${serviceUrl}/v1/favorites/${igdbId}`,
         {
           headers: authenticatedHeaders(token),
           method: "DELETE",
         },
-        options,
+        requestOptions,
       );
     },
 
-    listFavorites(
+    async listFavorites(
       token: string,
       filters: FavoriteFilters = {},
       signal?: AbortSignal,
@@ -79,22 +85,23 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
         }
       }
 
+      const serviceUrl = baseUrl();
+      await waitForServiceHealth(fetcher, serviceUrl, signal);
       const queryString = query.toString();
-      const url = `${baseUrl()}/v1/favorites${queryString ? `?${queryString}` : ""}`;
 
       return requestJson<FavoritePage>(
         fetcher,
-        url,
+        `${serviceUrl}/v1/favorites${queryString ? `?${queryString}` : ""}`,
         {
           headers: authenticatedHeaders(token),
           method: "GET",
           signal,
         },
-        options,
+        requestOptions,
       );
     },
 
-    suggestFavorites(
+    async suggestFavorites(
       token: string,
       type: SuggestionType,
       query: string,
@@ -107,32 +114,37 @@ export function createGameClient(options: GameClientOptions = {}): GameClient {
         params.set("limit", String(limit));
       }
 
+      const serviceUrl = baseUrl();
+      await waitForServiceHealth(fetcher, serviceUrl, signal);
+
       return requestJson<SuggestionPage>(
         fetcher,
-        `${baseUrl()}/v1/favorites/suggestions?${params.toString()}`,
+        `${serviceUrl}/v1/favorites/suggestions?${params.toString()}`,
         {
           headers: authenticatedHeaders(token),
           method: "GET",
           signal,
         },
-        options,
+        requestOptions,
       );
     },
 
-    updateFavoriteSnapshot(
+    async updateFavoriteSnapshot(
       token: string,
       igdbId: number,
       input: FavoriteSnapshotUpdate,
     ) {
+      const serviceUrl = baseUrl();
+      await waitForServiceHealth(fetcher, serviceUrl);
       return requestJson<Favorite>(
         fetcher,
-        `${baseUrl()}/v1/favorites/${igdbId}/snapshot`,
+        `${serviceUrl}/v1/favorites/${igdbId}/snapshot`,
         {
           body: JSON.stringify(input),
           headers: authenticatedHeaders(token),
           method: "PATCH",
         },
-        options,
+        requestOptions,
       );
     },
   };
