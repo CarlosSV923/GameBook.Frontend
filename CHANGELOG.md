@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.4.1...gamebook-frontend-v0.5.0) (2026-09-27)
+
+
+### Features
+
+* **auth:** show password change confirmation ([e6d806d](https://github.com/CarlosSV923/GameBook.Frontend/commit/e6d806dcf5e15bed979f26c71e6f3695712b1b66))
+
+
+### Bug Fixes
+
+* **auth:** keep session on invalid password ([01292fe](https://github.com/CarlosSV923/GameBook.Frontend/commit/01292fe8d33e6df29bfb4d6a5f93a8b66103358c))
+* **auth:** preserve session on invalid password ([9eb72a0](https://github.com/CarlosSV923/GameBook.Frontend/commit/9eb72a032320da81c04c6af93e537d34999ca532))
+
 ## [0.4.1](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.4.0...gamebook-frontend-v0.4.1) (2026-09-27)
 
 
