@@ -1,6 +1,11 @@
 import "server-only";
+import type { AxiosResponse } from "axios";
 
-import { readResponseBody, type Fetcher } from "@/shared/api/http";
+import {
+  defaultHttpClient,
+  requestRaw,
+  type HttpClient,
+} from "@/shared/api/http";
 import {
   IgdbClientError,
   type ApplicationTokenProvider,
@@ -26,7 +31,7 @@ import {
 
 type IgdbClientOptions = {
   config?: IgdbRuntimeConfig;
-  fetcher?: Fetcher;
+  httpClient?: HttpClient;
   requestLimiter?: IgdbRequestLimiter;
   tokenProvider?: ApplicationTokenProvider;
 };
@@ -64,29 +69,33 @@ const completeCatalogGameWhere = [
 
 export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
   const config = options.config ?? getIgdbRuntimeConfig();
-  const fetcher = options.fetcher ?? fetch;
+  const httpClient = options.httpClient ?? defaultHttpClient;
   const requestLimiter = options.requestLimiter ?? sharedIgdbRequestLimiter;
   const tokenProvider =
     options.tokenProvider ??
-    createTwitchApplicationTokenProvider(config, fetcher);
+    createTwitchApplicationTokenProvider(config, httpClient);
 
   const postQuery = async (endpoint: "games" | "platforms", query: string) => {
     let token = await tokenProvider.getToken();
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
-      let response: Response;
+      let response: AxiosResponse<unknown[]>;
 
       try {
         response = await requestLimiter.schedule(() =>
-          fetcher(`${config.apiBaseUrl}/${endpoint}`, {
-            body: query,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Client-ID": config.clientId,
-              "Content-Type": "text/plain",
+          requestRaw<unknown[]>(
+            httpClient,
+            `${config.apiBaseUrl}/${endpoint}`,
+            {
+              data: query,
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Client-ID": config.clientId,
+                "Content-Type": "text/plain",
+              },
+              method: "POST",
             },
-            method: "POST",
-          }),
+          ),
         );
       } catch {
         throw new IgdbClientError(
@@ -103,18 +112,9 @@ export function createIgdbClient(options: IgdbClientOptions = {}): IgdbClient {
         continue;
       }
 
-      let body: unknown;
+      const body: unknown = response.data;
 
-      try {
-        body = await readResponseBody(response);
-      } catch {
-        throw new IgdbClientError(
-          "IGDB_INVALID_RESPONSE",
-          "The IGDB response is invalid.",
-        );
-      }
-
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         throw toIgdbError(response.status);
       }
 

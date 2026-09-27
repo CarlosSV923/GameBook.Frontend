@@ -1,4 +1,9 @@
-import { ApiClientError, requestJson, type Fetcher } from "@/shared/api/http";
+import {
+  ApiClientError,
+  defaultHttpClient,
+  requestJson,
+  type HttpClient,
+} from "@/shared/api/http";
 import type {
   IgdbCatalogFilters,
   IgdbCatalogPage,
@@ -10,7 +15,7 @@ import type {
 } from "@/shared/api/igdb";
 
 type IgdbCatalogClientOptions = {
-  fetcher?: Fetcher;
+  httpClient?: HttpClient;
 };
 
 export interface IgdbCatalogClient {
@@ -35,12 +40,12 @@ export interface IgdbCatalogClient {
 export function createIgdbCatalogClient(
   options: IgdbCatalogClientOptions = {},
 ): IgdbCatalogClient {
-  const fetcher = options.fetcher ?? fetch;
+  const httpClient = options.httpClient ?? defaultHttpClient;
 
   return {
     async getGameDetail(igdbId, signal) {
       const detail = await requestJson<unknown>(
-        fetcher,
+        httpClient,
         `/api/igdb/games/${igdbId}`,
         {
           headers: { Accept: "application/json" },
@@ -61,7 +66,7 @@ export function createIgdbCatalogClient(
     },
     async getGameSuggestions(query, signal) {
       const suggestions = await requestJson<unknown>(
-        fetcher,
+        httpClient,
         `/api/igdb/games/suggestions?query=${encodeURIComponent(query.trim())}`,
         {
           headers: { Accept: "application/json" },
@@ -78,7 +83,7 @@ export function createIgdbCatalogClient(
     },
     async getPlatformSuggestions(query, signal) {
       const suggestions = await requestJson<unknown>(
-        fetcher,
+        httpClient,
         `/api/igdb/platforms?query=${encodeURIComponent(query.trim())}`,
         {
           headers: { Accept: "application/json" },
@@ -119,7 +124,7 @@ export function createIgdbCatalogClient(
       }
 
       const page = await requestJson<unknown>(
-        fetcher,
+        httpClient,
         `/api/igdb/games?${params.toString()}`,
         {
           headers: { Accept: "application/json" },

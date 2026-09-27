@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { createAuthUserClient } from "@/features/api/auth-user-client";
 import { createGameClient } from "@/features/api/game-client";
-import { createMockFetcher } from "@/shared/api/mocks";
+import { createMockHttpClient } from "@/shared/api/mocks";
 
 describe("AuthUser client", () => {
   it("keeps public calls unauthenticated and sends Bearer only to protected calls", async () => {
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: { status: "ok" } },
       {
         body: {
@@ -35,7 +35,7 @@ describe("AuthUser client", () => {
     ]);
     const client = createAuthUserClient({
       baseUrl: "https://auth.example.test/",
-      fetcher,
+      httpClient,
     });
 
     await client.register({
@@ -94,7 +94,7 @@ describe("Game client", () => {
       rating: 88,
       released: "2024-01-01",
     };
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: { status: "ok" } },
       {
         body: {
@@ -116,7 +116,7 @@ describe("Game client", () => {
     ]);
     const client = createGameClient({
       baseUrl: "https://game.example.test",
-      fetcher,
+      httpClient,
     });
 
     await client.listFavorites("jwt-token", {
@@ -162,7 +162,7 @@ describe("Game client", () => {
   });
 
   it("notifies the session owner when a protected request returns 401", async () => {
-    const { fetcher } = createMockFetcher([
+    const { httpClient } = createMockHttpClient([
       { body: { status: "ok" } },
       {
         body: {
@@ -175,7 +175,7 @@ describe("Game client", () => {
     let unauthorizedCalls = 0;
     const client = createGameClient({
       baseUrl: "https://game.example.test",
-      fetcher,
+      httpClient,
       onUnauthorized: () => {
         unauthorizedCalls += 1;
       },
