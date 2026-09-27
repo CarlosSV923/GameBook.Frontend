@@ -5,6 +5,7 @@ import {
   type Fetcher,
   type RequestJsonOptions,
 } from "@/shared/api/http";
+import { waitForServiceHealth } from "@/shared/api/healthcheck";
 import type {
   AuthUserClient,
   ChangePasswordInput,
@@ -35,12 +36,17 @@ export function createAuthUserClient(
       options.baseUrl ?? process.env.NEXT_PUBLIC_AUTHUSER_URL,
       "NEXT_PUBLIC_AUTHUSER_URL",
     );
+  const requestOptions = { ...options, retry: false };
+  const waitForHealth = (serviceUrl: string) =>
+    waitForServiceHealth(fetcher, serviceUrl);
 
   return {
     async changeMyPassword(token, input: ChangePasswordInput) {
+      const serviceUrl = baseUrl();
+      await waitForHealth(serviceUrl);
       await requestJson<null>(
         fetcher,
-        `${baseUrl()}/v1/users/me/password`,
+        `${serviceUrl}/v1/users/me/password`,
         {
           body: JSON.stringify(input),
           headers: {
@@ -49,14 +55,16 @@ export function createAuthUserClient(
           },
           method: "PATCH",
         },
-        options,
+        requestOptions,
       );
     },
 
     async disableMyAccount(token: string) {
+      const serviceUrl = baseUrl();
+      await waitForHealth(serviceUrl);
       await requestJson<null>(
         fetcher,
-        `${baseUrl()}/v1/users/me`,
+        `${serviceUrl}/v1/users/me`,
         {
           headers: {
             Accept: "application/json",
@@ -64,14 +72,16 @@ export function createAuthUserClient(
           },
           method: "DELETE",
         },
-        options,
+        requestOptions,
       );
     },
 
-    getCurrentSession(token: string) {
+    async getCurrentSession(token: string) {
+      const serviceUrl = baseUrl();
+      await waitForHealth(serviceUrl);
       return requestJson<SessionResponse>(
         fetcher,
-        `${baseUrl()}/v1/auth/session`,
+        `${serviceUrl}/v1/auth/session`,
         {
           headers: {
             Accept: "application/json",
@@ -79,33 +89,37 @@ export function createAuthUserClient(
           },
           method: "GET",
         },
-        options,
+        requestOptions,
       );
     },
 
-    login(input: LoginUserInput) {
+    async login(input: LoginUserInput) {
+      const serviceUrl = baseUrl();
+      await waitForHealth(serviceUrl);
       return requestJson<LoginResponse>(
         fetcher,
-        `${baseUrl()}/v1/auth/login`,
+        `${serviceUrl}/v1/auth/login`,
         {
           body: JSON.stringify(input),
           headers: jsonHeaders,
           method: "POST",
         },
-        options,
+        requestOptions,
       );
     },
 
-    register(input: RegisterUserInput) {
+    async register(input: RegisterUserInput) {
+      const serviceUrl = baseUrl();
+      await waitForHealth(serviceUrl);
       return requestJson<UserResponse>(
         fetcher,
-        `${baseUrl()}/v1/auth/register`,
+        `${serviceUrl}/v1/auth/register`,
         {
           body: JSON.stringify(input),
           headers: jsonHeaders,
           method: "POST",
         },
-        options,
+        requestOptions,
       );
     },
   };

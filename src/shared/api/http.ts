@@ -2,6 +2,7 @@ export type Fetcher = (input: string, init?: RequestInit) => Promise<Response>;
 
 export type RequestJsonOptions = {
   onUnauthorized?: () => void;
+  retry?: boolean;
 };
 
 const retryDelaysMs = [250, 750] as const;
@@ -64,7 +65,8 @@ export async function requestJson<T>(
   init: RequestInit,
   options: RequestJsonOptions = {},
 ): Promise<T> {
-  const canRetry = (init.method ?? "GET").toUpperCase() === "GET";
+  const canRetry =
+    options.retry !== false && (init.method ?? "GET").toUpperCase() === "GET";
   const signal = init.signal ?? undefined;
 
   for (let attempt = 0; ; attempt += 1) {
