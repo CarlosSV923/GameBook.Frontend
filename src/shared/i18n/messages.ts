@@ -147,8 +147,12 @@ export const messages = {
         fullName: "Full name",
         loading: "Checking your session",
         newPassword: "New password",
+        passwordChangedAction: "Sign in again",
+        passwordChangedDescription:
+          "Your password changed successfully. Your session will close now, so sign in again with your new password.",
         passwordChangedNotice:
           "Your password changed. Sign in again to continue.",
+        passwordChangedTitle: "Password updated",
         passwordDescription:
           "Changing your password signs you out everywhere and requires a new sign in.",
         passwordTitle: "Change password",
@@ -356,8 +360,12 @@ export const messages = {
         fullName: "Nombre completo",
         loading: "Comprobando tu sesión",
         newPassword: "Nueva contraseña",
+        passwordChangedAction: "Iniciar sesión de nuevo",
+        passwordChangedDescription:
+          "Tu contraseña cambió correctamente. Tu sesión se cerrará ahora; inicia sesión de nuevo con tu nueva contraseña.",
         passwordChangedNotice:
           "Tu contraseña cambió. Inicia sesión de nuevo para continuar.",
+        passwordChangedTitle: "Contraseña actualizada",
         passwordDescription:
           "Cambiar tu contraseña cerrará todas las sesiones y exigirá un nuevo inicio de sesión.",
         passwordTitle: "Cambiar contraseña",

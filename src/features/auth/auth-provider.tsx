@@ -49,6 +49,14 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const discardableSessionErrorCodes = new Set([
+  "TOKEN_MISSING",
+  "TOKEN_INVALID",
+  "TOKEN_EXPIRED",
+  "SESSION_REVOKED",
+  "ACCOUNT_DISABLED",
+]);
+
 export function AuthProvider({ children, client }: AuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<UserIdentity | null>(null);
@@ -227,10 +235,10 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
-function shouldDiscardToken(error: unknown): boolean {
+export function shouldDiscardToken(error: unknown): boolean {
   if (!(error instanceof ApiClientError)) {
     return false;
   }
 
-  return error.status === 401;
+  return error.status === 401 && discardableSessionErrorCodes.has(error.code);
 }
