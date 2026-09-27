@@ -20,6 +20,8 @@ import type { Messages } from "@/shared/i18n/messages";
 type GameCardProps = {
   game: IgdbGameCardData;
   messages: Messages;
+  favoriteStatus?: "loading" | "ready";
+  isFavorite?: boolean;
   onDelete?: (igdbId: number) => Promise<void>;
   onSave?: (game: FavoriteCreateInput) => Promise<void>;
   onSelect: () => void;
@@ -28,7 +30,9 @@ type GameCardProps = {
 
 export function GameCard({
   authStatus,
+  favoriteStatus = "ready",
   game,
+  isFavorite = false,
   messages,
   onDelete,
   onSave,
@@ -103,7 +107,7 @@ export function GameCard({
           </span>
         </span>
       </button>
-      {onDelete ? (
+      {onDelete && (isFavorite || onSave === undefined) ? (
         <FavoriteDeleteAction
           game={game}
           messages={messages}
@@ -112,6 +116,7 @@ export function GameCard({
         />
       ) : onSave ? (
         <FavoriteAction
+          favoriteStatus={favoriteStatus}
           game={game}
           messages={messages}
           onSave={onSave}
