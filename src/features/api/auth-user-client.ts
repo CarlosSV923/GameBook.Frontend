@@ -2,7 +2,8 @@ import {
   requireBearerToken,
   requestJson,
   resolveBaseUrl,
-  type Fetcher,
+  defaultHttpClient,
+  type HttpClient,
   type RequestJsonOptions,
 } from "@/shared/api/http";
 import { waitForServiceHealth } from "@/shared/api/healthcheck";
@@ -18,7 +19,7 @@ import type {
 
 type AuthUserClientOptions = {
   baseUrl?: string;
-  fetcher?: Fetcher;
+  httpClient?: HttpClient;
   onUnauthorized?: RequestJsonOptions["onUnauthorized"];
 };
 
@@ -30,7 +31,7 @@ const jsonHeaders = {
 export function createAuthUserClient(
   options: AuthUserClientOptions = {},
 ): AuthUserClient {
-  const fetcher = options.fetcher ?? fetch;
+  const httpClient = options.httpClient ?? defaultHttpClient;
   const baseUrl = () =>
     resolveBaseUrl(
       options.baseUrl ?? process.env.NEXT_PUBLIC_AUTHUSER_URL,
@@ -38,17 +39,17 @@ export function createAuthUserClient(
     );
   const requestOptions = { ...options, retry: false };
   const waitForHealth = (serviceUrl: string) =>
-    waitForServiceHealth(fetcher, serviceUrl);
+    waitForServiceHealth(serviceUrl, undefined, httpClient);
 
   return {
     async changeMyPassword(token, input: ChangePasswordInput) {
       const serviceUrl = baseUrl();
       await waitForHealth(serviceUrl);
       await requestJson<null>(
-        fetcher,
+        httpClient,
         `${serviceUrl}/v1/users/me/password`,
         {
-          body: JSON.stringify(input),
+          data: input,
           headers: {
             ...jsonHeaders,
             Authorization: requireBearerToken(token),
@@ -63,7 +64,7 @@ export function createAuthUserClient(
       const serviceUrl = baseUrl();
       await waitForHealth(serviceUrl);
       await requestJson<null>(
-        fetcher,
+        httpClient,
         `${serviceUrl}/v1/users/me`,
         {
           headers: {
@@ -80,7 +81,7 @@ export function createAuthUserClient(
       const serviceUrl = baseUrl();
       await waitForHealth(serviceUrl);
       return requestJson<SessionResponse>(
-        fetcher,
+        httpClient,
         `${serviceUrl}/v1/auth/session`,
         {
           headers: {
@@ -97,10 +98,10 @@ export function createAuthUserClient(
       const serviceUrl = baseUrl();
       await waitForHealth(serviceUrl);
       return requestJson<LoginResponse>(
-        fetcher,
+        httpClient,
         `${serviceUrl}/v1/auth/login`,
         {
-          body: JSON.stringify(input),
+          data: input,
           headers: jsonHeaders,
           method: "POST",
         },
@@ -112,10 +113,10 @@ export function createAuthUserClient(
       const serviceUrl = baseUrl();
       await waitForHealth(serviceUrl);
       return requestJson<UserResponse>(
-        fetcher,
+        httpClient,
         `${serviceUrl}/v1/auth/register`,
         {
-          body: JSON.stringify(input),
+          data: input,
           headers: jsonHeaders,
           method: "POST",
         },

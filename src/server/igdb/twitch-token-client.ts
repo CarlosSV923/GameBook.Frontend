@@ -1,6 +1,11 @@
 import "server-only";
+import type { AxiosResponse } from "axios";
 
-import { readResponseBody, type Fetcher } from "@/shared/api/http";
+import {
+  defaultHttpClient,
+  requestRaw,
+  type HttpClient,
+} from "@/shared/api/http";
 import {
   IgdbClientError,
   type ApplicationTokenProvider,
@@ -9,7 +14,7 @@ import type { IgdbRuntimeConfig } from "@/server/igdb/igdb-runtime-config";
 
 export function createTwitchApplicationTokenProvider(
   config: IgdbRuntimeConfig,
-  fetcher: Fetcher = fetch,
+  httpClient: HttpClient = defaultHttpClient,
 ): ApplicationTokenProvider {
   let cachedToken: { accessToken: string; expiresAt: number } | null = null;
 
@@ -19,20 +24,24 @@ export function createTwitchApplicationTokenProvider(
         return cachedToken.accessToken;
       }
 
-      let response: Response;
+      let response: AxiosResponse<unknown>;
 
       try {
-        response = await fetcher(config.twitchTokenUrl, {
-          body: new URLSearchParams({
-            client_id: config.clientId,
-            client_secret: config.clientSecret,
-            grant_type: "client_credentials",
-          }),
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+        response = await requestRaw<unknown>(
+          httpClient,
+          config.twitchTokenUrl,
+          {
+            data: new URLSearchParams({
+              client_id: config.clientId,
+              client_secret: config.clientSecret,
+              grant_type: "client_credentials",
+            }),
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method: "POST",
           },
-          method: "POST",
-        });
+        );
       } catch {
         throw new IgdbClientError(
           "IGDB_UNAVAILABLE",
@@ -40,18 +49,13 @@ export function createTwitchApplicationTokenProvider(
         );
       }
 
-      let body: unknown;
+      const body: unknown = response.data;
 
-      try {
-        body = await readResponseBody(response);
-      } catch {
-        throw new IgdbClientError(
-          "IGDB_AUTH_FAILED",
-          "The Twitch application token response is invalid.",
-        );
-      }
-
-      if (!response.ok || !isTwitchTokenResponse(body)) {
+      if (
+        response.status < 200 ||
+        response.status >= 300 ||
+        !isTwitchTokenResponse(body)
+      ) {
         throw new IgdbClientError(
           "IGDB_AUTH_FAILED",
           "The Twitch application token could not be obtained.",

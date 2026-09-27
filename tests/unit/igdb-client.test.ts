@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { buildGamesQuery, createIgdbClient } from "@/server/igdb/igdb-client";
 import { createTwitchApplicationTokenProvider } from "@/server/igdb/twitch-token-client";
-import { createMockFetcher, createMockTokenProvider } from "@/shared/api/mocks";
+import {
+  createMockHttpClient,
+  createMockTokenProvider,
+} from "@/shared/api/mocks";
 import { IgdbClientError } from "@/shared/api/igdb";
 
 const config = {
@@ -64,13 +67,13 @@ describe("IGDB query adapter", () => {
 
 describe("IGDB client", () => {
   it("uses the fixed games endpoint and maps the catalog response", async () => {
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: [rawGame, { ...rawGame, id: 43, name: "Second game" }] },
     ]);
     const token = createMockTokenProvider(["application-token"]);
     const client = createIgdbClient({
       config,
-      fetcher,
+      httpClient,
       tokenProvider: token.provider,
     });
 
@@ -108,13 +111,13 @@ describe("IGDB client", () => {
       id: 43,
       name: "Incomplete game",
     };
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: [rawGame, incompleteGame] },
       { body: [rawGame, incompleteGame] },
     ]);
     const client = createIgdbClient({
       config,
-      fetcher,
+      httpClient,
       tokenProvider: createMockTokenProvider().provider,
     });
 
@@ -142,14 +145,14 @@ describe("IGDB client", () => {
   });
 
   it("refreshes the application token once after an IGDB auth failure", async () => {
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: { message: "expired" }, status: 401 },
       { body: [rawGame] },
     ]);
     const token = createMockTokenProvider(["expired-token", "refreshed-token"]);
     const client = createIgdbClient({
       config,
-      fetcher,
+      httpClient,
       tokenProvider: token.provider,
     });
 
@@ -165,10 +168,12 @@ describe("IGDB client", () => {
   });
 
   it("maps detail fields and preserves the release date precision", async () => {
-    const { fetcher, requests } = createMockFetcher([{ body: [rawDetail] }]);
+    const { httpClient, requests } = createMockHttpClient([
+      { body: [rawDetail] },
+    ]);
     const client = createIgdbClient({
       config,
-      fetcher,
+      httpClient,
       tokenProvider: createMockTokenProvider().provider,
     });
 
@@ -186,10 +191,12 @@ describe("IGDB client", () => {
   });
 
   it("maps malformed responses and rate limits to safe domain errors", async () => {
-    const malformed = createMockFetcher([{ body: { result: "not-an-array" } }]);
+    const malformed = createMockHttpClient([
+      { body: { result: "not-an-array" } },
+    ]);
     const malformedClient = createIgdbClient({
       config,
-      fetcher: malformed.fetcher,
+      httpClient: malformed.httpClient,
       tokenProvider: createMockTokenProvider().provider,
     });
 
@@ -197,12 +204,12 @@ describe("IGDB client", () => {
       code: "IGDB_INVALID_RESPONSE",
     });
 
-    const limited = createMockFetcher([
+    const limited = createMockHttpClient([
       { status: 429, body: { message: "slow down" } },
     ]);
     const limitedClient = createIgdbClient({
       config,
-      fetcher: limited.fetcher,
+      httpClient: limited.httpClient,
       tokenProvider: createMockTokenProvider().provider,
     });
 
@@ -214,12 +221,12 @@ describe("IGDB client", () => {
   });
 
   it("maps upstream server failures to an unavailable domain error", async () => {
-    const { fetcher } = createMockFetcher([
+    const { httpClient } = createMockHttpClient([
       { status: 503, body: { message: "temporarily unavailable" } },
     ]);
     const client = createIgdbClient({
       config,
-      fetcher,
+      httpClient,
       tokenProvider: createMockTokenProvider().provider,
     });
 
@@ -231,10 +238,10 @@ describe("IGDB client", () => {
 
 describe("Twitch application token provider", () => {
   it("sends credentials only to Twitch and caches the application token", async () => {
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: { access_token: "twitch-token", expires_in: 3600 } },
     ]);
-    const provider = createTwitchApplicationTokenProvider(config, fetcher);
+    const provider = createTwitchApplicationTokenProvider(config, httpClient);
 
     await expect(provider.getToken()).resolves.toBe("twitch-token");
     await expect(provider.getToken()).resolves.toBe("twitch-token");
@@ -247,10 +254,10 @@ describe("Twitch application token provider", () => {
   });
 
   it("maps rejected Twitch token responses to a safe auth error", async () => {
-    const { fetcher } = createMockFetcher([
+    const { httpClient } = createMockHttpClient([
       { status: 401, body: { error: "invalid_client" } },
     ]);
-    const provider = createTwitchApplicationTokenProvider(config, fetcher);
+    const provider = createTwitchApplicationTokenProvider(config, httpClient);
 
     await expect(provider.getToken()).rejects.toMatchObject({
       code: "IGDB_AUTH_FAILED",
