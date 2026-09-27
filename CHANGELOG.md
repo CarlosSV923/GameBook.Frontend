@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.5.0...gamebook-frontend-v0.6.0) (2026-09-27)
+
+
+### Features
+
+* gate service calls with healthchecks ([92d7f17](https://github.com/CarlosSV923/GameBook.Frontend/commit/92d7f1777694c4ae52d41d24cd04eb0bc5eb2372))
+
 ## [0.5.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.4.1...gamebook-frontend-v0.5.0) (2026-09-27)
 
 
