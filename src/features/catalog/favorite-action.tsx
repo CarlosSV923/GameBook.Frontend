@@ -9,6 +9,7 @@ import { ApiClientError } from "@/shared/api/http";
 import type { Messages } from "@/shared/i18n/messages";
 
 type FavoriteActionProps = {
+  favoriteStatus?: "loading" | "ready";
   game: FavoriteCreateInput;
   messages: Messages;
   onSave: (game: FavoriteCreateInput) => Promise<void>;
@@ -28,6 +29,7 @@ type FavoriteDeleteActionProps = {
 type DeleteState = "confirming" | "error" | "idle" | "removing";
 
 export function FavoriteAction({
+  favoriteStatus = "ready",
   game,
   messages,
   onSave,
@@ -37,7 +39,7 @@ export function FavoriteAction({
   const router = useRouter();
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const isAnonymous = status === "anonymous";
-  const isLoading = status === "loading";
+  const isLoading = status === "loading" || favoriteStatus === "loading";
   const isSaving = saveState === "saving";
   const isSaved = saveState === "saved";
   const actionLabel = messages.catalog.favorite.action.replace(

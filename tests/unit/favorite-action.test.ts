@@ -151,4 +151,36 @@ describe("FavoriteAction", () => {
       'aria-label="Remove A Short Hike from favorites"',
     );
   });
+
+  it("uses the shared favorite state to switch catalog actions", () => {
+    const savedMarkup = renderToStaticMarkup(
+      createElement(GameCard, {
+        authStatus: "authenticated",
+        game,
+        isFavorite: true,
+        messages: messages.en,
+        onDelete,
+        onSave,
+        onSelect: () => undefined,
+      }),
+    );
+    const unsavedMarkup = renderToStaticMarkup(
+      createElement(GameCard, {
+        authStatus: "authenticated",
+        game,
+        isFavorite: false,
+        messages: messages.en,
+        onDelete,
+        onSave,
+        onSelect: () => undefined,
+      }),
+    );
+
+    expect(savedMarkup).toContain(
+      'aria-label="Remove A Short Hike from favorites"',
+    );
+    expect(unsavedMarkup).toContain(
+      'aria-label="Save A Short Hike to favorites"',
+    );
+  });
 });
