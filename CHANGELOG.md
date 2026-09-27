@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.6.0...gamebook-frontend-v0.7.0) (2026-09-27)
+
+
+### Features
+
+* migrate frontend HTTP transport to axios rxjs ([da5f4d3](https://github.com/CarlosSV923/GameBook.Frontend/commit/da5f4d365a4375c6bd1a95f595467f0d57834bf3))
+
 ## [0.6.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.5.0...gamebook-frontend-v0.6.0) (2026-09-27)
 
 
