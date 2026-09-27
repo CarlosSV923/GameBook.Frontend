@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
-import { createMockFetcher } from "@/shared/api/mocks";
+import { createMockHttpClient } from "@/shared/api/mocks";
 
 const page = {
   hasNext: true,
@@ -21,8 +21,8 @@ const page = {
 
 describe("IGDB catalog browser client", () => {
   it("requests the server proxy and returns validated catalog pages", async () => {
-    const { fetcher, requests } = createMockFetcher([{ body: page }]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const { httpClient, requests } = createMockHttpClient([{ body: page }]);
+    const client = createIgdbCatalogClient({ httpClient });
 
     await expect(client.listCatalog()).resolves.toEqual(page);
     expect(requests[0].url).toBe("/api/igdb/games?limit=20");
@@ -31,10 +31,10 @@ describe("IGDB catalog browser client", () => {
   });
 
   it("rejects an unsafe response shape before rendering it", async () => {
-    const { fetcher } = createMockFetcher([
+    const { httpClient } = createMockHttpClient([
       { body: { items: "not-an-array" } },
     ]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const client = createIgdbCatalogClient({ httpClient });
 
     await expect(client.listCatalog()).rejects.toMatchObject({
       code: "IGDB_INVALID_RESPONSE",
@@ -43,8 +43,8 @@ describe("IGDB catalog browser client", () => {
   });
 
   it("serializes combined filters for the server proxy", async () => {
-    const { fetcher, requests } = createMockFetcher([{ body: page }]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const { httpClient, requests } = createMockHttpClient([{ body: page }]);
+    const client = createIgdbCatalogClient({ httpClient });
 
     await client.listCatalog({
       name: " zelda ",
@@ -59,8 +59,8 @@ describe("IGDB catalog browser client", () => {
   });
 
   it("serializes the requested page limit and offset", async () => {
-    const { fetcher, requests } = createMockFetcher([{ body: page }]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const { httpClient, requests } = createMockHttpClient([{ body: page }]);
+    const client = createIgdbCatalogClient({ httpClient });
 
     await client.listCatalog({ limit: 20, offset: 40 });
 
@@ -68,11 +68,11 @@ describe("IGDB catalog browser client", () => {
   });
 
   it("requests validated game and platform suggestions", async () => {
-    const { fetcher, requests } = createMockFetcher([
+    const { httpClient, requests } = createMockHttpClient([
       { body: [{ igdbId: 42, name: "The Game" }] },
       { body: [{ id: 6, name: "PC" }] },
     ]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const client = createIgdbCatalogClient({ httpClient });
 
     await expect(client.getGameSuggestions("the game")).resolves.toEqual([
       { igdbId: 42, name: "The Game" },
@@ -98,8 +98,8 @@ describe("IGDB catalog browser client", () => {
       ],
       summary: "A game summary.",
     };
-    const { fetcher, requests } = createMockFetcher([{ body: detail }]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const { httpClient, requests } = createMockHttpClient([{ body: detail }]);
+    const client = createIgdbCatalogClient({ httpClient });
 
     await expect(client.getGameDetail(42)).resolves.toEqual(detail);
     expect(requests[0].url).toBe("/api/igdb/games/42");
@@ -113,12 +113,12 @@ describe("IGDB catalog browser client", () => {
       },
       status: 503,
     };
-    const { fetcher } = createMockFetcher([
+    const { httpClient } = createMockHttpClient([
       unavailableResponse,
       unavailableResponse,
       unavailableResponse,
     ]);
-    const client = createIgdbCatalogClient({ fetcher });
+    const client = createIgdbCatalogClient({ httpClient });
 
     await expect(client.getGameDetail(42)).rejects.toMatchObject({
       code: "IGDB_UNAVAILABLE",

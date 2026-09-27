@@ -1,4 +1,13 @@
-export type Fetcher = (input: string, init?: RequestInit) => Promise<Response>;
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from "axios";
+import { defer, firstValueFrom, of, throwError, timer } from "rxjs";
+import { catchError, map, mergeMap, retry } from "rxjs/operators";
+
+export type HttpClient = AxiosInstance;
+export type HttpRequestConfig = AxiosRequestConfig;
 
 export type RequestJsonOptions = {
   onUnauthorized?: () => void;
@@ -39,107 +48,124 @@ export class ApiClientError extends Error {
   }
 }
 
-export async function readResponseBody(
-  response: Response,
-): Promise<unknown | null> {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text) as unknown;
-  } catch {
-    throw new ApiClientError(
-      response.status,
-      {},
-      "The API response is invalid.",
-    );
-  }
+export function createHttpClient(): HttpClient {
+  return axios.create();
 }
 
+export const defaultHttpClient = createHttpClient();
+
 export async function requestJson<T>(
-  fetcher: Fetcher,
+  httpClient: HttpClient,
   url: string,
-  init: RequestInit,
+  config: HttpRequestConfig,
   options: RequestJsonOptions = {},
 ): Promise<T> {
   const canRetry =
-    options.retry !== false && (init.method ?? "GET").toUpperCase() === "GET";
-  const signal = init.signal ?? undefined;
+    options.retry !== false && (config.method ?? "GET").toUpperCase() === "GET";
 
-  for (let attempt = 0; ; attempt += 1) {
-    let response: Response;
+  return firstValueFrom(
+    requestResponse(httpClient, url, config, canRetry).pipe(
+      map((response) => {
+        const body = normalizeResponseData(response);
 
-    try {
-      response = await fetcher(url, init);
-    } catch (error) {
-      if (canRetry && attempt < retryDelaysMs.length && !signal?.aborted) {
-        await waitBeforeRetry(retryDelaysMs[attempt], signal);
-        continue;
+        if (response.status === 401) {
+          options.onUnauthorized?.();
+        }
+
+        if (response.status < 200 || response.status >= 300) {
+          const payload = isApiErrorPayload(body) ? body : {};
+          throw new ApiClientError(response.status, payload);
+        }
+
+        if (typeof body === "string" && isJsonResponse(response)) {
+          throw new ApiClientError(
+            response.status,
+            {},
+            "The API response is invalid.",
+          );
+        }
+
+        return body as T;
+      }),
+      catchError((error: unknown) => throwError(() => toApiClientError(error))),
+    ),
+  );
+}
+
+export async function requestRaw<T = unknown>(
+  httpClient: HttpClient,
+  url: string,
+  config: HttpRequestConfig,
+  canRetry = false,
+): Promise<AxiosResponse<T>> {
+  return firstValueFrom(requestResponse<T>(httpClient, url, config, canRetry));
+}
+
+export function requestResponse<T = unknown>(
+  httpClient: HttpClient,
+  url: string,
+  config: HttpRequestConfig,
+  canRetry = false,
+) {
+  return defer(() =>
+    httpClient.request<T>({
+      ...config,
+      url,
+      validateStatus: () => true,
+    }),
+  ).pipe(
+    mergeMap((response) => {
+      if (canRetry && isRetryableStatus(response.status)) {
+        return throwError(() => new RetryableResponseError(response));
       }
 
-      throw new ApiClientError(
-        0,
-        { code: "NETWORK_ERROR" },
-        error instanceof Error ? error.message : "The network request failed.",
-      );
-    }
+      return of(response);
+    }),
+    retry({
+      count: canRetry ? retryDelaysMs.length : 0,
+      delay: (_error, retryIndex) => timer(retryDelaysMs[retryIndex - 1] ?? 0),
+    }),
+  );
+}
 
-    if (
-      canRetry &&
-      isRetryableStatus(response.status) &&
-      attempt < retryDelaysMs.length
-    ) {
-      await response.body?.cancel();
-      await waitBeforeRetry(retryDelaysMs[attempt], signal);
-      continue;
-    }
+function normalizeResponseData(response: AxiosResponse): unknown | null {
+  return response.data === "" || response.data === undefined
+    ? null
+    : response.data;
+}
 
-    const body = await readResponseBody(response);
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        options.onUnauthorized?.();
-      }
-
-      const payload = isApiErrorPayload(body) ? body : {};
-      throw new ApiClientError(response.status, payload);
-    }
-
-    return body as T;
-  }
+function isJsonResponse(response: AxiosResponse): boolean {
+  const contentType = response.headers["content-type"];
+  return typeof contentType === "string" && contentType.includes("json");
 }
 
 function isRetryableStatus(status: number): boolean {
   return status === 408 || status === 425 || status === 429 || status >= 500;
 }
 
-function waitBeforeRetry(delayMs: number, signal?: AbortSignal): Promise<void> {
-  if (signal?.aborted) {
-    return Promise.reject(createAbortError());
+function toApiClientError(error: unknown): ApiClientError {
+  if (error instanceof ApiClientError) {
+    return error;
   }
 
-  return new Promise((resolve, reject) => {
-    const timeoutId = setTimeout(() => {
-      signal?.removeEventListener("abort", abort);
-      resolve();
-    }, delayMs);
+  if (error instanceof RetryableResponseError) {
+    const body = normalizeResponseData(error.response);
+    return new ApiClientError(
+      error.response.status,
+      isApiErrorPayload(body) ? body : {},
+    );
+  }
 
-    const abort = () => {
-      clearTimeout(timeoutId);
-      reject(createAbortError());
-    };
-
-    signal?.addEventListener("abort", abort, { once: true });
-  });
+  const message =
+    error instanceof Error ? error.message : "The network request failed.";
+  return new ApiClientError(0, { code: "NETWORK_ERROR" }, message);
 }
 
-function createAbortError(): Error {
-  const error = new Error("The request was aborted.");
-  error.name = "AbortError";
-  return error;
+class RetryableResponseError extends Error {
+  constructor(readonly response: AxiosResponse) {
+    super(`Retryable HTTP response: ${response.status}`);
+    this.name = "RetryableResponseError";
+  }
 }
 
 export function resolveBaseUrl(
@@ -164,5 +190,5 @@ export function requireBearerToken(token: string) {
 }
 
 function isApiErrorPayload(value: unknown): value is ApiErrorPayload {
-  return typeof value === "object" && value !== null;
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

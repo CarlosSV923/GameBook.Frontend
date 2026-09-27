@@ -1,7 +1,8 @@
-import type { Fetcher } from "@/shared/api/http";
+import axios, { type AxiosRequestConfig } from "axios";
+import type { HttpClient } from "@/shared/api/http";
 import type { ApplicationTokenProvider } from "@/shared/api/igdb";
 
-export type MockFetchResponse = {
+export type MockHttpResponse = {
   body?: unknown;
   headers?: Record<string, string>;
   status?: number;
@@ -14,36 +15,47 @@ export type MockRequest = {
   url: string;
 };
 
-export function createMockFetcher(
-  responses: readonly MockFetchResponse[] = [],
-): { fetcher: Fetcher; requests: MockRequest[] } {
+export function createMockHttpClient(
+  responses: readonly MockHttpResponse[] = [],
+): { httpClient: HttpClient; requests: MockRequest[] } {
   const queue = [...responses];
   const requests: MockRequest[] = [];
 
-  const fetcher: Fetcher = async (input, init = {}) => {
-    const response = queue.shift() ?? {};
-    const body =
-      response.body === undefined ? null : JSON.stringify(response.body);
+  const httpClient = axios.create({
+    adapter: async (config) => {
+      const response = queue.shift() ?? {};
+      const headers = new Headers();
 
-    requests.push({
-      body: serializeRequestBody(init.body),
-      headers: new Headers(init.headers),
-      method: init.method ?? "GET",
-      url: input,
-    });
+      for (const [key, value] of Object.entries(
+        config.headers?.toJSON?.() ?? config.headers ?? {},
+      )) {
+        if (typeof value === "string") {
+          headers.set(key, value);
+        }
+      }
 
-    return new Response(body, {
-      headers: response.headers,
-      status: response.status ?? 200,
-    });
-  };
+      requests.push({
+        body: serializeRequestBody(config.data),
+        headers,
+        method: (config.method ?? "GET").toUpperCase(),
+        url: config.url ?? "",
+      });
 
-  return { fetcher, requests };
+      return {
+        config,
+        data: response.body === undefined ? null : response.body,
+        headers: response.headers ?? {},
+        request: undefined,
+        status: response.status ?? 200,
+        statusText: String(response.status ?? 200),
+      };
+    },
+  });
+
+  return { httpClient, requests };
 }
 
-function serializeRequestBody(
-  body: BodyInit | null | undefined,
-): string | null {
+function serializeRequestBody(body: AxiosRequestConfig["data"]): string | null {
   if (body === undefined || body === null) {
     return null;
   }
@@ -56,7 +68,7 @@ function serializeRequestBody(
     return body.toString();
   }
 
-  return String(body);
+  return JSON.stringify(body);
 }
 
 export function createMockTokenProvider(
