@@ -16,6 +16,7 @@ import {
   getNextCatalogOffset,
   mergeCatalogItems,
 } from "@/features/catalog/catalog-pagination";
+import { listAllFavoriteIds } from "@/features/catalog/catalog-favorites";
 import {
   CatalogFilters,
   type AppliedCatalogFilters,
@@ -33,12 +34,19 @@ const CATALOG_PAGE_SIZE = 20;
 
 export function CatalogList() {
   const { copy } = usePreferences();
-  const { getAccessToken, signOut, status: authStatus } = useAuth();
+  const { getAccessToken, signOut, status: authStatus, user } = useAuth();
   const gameClient = useMemo(
     () => createGameClient({ onUnauthorized: signOut }),
     [signOut],
   );
   const [items, setItems] = useState<IgdbGameCard[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
+  const [favoriteSyncStatus, setFavoriteSyncStatus] = useState<
+    "error" | "idle" | "loading" | "ready"
+  >("idle");
+  const [favoriteSyncUserId, setFavoriteSyncUserId] = useState<string | null>(
+    null,
+  );
   const [status, setStatus] = useState<CatalogStatus>("loading");
   const [filters, setFilters] = useState<AppliedCatalogFilters>({});
   const [hasNext, setHasNext] = useState(false);
@@ -60,9 +68,76 @@ export function CatalogList() {
       }
 
       await gameClient.createFavorite(token, game);
+      setFavoriteIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+        nextIds.add(game.igdbId);
+        return nextIds;
+      });
     },
     [gameClient, getAccessToken],
   );
+
+  const deleteFavorite = useCallback(
+    async (igdbId: number) => {
+      const token = getAccessToken();
+
+      if (!token) {
+        throw new Error("A valid session is required to remove favorites.");
+      }
+
+      await gameClient.deleteFavorite(token, igdbId);
+      setFavoriteIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+        nextIds.delete(igdbId);
+        return nextIds;
+      });
+    },
+    [gameClient, getAccessToken],
+  );
+
+  useEffect(() => {
+    if (authStatus !== "authenticated") {
+      return;
+    }
+
+    const token = getAccessToken();
+    if (!token) {
+      signOut();
+      return;
+    }
+
+    const controller = new AbortController();
+    let isActive = true;
+
+    void Promise.resolve().then(() => {
+      if (isActive) {
+        setFavoriteSyncUserId(null);
+        setFavoriteSyncStatus("loading");
+      }
+    });
+
+    void listAllFavoriteIds(gameClient, token, controller.signal)
+      .then((nextFavoriteIds) => {
+        if (!isActive) {
+          return;
+        }
+
+        setFavoriteIds(nextFavoriteIds);
+        setFavoriteSyncUserId(user?.id ?? null);
+        setFavoriteSyncStatus("ready");
+      })
+      .catch(() => {
+        if (isActive && !controller.signal.aborted) {
+          setFavoriteSyncUserId(user?.id ?? null);
+          setFavoriteSyncStatus("error");
+        }
+      });
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [authStatus, gameClient, getAccessToken, signOut, user?.id]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -204,6 +279,19 @@ export function CatalogList() {
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== "",
   );
+  const favoriteDataIsCurrent =
+    authStatus === "authenticated" &&
+    favoriteSyncUserId === user?.id &&
+    favoriteSyncStatus !== "idle";
+  const visibleFavoriteIds = favoriteDataIsCurrent
+    ? favoriteIds
+    : new Set<number>();
+  const visibleFavoriteStatus =
+    authStatus !== "authenticated"
+      ? "ready"
+      : favoriteDataIsCurrent
+        ? favoriteSyncStatus
+        : "loading";
 
   return (
     <>
@@ -217,13 +305,31 @@ export function CatalogList() {
         />
       ) : (
         <>
+          {authStatus === "authenticated" &&
+          visibleFavoriteStatus === "loading" ? (
+            <p className="catalog-favorites-status" role="status">
+              <span aria-hidden="true" className="loading-spinner" />
+              {copy.catalog.favorite.syncing}
+            </p>
+          ) : null}
+          {authStatus === "authenticated" &&
+          visibleFavoriteStatus === "error" ? (
+            <p className="catalog-favorites-status" role="status">
+              {copy.catalog.favorite.syncError}
+            </p>
+          ) : null}
           <ul aria-label={copy.catalog.title} className="catalog-grid">
             {items.map((game) => (
               <li key={game.igdbId}>
                 <GameCard
                   authStatus={authStatus}
+                  favoriteStatus={
+                    visibleFavoriteStatus === "loading" ? "loading" : "ready"
+                  }
                   game={game}
+                  isFavorite={visibleFavoriteIds.has(game.igdbId)}
                   messages={copy}
+                  onDelete={deleteFavorite}
                   onSave={saveFavorite}
                   onSelect={() => setSelectedGame(game)}
                 />
@@ -275,8 +381,13 @@ export function CatalogList() {
       {selectedGame ? (
         <GameDetailModal
           authStatus={authStatus}
+          favoriteStatus={
+            visibleFavoriteStatus === "loading" ? "loading" : "ready"
+          }
           game={selectedGame}
+          isFavorite={visibleFavoriteIds.has(selectedGame.igdbId)}
           messages={copy}
+          onDelete={deleteFavorite}
           onSave={saveFavorite}
           onClose={() => setSelectedGame(null)}
         />

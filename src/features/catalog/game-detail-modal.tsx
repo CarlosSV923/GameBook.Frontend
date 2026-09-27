@@ -22,6 +22,8 @@ import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
 type GameDetailModalProps = {
   game: IgdbGameCard;
+  favoriteStatus?: "loading" | "ready";
+  isFavorite?: boolean;
   messages: Messages;
   onDelete?: (igdbId: number) => Promise<void>;
   onDetailLoaded?: (detail: IgdbGameDetail) => Promise<void>;
@@ -34,7 +36,9 @@ type DetailStatus = "error" | "loading" | "ready";
 type SnapshotStatus = "error" | "idle" | "syncing" | "updated";
 
 export function GameDetailModal({
+  favoriteStatus = "ready",
   game,
+  isFavorite = false,
   messages,
   onDelete,
   onDetailLoaded,
@@ -197,7 +201,7 @@ export function GameDetailModal({
               <span aria-hidden="true">•</span>
               <span>{formatGamePlatforms(game.platforms)}</span>
             </p>
-            {onDelete ? (
+            {onDelete && (isFavorite || onSave === undefined) ? (
               <FavoriteDeleteAction
                 game={game}
                 messages={messages}
@@ -206,6 +210,7 @@ export function GameDetailModal({
               />
             ) : onSave ? (
               <FavoriteAction
+                favoriteStatus={favoriteStatus}
                 game={game}
                 messages={messages}
                 onSave={onSave}

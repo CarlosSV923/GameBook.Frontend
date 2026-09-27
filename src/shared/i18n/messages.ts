@@ -73,6 +73,9 @@ export const messages = {
         saved: "{name} saved to favorites",
         saving: "Saving {name} to favorites",
         signIn: "Sign in to save {name} to favorites",
+        syncError:
+          "Your personal shelf could not be checked. Save actions remain available.",
+        syncing: "Checking your personal shelf",
       },
       detail: {
         open: "Open details for {name}",
@@ -286,6 +289,9 @@ export const messages = {
         saved: "{name} se guardó en favoritos",
         saving: "Guardando {name} en favoritos",
         signIn: "Inicia sesión para guardar {name} en favoritos",
+        syncError:
+          "No se pudo comprobar tu estantería personal. Las acciones para guardar siguen disponibles.",
+        syncing: "Comprobando tu estantería personal",
       },
       detail: {
         open: "Abrir detalle de {name}",
