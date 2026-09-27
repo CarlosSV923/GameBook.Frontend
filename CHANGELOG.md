@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.7.0...gamebook-frontend-v0.8.0) (2026-09-27)
+
+
+### Features
+
+* sync favorite state in catalog and detail ([ed28a7a](https://github.com/CarlosSV923/GameBook.Frontend/commit/ed28a7aa34aa9e6a14c9489b6cfd10ab0f953289))
+
 ## [0.7.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.6.0...gamebook-frontend-v0.7.0) (2026-09-27)
 
 
