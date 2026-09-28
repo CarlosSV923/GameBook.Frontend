@@ -20,6 +20,19 @@ The browser does not call IGDB directly. The Next.js server exposes the local `/
 
 The browser stores the GameBook JWT in `sessionStorage`. Authenticated requests forward it as `Authorization: Bearer <token>` to AuthUser and Game. Public catalog requests remain available without a GameBook account.
 
+## Frontend architecture
+
+The repository architecture diagram is available in English and Spanish. The embedded previews use the validated dark theme; the standalone HTML files retain Archify's interactive viewer.
+
+[![GameBook.Frontend architecture — English](architecture/GameBook.Frontend-architecture-en-dark.png)](architecture/GameBook.Frontend-architecture-en.html)
+
+- [Open the interactive English diagram on GitHub Pages](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
+- [Open the interactive Spanish diagram on GitHub Pages](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-es.html)
+- [Open the English HTML source from this repository](architecture/GameBook.Frontend-architecture-en.html)
+- [Open the Spanish HTML source from this repository](architecture/GameBook.Frontend-architecture-es.html)
+
+The Spanish diagram keeps Archify's fixed viewer controls in English while translating the authored architecture content.
+
 ## Local setup
 
 Prerequisites:
