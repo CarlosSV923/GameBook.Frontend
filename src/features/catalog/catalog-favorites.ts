@@ -1,3 +1,6 @@
+import { defer, EMPTY, firstValueFrom } from "rxjs";
+import { expand, map, reduce } from "rxjs/operators";
+
 import type { GameClient } from "@/shared/api/game";
 
 const ALL_FAVORITES_PAGE_SIZE = 1000;
@@ -7,30 +10,43 @@ export async function listAllFavoriteIds(
   token: string,
   signal?: AbortSignal,
 ): Promise<Set<number>> {
-  const favoriteIds = new Set<number>();
-  let page = 1;
+  const requestPage = (page: number) => {
+    if (signal?.aborted) {
+      return Promise.reject(createAbortError());
+    }
 
-  do {
-    const response = await gameClient.listFavorites(
+    return gameClient.listFavorites(
       token,
       { page, pageSize: ALL_FAVORITES_PAGE_SIZE },
       signal,
     );
+  };
 
-    for (const favorite of response.items) {
-      favoriteIds.add(favorite.igdbId);
-    }
+  return firstValueFrom(
+    defer(() => requestPage(1)).pipe(
+      expand(
+        (response, pageIndex) =>
+          response.hasNext ? defer(() => requestPage(pageIndex + 2)) : EMPTY,
+        1,
+      ),
+      reduce((favoriteIds, response) => {
+        for (const favorite of response.items) {
+          favoriteIds.add(favorite.igdbId);
+        }
 
-    page += 1;
+        return favoriteIds;
+      }, new Set<number>()),
+      map((favoriteIds) => {
+        if (signal?.aborted) {
+          throw createAbortError();
+        }
 
-    if (!response.hasNext) {
-      break;
-    }
-  } while (!signal?.aborted);
+        return favoriteIds;
+      }),
+    ),
+  );
+}
 
-  if (signal?.aborted) {
-    throw new DOMException("The favorite lookup was aborted.", "AbortError");
-  }
-
-  return favoriteIds;
+function createAbortError(): DOMException {
+  return new DOMException("The favorite lookup was aborted.", "AbortError");
 }
