@@ -20,6 +20,19 @@ El navegador no llama directamente a IGDB. El servidor Next.js expone las rutas 
 
 El navegador almacena el JWT de GameBook en `sessionStorage`. Las peticiones autenticadas lo envían como `Authorization: Bearer <token>` a AuthUser y Game. El catálogo público está disponible sin cuenta de GameBook.
 
+## Arquitectura del frontend
+
+El diagrama de arquitectura del repositorio está disponible en inglés y español. Las vistas previas embebidas usan el tema oscuro validado; los archivos HTML conservan el visor interactivo de Archify.
+
+[![Arquitectura de GameBook.Frontend — español](architecture/GameBook.Frontend-architecture-es-dark.png)](architecture/GameBook.Frontend-architecture-es.html)
+
+- [Abrir el diagrama interactivo en español en GitHub Pages](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-es.html)
+- [Abrir el diagrama interactivo en inglés en GitHub Pages](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
+- [Abrir el HTML fuente en español desde este repositorio](architecture/GameBook.Frontend-architecture-es.html)
+- [Abrir el HTML fuente en inglés desde este repositorio](architecture/GameBook.Frontend-architecture-en.html)
+
+Los controles fijos del visor Archify permanecen en inglés, mientras que el contenido authored de la arquitectura está traducido al español.
+
 ## Configuración local
 
 Requisitos previos:
