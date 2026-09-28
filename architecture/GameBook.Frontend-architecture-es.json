@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura del Frontend de GameBook",
+    "output": "GameBook.Frontend-architecture-es.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/CarlosSV923/GameBook.Frontend",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "6cd310e341ef958ef639540868d565bf054073ac"
+    },
+    "views": [
+      { "id": "public-catalog", "label": "Catálogo público", "focus": ["browser", "next-app", "igdb-routes", "igdb-api"], "note": "Sigue una consulta pública del catálogo desde el navegador hasta el límite server-side de IGDB." },
+      { "id": "authenticated-actions", "label": "Acciones autenticadas", "focus": ["browser", "next-app", "auth-adapter", "authuser", "game-adapter", "game"], "note": "Sigue las operaciones de cuenta y favoritos protegidas por JWT mediante los adaptadores de servicios." },
+      { "id": "external-auth", "label": "Acceso externo a IGDB", "focus": ["igdb-routes", "igdb-runtime", "twitch", "igdb-api"], "note": "Inspecciona la ruta OAuth server-only que mantiene las credenciales del proveedor fuera del navegador." }
+    ]
+  },
+  "components": [
+    { "id": "browser", "type": "external", "label": "Navegador", "sublabel": "UI pública y autenticada", "pos": [40, 300], "size": [150, 68], "sources": [{ "path": "src/app/page.tsx", "label": "interfaz del catálogo" }] },
+    { "id": "next-app", "type": "frontend", "label": "Frontend Next.js", "sublabel": "App Router + sesión", "pos": [280, 300], "size": [170, 68], "tag": "Vercel", "sources": [{ "path": "src/app/layout.tsx", "label": "App Router" }, { "path": "src/shared/auth/session-storage.ts", "label": "sessionStorage" }] },
+    { "id": "auth-adapter", "type": "frontend", "label": "Adaptador AuthUser", "sublabel": "Axios + RxJS", "pos": [520, 150], "size": [170, 68], "sources": [{ "path": "src/features/api/auth-user-client.ts", "label": "cliente del servicio" }, { "path": "src/shared/api/http.ts", "label": "transporte HTTP" }] },
+    { "id": "game-adapter", "type": "frontend", "label": "Adaptador Game", "sublabel": "JWT + healthcheck", "pos": [520, 450], "size": [170, 68], "sources": [{ "path": "src/features/api/game-client.ts", "label": "cliente del servicio" }, { "path": "src/shared/api/healthcheck.ts", "label": "healthcheck" }] },
+    { "id": "igdb-routes", "type": "backend", "label": "Rutas server-side IGDB", "sublabel": "Rutas API de Next.js", "pos": [520, 300], "size": [170, 68], "sources": [{ "path": "src/app/api/igdb/games/route.ts", "label": "ruta del catálogo" }] },
+    { "id": "authuser", "type": "backend", "label": "AuthUser", "sublabel": "Microservicio en Render", "pos": [800, 150], "size": [170, 68], "tag": "emisor JWT" },
+    { "id": "game", "type": "backend", "label": "Game", "sublabel": "Microservicio en Render", "pos": [800, 450], "size": [170, 68], "tag": "API de favoritos" },
+    { "id": "igdb-runtime", "type": "backend", "label": "Runtime IGDB", "sublabel": "Cliente server-only", "pos": [800, 300], "size": [170, 68], "sources": [{ "path": "src/server/igdb/igdb-runtime-config.ts", "label": "runtime del proveedor" }, { "path": "src/server/igdb/igdb-client.ts", "label": "cliente IGDB" }] },
+    { "id": "twitch", "type": "external", "label": "OAuth de Twitch", "sublabel": "Token de aplicación", "pos": [1070, 230], "size": [170, 68] },
+    { "id": "igdb-api", "type": "external", "label": "API de IGDB", "sublabel": "Metadatos de juegos", "pos": [1070, 370], "size": [170, 68] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Navegador", "wraps": ["browser"] },
+    { "kind": "region", "label": "Límite server-side de Next.js", "wraps": ["next-app", "igdb-routes", "igdb-runtime"] },
+    { "kind": "security-group", "label": "Credenciales IGDB server-only", "wraps": ["igdb-runtime", "twitch", "igdb-api"] }
+  ],
+  "connections": [
+    { "id": "browser-to-next", "from": "browser", "to": "next-app", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "next-to-auth-adapter", "from": "next-app", "to": "auth-adapter", "label": "solicitudes de cuenta", "fromSide": "right", "toSide": "left" },
+    { "id": "auth-adapter-to-authuser", "from": "auth-adapter", "to": "authuser", "label": "healthcheck + REST/JWT", "variant": "security", "labelDy": 58 },
+    { "id": "next-to-game-adapter", "from": "next-app", "to": "game-adapter", "label": "solicitudes de favoritos", "fromSide": "right", "toSide": "left" },
+    { "id": "game-adapter-to-game", "from": "game-adapter", "to": "game", "label": "healthcheck + Bearer", "variant": "security" },
+    { "id": "next-to-igdb-routes", "from": "next-app", "to": "igdb-routes", "label": "catálogo / detalle", "fromSide": "right", "toSide": "left", "labelDx": 100, "labelDy": -28 },
+    { "id": "routes-to-runtime", "from": "igdb-routes", "to": "igdb-runtime", "label": "consultas normalizadas", "labelDy": -28 },
+    { "id": "runtime-to-twitch", "from": "igdb-runtime", "to": "twitch", "label": "token OAuth", "variant": "security", "fromSide": "right", "toSide": "left" },
+    { "id": "runtime-to-igdb", "from": "igdb-runtime", "to": "igdb-api", "label": "Client-ID + Bearer", "variant": "security", "fromSide": "right", "toSide": "left" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Límite del frontend", "items": ["Next.js sirve la interfaz y las rutas server-side de IGDB", "El navegador nunca recibe las credenciales del proveedor IGDB"] },
+    { "dot": "emerald", "title": "Servicios GameBook", "items": ["AuthUser es dueño de la cuenta y los flujos JWT", "Game es dueño de los favoritos autenticados", "Los healthchecks preceden las solicitudes a AuthUser y Game"] },
+    { "dot": "rose", "title": "Seguridad del proveedor", "items": ["OAuth de Twitch emite el token de aplicación", "El runtime IGDB llama a IGDB server-side y normaliza las respuestas"] },
+    { "dot": "slate", "title": "Idioma del visor", "items": ["Las etiquetas authored están traducidas al español", "Los controles fijos del visor Archify permanecen en inglés"] }
+  ]
+}
