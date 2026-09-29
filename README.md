@@ -119,3 +119,4 @@ Commits follow Conventional Commits. The `release-please` workflow runs only on 
 
 - [GameBook.Microservice.AuthUser](https://github.com/CarlosSV923/GameBook.Microservice.AuthUser)
 - [GameBook.Microservice.Game](https://github.com/CarlosSV923/GameBook.Microservice.Game)
+- [GameBook.System documentation](https://github.com/CarlosSV923/GameBook.System/blob/main/README.md)
