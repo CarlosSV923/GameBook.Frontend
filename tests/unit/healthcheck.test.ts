@@ -1,12 +1,37 @@
 import axios from "axios";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   healthcheckMaxRetries,
   waitForServiceHealth,
 } from "@/shared/api/healthcheck";
+import {
+  dismissServiceWarmupAlert,
+  getServiceWarmupAlertSnapshot,
+} from "@/shared/api/service-warmup-alert";
 
 describe("service healthcheck", () => {
+  afterEach(() => {
+    dismissServiceWarmupAlert();
+  });
+
+  it("does not show the warmup alert when the first attempt succeeds", async () => {
+    const adapter = vi.fn().mockResolvedValue({
+      config: {},
+      data: null,
+      headers: {},
+      status: 200,
+      statusText: "200",
+    });
+    const httpClient = axios.create({ adapter });
+
+    await expect(
+      waitForServiceHealth("https://auth.example.test", undefined, httpClient),
+    ).resolves.toBeUndefined();
+
+    expect(getServiceWarmupAlertSnapshot()).toEqual({ visible: false });
+  });
+
   it("retries only the health endpoint and proceeds after HTTP 200", async () => {
     const adapter = vi
       .fn()
@@ -43,6 +68,7 @@ describe("service healthcheck", () => {
     );
     expect(adapter.mock.calls[0][0].method).toBe("get");
     expect(adapter.mock.calls[0][0].timeout).toBe(15_000);
+    expect(getServiceWarmupAlertSnapshot()).toEqual({ visible: false });
   });
 
   it("stops after the initial attempt plus 15 retries", async () => {
@@ -60,6 +86,7 @@ describe("service healthcheck", () => {
     ).rejects.toMatchObject({ code: "SERVICE_UNAVAILABLE", status: 503 });
 
     expect(adapter).toHaveBeenCalledTimes(healthcheckMaxRetries + 1);
+    expect(getServiceWarmupAlertSnapshot()).toEqual({ visible: true });
   });
 
   it("propagates caller cancellation without retrying", async () => {
@@ -83,5 +110,6 @@ describe("service healthcheck", () => {
 
     await expect(healthcheck).rejects.toMatchObject({ name: "AbortError" });
     expect(adapter).toHaveBeenCalledTimes(1);
+    expect(getServiceWarmupAlertSnapshot()).toEqual({ visible: false });
   });
 });

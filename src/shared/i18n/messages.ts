@@ -217,6 +217,10 @@ export const messages = {
       rating: "Rating",
       year: "Year",
     },
+    serviceWarmup: {
+      dismiss: "Dismiss server startup notice",
+      message: "One moment while we bring the test servers online.",
+    },
   },
   es: {
     home: {
@@ -432,6 +436,11 @@ export const messages = {
       platforms: "Plataformas",
       rating: "Puntuación",
       year: "Año",
+    },
+    serviceWarmup: {
+      dismiss: "Cerrar aviso de arranque de servidores",
+      message:
+        "Un momento mientras ponemos en marcha los servidores de prueba.",
     },
   },
 } as const;
