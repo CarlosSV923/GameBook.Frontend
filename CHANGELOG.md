@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.8.0...gamebook-frontend-v0.9.0) (2026-09-29)
+
+
+### Features
+
+* **frontend:** notify when render services wake ([8528370](https://github.com/CarlosSV923/GameBook.Frontend/commit/852837029492d540a8259e2d6f92245f42e81d30))
+* **frontend:** notify when Render services wake ([6eb0ff5](https://github.com/CarlosSV923/GameBook.Frontend/commit/6eb0ff56fbf338258fae10e7f5f41a24c93d0dd3))
+
 ## [0.8.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.7.0...gamebook-frontend-v0.8.0) (2026-09-27)
 
 
