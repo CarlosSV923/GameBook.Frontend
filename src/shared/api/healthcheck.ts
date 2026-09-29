@@ -1,12 +1,16 @@
 import axios from "axios";
 import { defer, firstValueFrom, of, throwError, timer } from "rxjs";
-import { catchError, map, mergeMap, retry } from "rxjs/operators";
+import { catchError, map, mergeMap, retry, tap } from "rxjs/operators";
 
 import {
   ApiClientError,
   defaultHttpClient,
   type HttpClient,
 } from "@/shared/api/http";
+import {
+  reportHealthcheckFirstFailure,
+  reportHealthcheckRecovery,
+} from "@/shared/api/service-warmup-alert";
 
 export const healthcheckTimeoutMs = 15_000;
 export const healthcheckMaxRetries = 15;
@@ -18,23 +22,45 @@ export async function waitForServiceHealth(
   signal?: AbortSignal,
   httpClient: HttpClient = defaultHttpClient,
 ): Promise<void> {
+  let attempt = 0;
+  let reportedFailure = false;
+
   return firstValueFrom(
-    defer(() =>
-      httpClient.request({
+    defer(() => {
+      attempt += 1;
+
+      return httpClient.request({
         headers: healthcheckHeaders,
         method: "GET",
         signal,
         timeout: healthcheckTimeoutMs,
         url: `${serviceUrl}/health`,
         validateStatus: () => true,
-      }),
-    ).pipe(
+      });
+    }).pipe(
       mergeMap((response) => {
         if (response.status === 200) {
+          if (reportedFailure) {
+            reportHealthcheckRecovery(serviceUrl);
+          }
+
           return of(undefined);
         }
 
         return throwError(() => new HealthcheckError(response.status));
+      }),
+      tap({
+        error: (error: unknown) => {
+          if (
+            attempt === 1 &&
+            !signal?.aborted &&
+            !axios.isCancel(error) &&
+            !reportedFailure
+          ) {
+            reportedFailure = true;
+            reportHealthcheckFirstFailure(serviceUrl);
+          }
+        },
       }),
       retry({
         count: healthcheckMaxRetries,
