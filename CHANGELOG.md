@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.9.0...gamebook-frontend-v0.10.0) (2026-09-30)
+
+
+### Features
+
+* add local Compose image ([05ca4ef](https://github.com/CarlosSV923/GameBook.Frontend/commit/05ca4ef129d38f155f0cd8725da23046dfce207f))
+* **frontend:** add compose integration image ([32e11ce](https://github.com/CarlosSV923/GameBook.Frontend/commit/32e11ce9a34453130ae1cef1b67d52a36012d624))
+
 ## [0.9.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.8.0...gamebook-frontend-v0.9.0) (2026-09-29)
 
 
