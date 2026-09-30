@@ -49,6 +49,10 @@ pnpm dev
 
 The frontend is available at `http://localhost:3000` by default.
 
+## Local Docker image
+
+The repository includes the production-style `Dockerfile` used by the integration Compose in [GameBook.System](https://github.com/CarlosSV923/GameBook.System). Keep the three repositories as sibling directories and follow the Compose setup there; the browser-facing `NEXT_PUBLIC_AUTHUSER_URL` and `NEXT_PUBLIC_GAME_URL` values are supplied as image build arguments.
+
 ## Production deployment
 
 The public GameBook frontend is deployed on Vercel at [`https://gamebook-frontend.vercel.app`](https://gamebook-frontend.vercel.app). Its production service dependencies are AuthUser at [`https://gamebook-microservice-authuser.onrender.com`](https://gamebook-microservice-authuser.onrender.com) and Game at [`https://gamebook-microservice-game.onrender.com`](https://gamebook-microservice-game.onrender.com). AuthUser and Game expose their production Swagger UI at [`/docs`](https://gamebook-microservice-authuser.onrender.com/docs) and [`/docs`](https://gamebook-microservice-game.onrender.com/docs), respectively.
