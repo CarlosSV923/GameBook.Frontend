@@ -1,6 +1,7 @@
 import type { MouseEvent } from "react";
 import type { Messages } from "@/shared/i18n/messages";
 import { CatalogState } from "@/shared/ui/catalog-state";
+import { Button } from "@/shared/ui/button";
 
 export function CollectionPagination({
   fetching,
@@ -16,33 +17,41 @@ export function CollectionPagination({
   onNext: (event: MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
-    <div aria-live="polite" className="catalog-pagination">
+    <div
+      aria-live="polite"
+      className="mt-6 grid min-h-[42px] justify-items-center gap-2.5"
+    >
       {fetching ? (
-        <p className="catalog-pagination__status" role="status">
-          <span aria-hidden="true" className="loading-spinner" />
+        <p
+          className="m-0 inline-flex items-center text-center text-xs leading-[1.4] text-ink-muted"
+          role="status"
+        >
+          <span
+            aria-hidden="true"
+            className="mr-2 inline-block size-3.5 shrink-0 animate-[catalog-suggestion-search_700ms_linear_infinite] rounded-full border-2 border-current/30 border-t-copper align-[-2px] motion-reduce:animate-none"
+          />
           {messages.states.loadingMore}
         </p>
       ) : null}
       {error ? (
-        <div className="catalog-pagination__error" role="alert">
+        <div
+          className="flex flex-wrap items-center justify-center gap-3 text-center text-[0.8125rem] text-danger"
+          role="alert"
+        >
           <p>{messages.states.paginationError}</p>
-          <button
-            className="catalog-filter-button catalog-filter-button--quiet"
+          <Button
+            className="min-w-[120px]"
             onClick={onNext}
-            type="button"
+            variant="secondary"
           >
             {messages.states.retry}
-          </button>
+          </Button>
         </div>
       ) : null}
       {!fetching && !error && hasNext ? (
-        <button
-          className="catalog-filter-button catalog-pagination__button"
-          onClick={onNext}
-          type="button"
-        >
+        <Button className="min-w-[120px]" onClick={onNext} variant="primary">
           {messages.states.loadMore}
-        </button>
+        </Button>
       ) : null}
       {!fetching && !error && !hasNext ? (
         <CatalogState kind="end" messages={messages} />

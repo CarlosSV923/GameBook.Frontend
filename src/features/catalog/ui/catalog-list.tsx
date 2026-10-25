@@ -147,13 +147,22 @@ export function CatalogList() {
       ) : (
         <>
           {authStatus === "authenticated" && favoriteIdsQuery.isPending ? (
-            <p className="catalog-favorites-status" role="status">
-              <span aria-hidden="true" className="loading-spinner" />
+            <p
+              className="mb-4 flex items-center gap-2 text-xs leading-[1.4] text-ink-muted"
+              role="status"
+            >
+              <span
+                aria-hidden="true"
+                className="inline-block size-3.5 shrink-0 animate-[catalog-suggestion-search_700ms_linear_infinite] rounded-full border-2 border-current/30 border-t-copper motion-reduce:animate-none"
+              />
               {copy.catalog.favorite.syncing}
             </p>
           ) : null}
           {authStatus === "authenticated" && favoriteIdsQuery.isError ? (
-            <p className="catalog-favorites-status" role="status">
+            <p
+              className="mb-4 flex items-center gap-2 text-xs leading-[1.4] text-ink-muted"
+              role="status"
+            >
               {copy.catalog.favorite.syncError}
             </p>
           ) : null}

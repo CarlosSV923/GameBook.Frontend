@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
 import { AuthProvider } from "@/features/auth/ui/auth-provider";
@@ -9,22 +9,32 @@ import { QueryProvider } from "@/shared/query/query-client-provider";
 
 import "./globals.css";
 
-const newsreader = Newsreader({
-  subsets: ["latin"],
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/newsreader-latin-600-normal.woff2", weight: "600" },
+  ],
+  display: "swap",
+  fallback: ["Georgia", "Times New Roman", "serif"],
   variable: "--font-newsreader",
-  weight: ["400", "600"],
 });
 
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
+const ibmPlexSans = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-sans-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/ibm-plex-sans-latin-500-normal.woff2", weight: "500" },
+    { path: "./fonts/ibm-plex-sans-latin-600-normal.woff2", weight: "600" },
+  ],
+  display: "swap",
+  fallback: ["Segoe UI", "Aptos", "system-ui", "sans-serif"],
   variable: "--font-ibm-plex-sans",
-  weight: ["400", "500", "600"],
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
+const ibmPlexMono = localFont({
+  src: "./fonts/ibm-plex-mono-latin-500-normal.woff2",
+  display: "swap",
+  fallback: ["SFMono-Regular", "Consolas", "monospace"],
   variable: "--font-ibm-plex-mono",
-  weight: ["500"],
 });
 
 export const metadata: Metadata = {

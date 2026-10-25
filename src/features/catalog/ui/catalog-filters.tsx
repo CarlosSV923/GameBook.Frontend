@@ -401,19 +401,19 @@ function SuggestionField({
       {isOpen && isLoading ? (
         <div
           aria-live="polite"
-          className="catalog-filter-suggestions catalog-filter-suggestions--loading"
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-[6] flex min-h-11 items-center gap-2.5 rounded-control border border-border bg-paper-raised p-2.5 text-[0.8125rem] font-semibold leading-[1.4] text-ink-secondary shadow-raised"
           id={`${id}-suggestions`}
           role="status"
         >
           <span
             aria-hidden="true"
-            className="catalog-filter-suggestions__spinner"
+            className="size-3.5 shrink-0 animate-[catalog-suggestion-search_700ms_linear_infinite] rounded-full border-2 border-slate/40 border-t-copper motion-reduce:animate-none"
           />
           <span>{loadingLabel}</span>
         </div>
       ) : hasSuggestions ? (
         <ul
-          className="catalog-filter-suggestions"
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-[6] grid max-h-[220px] list-none gap-0.5 overflow-y-auto rounded-control border border-border bg-paper-raised p-[5px] shadow-raised"
           id={`${id}-suggestions`}
           aria-label={label}
           role="listbox"
@@ -425,6 +425,7 @@ function SuggestionField({
               role="option"
             >
               <button
+                className="w-full cursor-pointer rounded-[4px] border-0 bg-transparent px-2.5 py-[9px] text-left text-[0.8125rem] text-ink-secondary hover:bg-paper-inset hover:text-ink"
                 onClick={() => {
                   onSelect(suggestion);
                   setIsFocused(false);
