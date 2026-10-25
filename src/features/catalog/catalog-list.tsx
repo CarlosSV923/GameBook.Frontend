@@ -295,6 +295,7 @@ export function CatalogList() {
 
   return (
     <>
+      <p className="catalog-ranking-note">{copy.catalog.rankingNote}</p>
       <CatalogFilters onApply={applyFilters} />
       {status !== "ready" ? (
         <CatalogState

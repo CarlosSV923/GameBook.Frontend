@@ -20,6 +20,12 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   ).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(
+    page.getByText(
+      "The ranking uses IGDB’s combined critic and player rating.",
+    ),
+  ).toBeVisible();
+  await expect(page.locator('[aria-label="Rating / 100: 92"]')).toBeVisible();
 
   await page.getByRole("combobox", { name: "Game name" }).fill("Example");
   await expect(
@@ -125,6 +131,17 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(
     page.getByRole("link", { name: "Juegos favoritos" }),
+  ).toBeVisible();
+
+  // The ranking note and 0–100 label belong to the public catalog.
+  await page.goto("/");
+  await expect(
+    page.getByText(
+      "La clasificación usa la puntuación combinada de la crítica y los jugadores de IGDB.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.locator('[aria-label="Puntuación / 100: 92"]'),
   ).toBeVisible();
   await mocks.expectNoExternalRequests();
 });

@@ -2,6 +2,8 @@ import "server-only";
 
 import { IgdbClientError, type IgdbCatalogFilters } from "@/shared/api/igdb";
 
+export const MIN_TOTAL_RATING_COUNT = 100;
+
 const catalogFields = [
   "id",
   "name",
@@ -81,6 +83,10 @@ export function buildGamesQuery(filters: IgdbCatalogFilters): string {
     where.push(
       `first_release_date >= ${utcYearStart(yearFrom)} & first_release_date < ${utcYearStart(yearTo + 1)}`,
     );
+  }
+
+  if (!name) {
+    where.push(`total_rating_count >= ${MIN_TOTAL_RATING_COUNT}`);
   }
 
   const clauses = [`fields ${catalogFields}`];

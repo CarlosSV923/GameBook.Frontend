@@ -36,6 +36,7 @@ export const messages = {
     catalog: {
       description:
         "Search the archive by name, platform, or launch year when the catalog is connected.",
+      rankingNote: "The ranking uses IGDB’s combined critic and player rating.",
       emptyDescription:
         "Your next search will bring the shelves to life. The same view will later hold public results and your saved games.",
       emptyTitle: "The shelves are ready for your next search.",
@@ -214,7 +215,7 @@ export const messages = {
     },
     indexStrip: {
       platforms: "Platforms",
-      rating: "Rating",
+      rating: "Rating / 100",
       year: "Year",
     },
     serviceWarmup: {
@@ -257,6 +258,8 @@ export const messages = {
     catalog: {
       description:
         "Busca en el archivo por nombre, plataforma o año de lanzamiento cuando el catálogo esté conectado.",
+      rankingNote:
+        "La clasificación usa la puntuación combinada de la crítica y los jugadores de IGDB.",
       emptyDescription:
         "Tu próxima búsqueda dará vida a las estanterías. Después, esta vista reunirá resultados públicos y juegos guardados.",
       emptyTitle: "Las estanterías esperan tu próxima búsqueda.",
@@ -434,7 +437,7 @@ export const messages = {
     },
     indexStrip: {
       platforms: "Plataformas",
-      rating: "Puntuación",
+      rating: "Puntuación / 100",
       year: "Año",
     },
     serviceWarmup: {

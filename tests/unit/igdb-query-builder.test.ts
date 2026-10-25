@@ -5,6 +5,7 @@ import {
   buildGameSuggestionsQuery,
   buildGamesQuery,
   buildPlatformSuggestionsQuery,
+  MIN_TOTAL_RATING_COUNT,
   normalizeCatalogPagination,
 } from "@/server/igdb/igdb-query-builder";
 import { IgdbClientError } from "@/shared/api/igdb";
@@ -31,9 +32,13 @@ describe("IGDB query builder", () => {
     expect(query).toContain("first_release_date != null");
     expect(query).toContain("total_rating != null");
     expect(query).toContain("platforms != null");
+    expect(query).not.toContain("total_rating_count");
 
     const defaultQuery = buildGamesQuery({});
     expect(defaultQuery).toContain("total_rating != null");
+    expect(defaultQuery).toContain(
+      `total_rating_count >= ${MIN_TOTAL_RATING_COUNT}`,
+    );
     expect(defaultQuery).toContain("sort total_rating desc");
   });
 
@@ -48,10 +53,27 @@ describe("IGDB query builder", () => {
     });
   });
 
+  it("applies the rating-count threshold only to ranked catalog queries", () => {
+    expect(buildGamesQuery({ platformId: 6 })).toContain(
+      `total_rating_count >= ${MIN_TOTAL_RATING_COUNT}`,
+    );
+    expect(buildGamesQuery({ name: "Metroid" })).not.toContain(
+      "total_rating_count",
+    );
+    expect(buildGameSuggestionsQuery("Metroid") ?? "").not.toContain(
+      "total_rating_count",
+    );
+    expect(buildPlatformSuggestionsQuery("Nintendo") ?? "").not.toContain(
+      "total_rating_count",
+    );
+  });
+
   it("builds detail and suggestion bodies from fixed fields and escaped terms", () => {
-    expect(buildGameDetailQuery(42)).toContain(
+    const detailQuery = buildGameDetailQuery(42);
+    expect(detailQuery).toContain(
       "fields id,name,first_release_date,cover.image_id,total_rating,platforms.id,platforms.name,summary,genres.name,involved_companies.developer,involved_companies.company.name,release_dates.date,release_dates.y,release_dates.m,release_dates.d,screenshots.image_id; where id = 42; limit 1;",
     );
+    expect(detailQuery).not.toContain("total_rating_count");
     expect(buildGameSuggestionsQuery('A \\"quoted\\"')).toContain(
       'search "A \\\\\\\"quoted\\\\\\\""',
     );

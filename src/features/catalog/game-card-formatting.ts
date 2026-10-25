@@ -1,7 +1,7 @@
 import type { Platform } from "@/shared/api/game";
 
 export function formatGameRating(rating: number | null): string {
-  return rating === null ? "—" : (Math.round(rating) / 10).toFixed(1);
+  return rating === null ? "—" : String(Math.round(rating));
 }
 
 export function formatGameYear(released: string | null): string {
