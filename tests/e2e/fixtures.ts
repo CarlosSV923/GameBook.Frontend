@@ -26,6 +26,11 @@ const detail = {
 
 type Favorite = typeof exampleGame;
 
+const transparentPng = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+  "base64",
+);
+
 export async function mockGameBook(
   page: Page,
   options: { catalogPagination?: boolean } = {},
@@ -37,6 +42,11 @@ export async function mockGameBook(
     const url = new URL(route.request().url());
 
     if (url.origin === "http://127.0.0.1:3180") {
+      // Serve covers locally so the image optimizer never fetches IGDB.
+      if (url.pathname === "/_next/image") {
+        await route.fulfill({ contentType: "image/png", body: transparentPng });
+        return;
+      }
       if (url.pathname.startsWith("/api/igdb/")) {
         await fulfillIgdb(route, url, options.catalogPagination ?? false);
         return;
