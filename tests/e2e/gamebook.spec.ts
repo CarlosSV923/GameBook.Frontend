@@ -9,9 +9,16 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   );
   const mocks = await mockGameBook(page);
   const catalogRequests: string[] = [];
+  const favoriteSaveRequests: string[] = [];
   page.on("request", (request) => {
     if (new URL(request.url()).pathname === "/api/igdb/games")
       catalogRequests.push(request.url());
+    if (
+      request.method() === "POST" &&
+      new URL(request.url()).pathname === "/v1/favorites"
+    ) {
+      favoriteSaveRequests.push(request.url());
+    }
   });
 
   await page.goto("/");
@@ -57,11 +64,43 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(openDetails).toBeFocused();
 
-  await page
-    .getByRole("button", { name: "Sign in to save Example Quest to favorites" })
-    .click();
+  const anonymousTrigger = page.getByRole("button", {
+    name: "Sign in to save Example Quest to favorites",
+  });
+  await anonymousTrigger.click();
+  expect(favoriteSaveRequests).toEqual([]);
+  const anonymousPopover = page.getByRole("region", {
+    name: "To save to favorites, you need to:",
+  });
+  await expect(anonymousPopover).toContainText(
+    "To save to favorites, you need to:",
+  );
+  await expect(anonymousTrigger).toHaveAttribute("aria-expanded", "true");
+  const anonymousPopoverId = await anonymousPopover.getAttribute("id");
+  if (!anonymousPopoverId) throw new Error("The favorite popover needs an id");
+  await expect(anonymousTrigger).toHaveAttribute(
+    "aria-controls",
+    anonymousPopoverId,
+  );
+  await expect(
+    anonymousPopover.getByRole("link", { name: "Sign in", exact: true }),
+  ).toBeFocused();
+  await expect(
+    anonymousPopover.getByRole("link", { name: "Sign in", exact: true }),
+  ).toHaveAttribute("href", "/login");
+  await expect(
+    anonymousPopover.getByRole("link", {
+      name: "Create account",
+      exact: true,
+    }),
+  ).toHaveAttribute("href", "/register");
+  await anonymousPopover.getByRole("link", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/login$/);
-  await page.goto("/register");
+  await page
+    .getByRole("navigation", { name: "Account navigation" })
+    .getByRole("link", { name: "Create account" })
+    .click();
+  await expect(page).toHaveURL(/\/register$/);
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Email address").fill("ada.lovelace@example.test");
   await page.getByLabel("Password", { exact: true }).fill("GameBook@2026");
@@ -81,6 +120,33 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await page
     .getByRole("button", { name: `Save ${exampleGame.name} to favorites` })
     .click();
+  const saveConfirmation = page.getByRole("group", {
+    name: `Confirm saving ${exampleGame.name}`,
+  });
+  await expect(saveConfirmation).toBeVisible();
+  await expect(
+    saveConfirmation.getByRole("button", { name: "Save" }),
+  ).toBeVisible();
+  await expect(
+    saveConfirmation.getByRole("button", { name: "Cancel" }),
+  ).toBeVisible();
+  expect(favoriteSaveRequests).toEqual([]);
+  await saveConfirmation.getByRole("button", { name: "Cancel" }).click();
+  await expect(saveConfirmation).toHaveCount(0);
+  await expect(
+    page.getByRole("button", {
+      name: `Save ${exampleGame.name} to favorites`,
+    }),
+  ).toBeFocused();
+  expect(favoriteSaveRequests).toEqual([]);
+  await page
+    .getByRole("button", { name: `Save ${exampleGame.name} to favorites` })
+    .click();
+  const reopenedSaveConfirmation = page.getByRole("group", {
+    name: `Confirm saving ${exampleGame.name}`,
+  });
+  await reopenedSaveConfirmation.getByRole("button", { name: "Save" }).click();
+  await expect.poll(() => favoriteSaveRequests).toHaveLength(1);
   // A saved catalog card switches to the remove action (GB-012.17).
   await expect(
     page.getByRole("button", {
@@ -170,6 +236,29 @@ test("mobile public catalog and detail", async ({ page }, testInfo) => {
   await expect(
     page.getByRole("heading", { name: exampleGame.name }),
   ).toBeVisible();
+  const favoriteTrigger = page.getByRole("button", {
+    name: `Sign in to save ${exampleGame.name} to favorites`,
+  });
+  await favoriteTrigger.click();
+  const anonymousPopover = page.getByRole("region", {
+    name: "To save to favorites, you need to:",
+  });
+  await expect(anonymousPopover).toBeVisible();
+  await expect(favoriteTrigger).toHaveAttribute("aria-expanded", "true");
+  const popoverBounds = await anonymousPopover.boundingBox();
+  const viewport = page.viewportSize();
+  expect(popoverBounds).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  expect(popoverBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(popoverBounds!.y).toBeGreaterThanOrEqual(0);
+  expect(popoverBounds!.x + popoverBounds!.width).toBeLessThanOrEqual(
+    viewport!.width,
+  );
+  expect(popoverBounds!.y + popoverBounds!.height).toBeLessThanOrEqual(
+    viewport!.height,
+  );
+  await page.keyboard.press("Escape");
+  await expect(favoriteTrigger).toBeFocused();
   await page
     .getByRole("button", { name: "Open details for Example Quest" })
     .click();
