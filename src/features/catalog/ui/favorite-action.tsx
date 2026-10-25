@@ -127,9 +127,13 @@ export function FavoriteAction({
       </IconButton>
       {saveState === "error" || saveState === "duplicate" ? (
         <span
-          className="absolute right-0 top-full mt-2 w-max max-w-[220px] rounded-control border border-border bg-paper-raised p-2 font-ui text-xs leading-snug text-danger shadow-md"
+          className="absolute right-0 top-full mt-2 flex w-max max-w-[240px] items-start gap-2 rounded-control border border-border bg-paper-raised p-3 font-ui text-xs leading-5 text-ink shadow-raised"
           role="alert"
         >
+          <span
+            aria-hidden="true"
+            className="mt-0.5 size-2 shrink-0 rounded-full bg-danger"
+          />
           {saveState === "duplicate" ? duplicateLabel : errorLabel}
         </span>
       ) : null}

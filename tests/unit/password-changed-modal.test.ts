@@ -17,6 +17,11 @@ describe("PasswordChangedModal", () => {
 
     expect(markup).toContain('role="dialog"');
     expect(markup).toContain('aria-modal="true"');
+    expect(markup).toContain('aria-labelledby="password-changed-title"');
+    expect(markup).toContain('aria-describedby="password-changed-description"');
+    expect(markup).toContain("bg-scrim");
+    expect(markup).toContain("bg-paper-raised");
+    expect(markup).toContain('type="button"');
     expect(markup).toContain("Password updated");
     expect(markup).toContain("Your session will close now");
     expect(markup).toContain("Sign in again");

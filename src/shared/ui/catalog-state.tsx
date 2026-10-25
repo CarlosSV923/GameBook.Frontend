@@ -2,7 +2,7 @@ import type { Messages } from "@/shared/i18n/messages";
 
 import { IndexStrip } from "@/shared/ui/index-strip";
 
-export type CatalogStateKind = "empty" | "error" | "loading";
+export type CatalogStateKind = "empty" | "end" | "error" | "loading";
 
 type CatalogStateProps = {
   context?: "catalog" | "favorites";
@@ -42,6 +42,10 @@ export function CatalogState({
           ? messages.favorites.errorTitle
           : messages.states.errorTitle,
     },
+    end: {
+      description: messages.states.endOfResults,
+      title: sectionCopy.title,
+    },
     loading: {
       description: sectionCopy.description,
       title:
@@ -79,17 +83,35 @@ export function CatalogState({
     </div>
   ) : (
     <div
-      aria-live="assertive"
-      className={`catalog-state catalog-state--${kind}`}
-      role={kind === "error" ? "alert" : undefined}
+      aria-live={kind === "end" ? "polite" : "assertive"}
+      className={`grid min-h-48 grid-cols-[72px_minmax(0,1fr)] gap-5 rounded-panel border border-border-soft bg-paper-raised p-5 shadow-raised sm:min-h-52 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-6 sm:p-6 ${kind === "error" ? "border-danger/40" : ""} ${kind === "end" ? "min-h-0 items-center py-4" : ""}`}
+      role={kind === "error" ? "alert" : kind === "end" ? "status" : undefined}
     >
       <IndexStrip labels={messages.indexStrip} />
-      <div className="catalog-state__content">
-        <p className="catalog-state__kicker">{sectionCopy.eyebrow}</p>
-        <h3>{content.title}</h3>
-        <p>{content.description}</p>
+      <div className="self-center">
+        <p className="mb-2 font-ui text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-copper-strong">
+          {sectionCopy.eyebrow}
+        </p>
+        {kind === "end" ? (
+          <p className="m-0 max-w-[44ch] text-sm leading-6 text-ink-secondary">
+            {content.description}
+          </p>
+        ) : (
+          <>
+            <h3 className="mb-3 max-w-[18ch] font-display text-2xl font-medium leading-tight tracking-tight text-ink">
+              {content.title}
+            </h3>
+            <p className="mb-0 max-w-[44ch] text-sm leading-6 text-ink-secondary">
+              {content.description}
+            </p>
+          </>
+        )}
         {kind === "error" && onRetry ? (
-          <button className="text-button" onClick={onRetry} type="button">
+          <button
+            className="mt-4 min-h-11 rounded-control border border-border bg-paper-inset px-4 text-sm font-semibold text-ink hover:border-copper focus-visible:outline-3 focus-visible:outline-focus focus-visible:outline-offset-2"
+            onClick={onRetry}
+            type="button"
+          >
             {messages.states.retry}
           </button>
         ) : null}

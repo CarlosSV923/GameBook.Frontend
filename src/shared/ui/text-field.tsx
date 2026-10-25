@@ -12,13 +12,14 @@ export type TextFieldProps = Omit<
   error?: string;
   hint?: string;
   icon?: ReactNode;
+  endAdornment?: ReactNode;
   id?: string;
   label: string;
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   function TextField(
-    { className, error, hint, icon, id, label, ...inputProps },
+    { className, endAdornment, error, hint, icon, id, label, ...inputProps },
     ref,
   ) {
     const generatedId = useId();
@@ -36,7 +37,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         >
           {label}
         </label>
-        <span className="relative flex min-h-11 items-center rounded-control border border-border bg-paper-inset text-ink transition-[border-color,box-shadow] duration-150 focus-within:border-focus focus-within:ring-3 focus-within:ring-focus">
+        <span
+          className={`relative flex min-h-11 items-center rounded-control border ${error ? "border-danger" : "border-border"} bg-paper-inset text-ink transition-[border-color,box-shadow] duration-150 focus-within:border-focus focus-within:ring-3 focus-within:ring-focus`}
+        >
           {icon ? (
             <span aria-hidden="true" className="ml-3 inline-flex shrink-0">
               {icon}
@@ -50,6 +53,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             id={inputId}
             ref={ref}
           />
+          {endAdornment ? (
+            <span className="mr-1 inline-flex shrink-0">{endAdornment}</span>
+          ) : null}
         </span>
         {hint ? (
           <span className="text-xs leading-4 text-ink-muted" id={hintId}>

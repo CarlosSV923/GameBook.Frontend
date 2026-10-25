@@ -1,5 +1,6 @@
 import type { MouseEvent } from "react";
 import type { Messages } from "@/shared/i18n/messages";
+import { CatalogState } from "@/shared/ui/catalog-state";
 
 export function CollectionPagination({
   fetching,
@@ -44,9 +45,7 @@ export function CollectionPagination({
         </button>
       ) : null}
       {!fetching && !error && !hasNext ? (
-        <p className="catalog-pagination__status">
-          {messages.states.endOfResults}
-        </p>
+        <CatalogState kind="end" messages={messages} />
       ) : null}
     </div>
   );

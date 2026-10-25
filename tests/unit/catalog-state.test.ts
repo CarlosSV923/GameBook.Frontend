@@ -27,6 +27,12 @@ describe("CatalogState", () => {
         onRetry: () => undefined,
       }),
     );
+    const end = renderToStaticMarkup(
+      createElement(CatalogState, {
+        kind: "end",
+        messages: messages.en,
+      }),
+    );
 
     expect(loading).toContain(messages.en.states.loading);
     expect(loading).toContain('aria-live="polite"');
@@ -37,5 +43,8 @@ describe("CatalogState", () => {
     expect(error).toContain(messages.en.states.errorTitle);
     expect(error).toContain(messages.en.states.retry);
     expect(error).toContain('role="alert"');
+    expect(end).toContain(messages.en.states.endOfResults);
+    expect(end).toContain('role="status"');
+    expect(end).toContain('data-variant="card"');
   });
 });
