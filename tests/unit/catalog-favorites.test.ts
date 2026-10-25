@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { listAllFavoriteIds } from "@/features/catalog/catalog-favorites";
-import type { GameClient } from "@/shared/api/game";
+import { listAllFavoriteIds } from "@/features/catalog/model/catalog-favorites";
+import type { GameClient } from "@/features/favorites/model/game";
 
 function createClient(
   pages: Array<{ hasNext: boolean; ids: number[] }>,

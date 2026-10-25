@@ -4,7 +4,7 @@ import {
   formatGamePlatforms,
   formatGameRating,
   formatGameYear,
-} from "@/features/catalog/game-card-formatting";
+} from "@/features/catalog/model/game-card-formatting";
 
 describe("GameBook card metadata", () => {
   it("shows rounded IGDB ratings on the 0-100 scale", () => {

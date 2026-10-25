@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import type { HttpClient } from "@/shared/api/http";
-import type { ApplicationTokenProvider } from "@/shared/api/igdb";
+import type { ApplicationTokenProvider } from "@/features/catalog/model/igdb";
 
 export type MockHttpResponse = {
   body?: unknown;

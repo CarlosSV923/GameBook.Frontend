@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { shouldDiscardToken } from "@/features/auth/auth-provider";
+import { shouldDiscardToken } from "@/features/auth/ui/auth-provider";
 import { ApiClientError } from "@/shared/api/http";
 
 describe("shouldDiscardToken", () => {

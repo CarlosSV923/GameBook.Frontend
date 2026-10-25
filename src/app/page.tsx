@@ -1,8 +1,8 @@
 "use client";
 
-import { AppShell } from "@/features/layout/app-shell";
-import { CatalogList } from "@/features/catalog/catalog-list";
-import { usePreferences } from "@/features/preferences/preferences-provider";
+import { AppShell } from "@/features/layout/ui/app-shell";
+import { CatalogList } from "@/features/catalog/ui/catalog-list";
+import { usePreferences } from "@/features/preferences/ui/preferences-provider";
 
 export default function Home() {
   return (

@@ -13,7 +13,7 @@ import {
   type IgdbCatalogFilters,
   type IgdbCatalogPage,
   type IgdbClient,
-} from "@/shared/api/igdb";
+} from "@/features/catalog/model/igdb";
 import {
   getIgdbRuntimeConfig,
   type IgdbRuntimeConfig,

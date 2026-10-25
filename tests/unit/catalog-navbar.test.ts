@@ -6,9 +6,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-import { AuthProvider } from "@/features/auth/auth-provider";
-import { CatalogNavbar } from "@/features/navigation/catalog-navbar";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { AuthProvider } from "@/features/auth/ui/auth-provider";
+import { CatalogNavbar } from "@/features/layout/ui/catalog-navbar";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("CatalogNavbar", () => {
   it("shows visitor account actions without exposing authenticated links", () => {

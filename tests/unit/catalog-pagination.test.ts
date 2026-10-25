@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   getNextCatalogOffset,
   mergeCatalogItems,
-} from "@/features/catalog/catalog-pagination";
+} from "@/features/catalog/model/catalog-pagination";
 
 const game = (igdbId: number) => ({
   igdbId,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getNextFavoritePage } from "@/features/favorites/favorites-pagination";
+import { getNextFavoritePage } from "@/features/favorites/model/favorites-pagination";
 
 describe("favorites pagination", () => {
   it("advances by the server page number", () => {

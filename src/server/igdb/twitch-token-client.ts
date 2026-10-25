@@ -9,7 +9,7 @@ import {
 import {
   IgdbClientError,
   type ApplicationTokenProvider,
-} from "@/shared/api/igdb";
+} from "@/features/catalog/model/igdb";
 import type { IgdbRuntimeConfig } from "@/server/igdb/igdb-runtime-config";
 
 export function createTwitchApplicationTokenProvider(

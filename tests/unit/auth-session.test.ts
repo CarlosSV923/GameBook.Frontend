@@ -7,7 +7,7 @@ import {
   SessionStorageUnavailableError,
   writeAccessToken,
 } from "@/shared/auth/session-storage";
-import { sessionStatusCheckIntervalMs } from "@/features/auth/auth-provider";
+import { sessionStatusCheckIntervalMs } from "@/features/auth/ui/auth-provider";
 
 function createStorage() {
   const values = new Map<string, string>();

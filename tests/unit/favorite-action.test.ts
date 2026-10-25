@@ -9,9 +9,9 @@ vi.mock("next/navigation", () => ({
 import {
   FavoriteAction,
   FavoriteDeleteAction,
-} from "@/features/catalog/favorite-action";
-import { GameCard } from "@/features/catalog/game-card";
-import { GameDetailModal } from "@/features/catalog/game-detail-modal";
+} from "@/features/catalog/ui/favorite-action";
+import { GameCard } from "@/features/catalog/ui/game-card";
+import { GameDetailModal } from "@/features/catalog/ui/game-detail-modal";
 import { messages } from "@/shared/i18n/messages";
 
 const game = {

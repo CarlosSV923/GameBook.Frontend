@@ -2,13 +2,13 @@ import "server-only";
 
 import { z } from "zod";
 
-import type { Platform } from "@/shared/api/game";
+import type { Platform } from "@/features/favorites/model/game";
 import {
   IgdbClientError,
   type IgdbGameCard,
   type IgdbGameDetail,
   type IgdbReleaseDatePrecision,
-} from "@/shared/api/igdb";
+} from "@/features/catalog/model/igdb";
 
 const recordSchema = z.record(z.string(), z.unknown());
 const requiredStringSchema = z

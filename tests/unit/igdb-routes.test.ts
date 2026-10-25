@@ -5,7 +5,7 @@ import {
   parseCatalogFilters,
   parseRequiredPositiveId,
 } from "@/server/igdb/igdb-route";
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 describe("IGDB server routes", () => {
   it("parses only the supported catalog filters", () => {

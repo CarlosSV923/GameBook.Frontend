@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createIgdbCatalogClient } from "@/features/api/igdb-catalog-client";
+import { createIgdbCatalogClient } from "@/features/catalog/api/igdb-catalog-client";
 import { createMockHttpClient } from "@/shared/api/mocks";
 
 const page = {

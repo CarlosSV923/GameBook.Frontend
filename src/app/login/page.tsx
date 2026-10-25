@@ -1,4 +1,4 @@
-import { LoginPageView } from "@/features/auth/login-page-view";
+import { LoginPageView } from "@/features/auth/ui/login-page-view";
 
 type LoginPageProps = {
   searchParams: Promise<{
