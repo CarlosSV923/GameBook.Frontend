@@ -26,7 +26,10 @@ const detail = {
 
 type Favorite = typeof exampleGame;
 
-export async function mockGameBook(page: Page) {
+export async function mockGameBook(
+  page: Page,
+  options: { catalogPagination?: boolean } = {},
+) {
   const favorites: Favorite[] = [];
   const blockedRequests: string[] = [];
 
@@ -35,7 +38,7 @@ export async function mockGameBook(page: Page) {
 
     if (url.origin === "http://127.0.0.1:3180") {
       if (url.pathname.startsWith("/api/igdb/")) {
-        await fulfillIgdb(route, url);
+        await fulfillIgdb(route, url, options.catalogPagination ?? false);
         return;
       }
       await route.continue();
@@ -63,8 +66,32 @@ export async function mockGameBook(page: Page) {
   };
 }
 
-async function fulfillIgdb(route: Route, url: URL) {
+async function fulfillIgdb(route: Route, url: URL, catalogPagination: boolean) {
   if (url.pathname === "/api/igdb/games") {
+    if (catalogPagination) {
+      const offset = Number(url.searchParams.get("offset") ?? 0);
+      const items = Array.from(
+        { length: offset === 0 ? 20 : 1 },
+        (_, index) => {
+          const number = offset + index + 1;
+          return {
+            ...exampleGame,
+            igdbId: 1000 + number,
+            name: `Pagination Example ${number}`,
+          };
+        },
+      );
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          hasNext: offset === 0,
+          items,
+          limit: 20,
+          offset,
+        }),
+      });
+      return;
+    }
     const gameMatches = matchesFilters(url, exampleGame);
     await route.fulfill({
       contentType: "application/json",

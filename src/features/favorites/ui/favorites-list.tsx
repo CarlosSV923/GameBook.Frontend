@@ -1,59 +1,50 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-} from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState, type MouseEvent } from "react";
 
-import { createGameClient } from "@/features/favorites/api/game-client";
 import { useAuth } from "@/features/auth/ui/auth-provider";
 import {
   CatalogFilters,
   type AppliedCatalogFilters,
   type CatalogSuggestionProvider,
 } from "@/features/catalog/ui/catalog-filters";
-import { mergeCatalogItems } from "@/features/catalog/model/catalog-pagination";
-import { GameDetailModal } from "@/features/catalog/ui/game-detail-modal";
 import { GameCard } from "@/features/catalog/ui/game-card";
+import { GameDetailModal } from "@/features/catalog/ui/game-detail-modal";
 import { toFavoriteSnapshot } from "@/features/favorites/model/favorite-snapshot";
 import { getNextFavoritePage } from "@/features/favorites/model/favorites-pagination";
-import { usePreferences } from "@/features/preferences/ui/preferences-provider";
-import type { Favorite } from "@/features/favorites/model/game";
+import type { Favorite, FavoritePage } from "@/features/favorites/model/game";
 import type { IgdbGameDetail } from "@/features/catalog/model/igdb";
-import { CatalogState, type CatalogStateKind } from "@/shared/ui/catalog-state";
+import { createGameClient } from "@/features/favorites/api/game-client";
+import { usePreferences } from "@/features/preferences/ui/preferences-provider";
+import { collectionKeys } from "@/shared/query/query-keys";
+import { CollectionPagination } from "@/shared/query/collection-pagination";
+import { CollectionSentinel } from "@/shared/query/collection-sentinel";
+import {
+  flattenCollection,
+  useInfiniteCollection,
+} from "@/shared/query/use-infinite-collection";
+import { CatalogState } from "@/shared/ui/catalog-state";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
-type FavoritesStatus = CatalogStateKind | "ready";
-const FAVORITES_PAGE_SIZE = 20;
+const PAGE_SIZE = 20;
 
 export function FavoritesList() {
   const { copy } = usePreferences();
-  const { getAccessToken, signOut, status: authStatus } = useAuth();
+  const { getAccessToken, signOut, status: authStatus, user } = useAuth();
+  const queryClient = useQueryClient();
+  const [filters, setFilters] = useState<AppliedCatalogFilters>({});
+  const [selectedGame, setSelectedGame] = useState<Favorite | null>(null);
   const gameClient = useMemo(
     () => createGameClient({ onUnauthorized: signOut }),
     [signOut],
   );
-  const [items, setItems] = useState<Favorite[]>([]);
-  const [status, setStatus] = useState<FavoritesStatus>("loading");
-  const [filters, setFilters] = useState<AppliedCatalogFilters>({});
-  const [hasNext, setHasNext] = useState(false);
-  const [nextPage, setNextPage] = useState(1);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [paginationError, setPaginationError] = useState(false);
-  const [selectedGame, setSelectedGame] = useState<Favorite | null>(null);
-  const [retryKey, setRetryKey] = useState(0);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const activeControllerRef = useRef<AbortController | null>(null);
-  const requestVersionRef = useRef(0);
-
   const suggestionProvider = useMemo<CatalogSuggestionProvider>(
     () => ({
       async getGameSuggestions(query, signal) {
-        const token = requireAccessToken(getAccessToken);
+        const token = getAccessToken();
+        if (!token)
+          throw new Error("A valid session is required to query favorites.");
         const response = await gameClient.suggestFavorites(
           token,
           "name",
@@ -61,12 +52,12 @@ export function FavoritesList() {
           undefined,
           signal,
         );
-        return response.items.map((suggestion) => ({
-          name: suggestion.value,
-        }));
+        return response.items.map(({ value }) => ({ name: value }));
       },
       async getPlatformSuggestions(query, signal) {
-        const token = requireAccessToken(getAccessToken);
+        const token = getAccessToken();
+        if (!token)
+          throw new Error("A valid session is required to query favorites.");
         const response = await gameClient.suggestFavorites(
           token,
           "platform",
@@ -74,222 +65,102 @@ export function FavoritesList() {
           undefined,
           signal,
         );
-        return response.items.map((suggestion) => ({
-          id: suggestion.platformId,
-          name: suggestion.value,
+        return response.items.map(({ platformId, value }) => ({
+          id: platformId,
+          name: value,
         }));
       },
     }),
     [gameClient, getAccessToken],
   );
-
-  useEffect(() => {
-    if (authStatus !== "authenticated") {
-      return;
-    }
-
-    const token = getAccessToken();
-    if (!token) {
-      signOut();
-      return;
-    }
-
-    const controller = new AbortController();
-    const requestVersion = ++requestVersionRef.current;
-    let isActive = true;
-    activeControllerRef.current = controller;
-
-    void gameClient
-      .listFavorites(
+  const collection = useInfiniteCollection<FavoritePage, Favorite, number>({
+    queryKey: collectionKeys.favorites(user?.id ?? "", filters),
+    enabled: authStatus === "authenticated" && Boolean(user?.id),
+    initialPageParam: 1,
+    queryPage: (page: number, signal) => {
+      const token = getAccessToken();
+      if (!token) {
+        signOut();
+        throw new Error("A valid session is required to query favorites.");
+      }
+      return gameClient.listFavorites(
         token,
-        { ...filters, page: 1, pageSize: FAVORITES_PAGE_SIZE },
-        controller.signal,
-      )
-      .then((page) => {
-        if (!isActive || requestVersion !== requestVersionRef.current) {
-          return;
-        }
-
-        setItems(page.items);
-        setHasNext(page.hasNext);
-        setNextPage(getNextFavoritePage(page));
-        setPaginationError(false);
-        setStatus(page.items.length > 0 ? "ready" : "empty");
-      })
-      .catch(() => {
-        if (
-          isActive &&
-          !controller.signal.aborted &&
-          requestVersion === requestVersionRef.current
-        ) {
-          setHasNext(false);
-          setStatus("error");
-        }
-      });
-
-    return () => {
-      isActive = false;
-      controller.abort();
-      if (activeControllerRef.current === controller) {
-        activeControllerRef.current = null;
-      }
-    };
-  }, [authStatus, filters, getAccessToken, gameClient, retryKey, signOut]);
-
-  const loadNextPage = useCallback(async () => {
-    if (status !== "ready" || !hasNext || isLoadingMore) {
-      return;
-    }
-
-    const token = getAccessToken();
-    if (!token) {
-      signOut();
-      return;
-    }
-
-    const controller = new AbortController();
-    const requestVersion = ++requestVersionRef.current;
-    activeControllerRef.current?.abort();
-    activeControllerRef.current = controller;
-    setIsLoadingMore(true);
-    setPaginationError(false);
-
-    try {
-      const page = await gameClient.listFavorites(
-        token,
-        { ...filters, page: nextPage, pageSize: FAVORITES_PAGE_SIZE },
-        controller.signal,
-      );
-
-      if (
-        controller.signal.aborted ||
-        requestVersion !== requestVersionRef.current
-      ) {
-        return;
-      }
-
-      setItems((currentItems) => mergeCatalogItems(currentItems, page.items));
-      setHasNext(page.hasNext);
-      setNextPage(getNextFavoritePage(page));
-    } catch {
-      if (
-        !controller.signal.aborted &&
-        requestVersion === requestVersionRef.current
-      ) {
-        setPaginationError(true);
-      }
-    } finally {
-      if (requestVersion === requestVersionRef.current) {
-        setIsLoadingMore(false);
-        activeControllerRef.current = null;
-      }
-    }
-  }, [
-    filters,
-    gameClient,
-    getAccessToken,
-    hasNext,
-    isLoadingMore,
-    nextPage,
-    signOut,
-    status,
-  ]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (
-      !sentinel ||
-      typeof IntersectionObserver === "undefined" ||
-      status !== "ready" ||
-      !hasNext
-    ) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          void loadNextPage();
-        }
-      },
-      { rootMargin: "320px 0px" },
-    );
-    observer.observe(sentinel);
-
-    return () => observer.disconnect();
-  }, [hasNext, loadNextPage, status]);
-
-  const applyFilters = (nextFilters: AppliedCatalogFilters) => {
-    activeControllerRef.current?.abort();
-    requestVersionRef.current += 1;
-    setItems([]);
-    setHasNext(false);
-    setNextPage(1);
-    setIsLoadingMore(false);
-    setPaginationError(false);
-    setStatus("loading");
-    setFilters(nextFilters);
-  };
-
-  const retryFavorites = () => {
-    activeControllerRef.current?.abort();
-    requestVersionRef.current += 1;
-    setItems([]);
-    setHasNext(false);
-    setNextPage(1);
-    setPaginationError(false);
-    setStatus("loading");
-    setRetryKey((key) => key + 1);
-  };
-
-  const retryNextPage = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    void loadNextPage();
-  };
-
-  const deleteFavorite = useCallback(
-    async (igdbId: number) => {
-      const token = requireAccessToken(getAccessToken);
-      await gameClient.deleteFavorite(token, igdbId);
-      setItems((currentItems) =>
-        currentItems.filter((item) => item.igdbId !== igdbId),
-      );
-      if (items.length === 1 && !hasNext) {
-        setStatus("empty");
-      }
-      setSelectedGame((currentGame) =>
-        currentGame?.igdbId === igdbId ? null : currentGame,
+        { ...filters, page, pageSize: PAGE_SIZE },
+        signal,
       );
     },
-    [gameClient, getAccessToken, hasNext, items.length],
-  );
-
-  const syncFavoriteSnapshot = useCallback(
-    async (detail: IgdbGameDetail) => {
-      const token = requireAccessToken(getAccessToken);
-      const updatedFavorite = await gameClient.updateFavoriteSnapshot(
+    getNextPageParam: (page) =>
+      page.hasNext ? getNextFavoritePage(page) : undefined,
+  });
+  const items = flattenCollection<Favorite>(collection.data);
+  const applyFilters = (nextFilters: AppliedCatalogFilters) => {
+    if (user?.id) {
+      queryClient.removeQueries({
+        queryKey: ["collection", "favorites", user.id],
+      });
+    }
+    setFilters(nextFilters);
+  };
+  const refetchFavorites = async () => {
+    if (user?.id)
+      await queryClient.resetQueries({
+        queryKey: ["collection", "favorites", user.id],
+      });
+  };
+  const refreshFavoriteIds = async () => {
+    if (user?.id) {
+      await queryClient.invalidateQueries({
+        queryKey: ["favorite-ids", user.id],
+      });
+    }
+  };
+  const deleteMutation = useMutation({
+    mutationFn: async (igdbId: number) => {
+      const token = getAccessToken();
+      if (!token)
+        throw new Error("A valid session is required to remove favorites.");
+      await gameClient.deleteFavorite(token, igdbId);
+    },
+    onSuccess: async (_data, igdbId) => {
+      setSelectedGame((current) =>
+        current?.igdbId === igdbId ? null : current,
+      );
+      await Promise.all([refetchFavorites(), refreshFavoriteIds()]);
+    },
+  });
+  const snapshotMutation = useMutation({
+    mutationFn: async (detail: IgdbGameDetail) => {
+      const token = getAccessToken();
+      if (!token)
+        throw new Error("A valid session is required to query favorites.");
+      return gameClient.updateFavoriteSnapshot(
         token,
         detail.igdbId,
         toFavoriteSnapshot(detail),
       );
-
-      setItems((currentItems) =>
-        currentItems.map((item) =>
-          item.igdbId === updatedFavorite.igdbId ? updatedFavorite : item,
-        ),
-      );
-      setSelectedGame((currentGame) =>
-        currentGame?.igdbId === updatedFavorite.igdbId
-          ? updatedFavorite
-          : currentGame,
-      );
     },
-    [gameClient, getAccessToken],
-  );
+    onSuccess: async (favorite) => {
+      setSelectedGame((current) =>
+        current?.igdbId === favorite.igdbId ? favorite : current,
+      );
+      await refetchFavorites();
+    },
+  });
 
+  const status = collection.isPending
+    ? "loading"
+    : collection.isError
+      ? "error"
+      : items.length
+        ? "ready"
+        : "empty";
   const hasActiveFilters = Object.values(filters).some(
     (value) => value !== undefined && value !== "",
   );
+  const retryNextPage = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    void collection.fetchNextPage({ cancelRefetch: false });
+  };
 
   return (
     <>
@@ -297,6 +168,7 @@ export function FavoritesList() {
         eyebrow={copy.favorites.eyebrow}
         onApply={applyFilters}
         suggestionProvider={suggestionProvider}
+        suggestionSource={`favorites:${user?.id ?? ""}`}
       />
       {status !== "ready" ? (
         <CatalogState
@@ -304,7 +176,9 @@ export function FavoritesList() {
           emptyMode={hasActiveFilters ? "noResults" : "initial"}
           kind={status}
           messages={copy}
-          onRetry={status === "error" ? retryFavorites : undefined}
+          onRetry={
+            status === "error" ? () => void collection.refetch() : undefined
+          }
         />
       ) : (
         <>
@@ -315,51 +189,27 @@ export function FavoritesList() {
                   authStatus="authenticated"
                   game={game}
                   messages={copy}
-                  onDelete={deleteFavorite}
+                  onDelete={(id) => deleteMutation.mutateAsync(id)}
                   onSelect={() => setSelectedGame(game)}
                 />
               </li>
             ))}
           </ul>
-          <div
-            aria-hidden="true"
-            className="catalog-pagination__sentinel"
-            ref={sentinelRef}
+          <CollectionSentinel
+            enabled={
+              Boolean(collection.hasNextPage) && !collection.isFetchingNextPage
+            }
+            onIntersect={() =>
+              void collection.fetchNextPage({ cancelRefetch: false })
+            }
           />
-          <div aria-live="polite" className="catalog-pagination">
-            {isLoadingMore ? (
-              <p className="catalog-pagination__status" role="status">
-                <span aria-hidden="true" className="loading-spinner" />
-                {copy.states.loadingMore}
-              </p>
-            ) : null}
-            {paginationError ? (
-              <div className="catalog-pagination__error" role="alert">
-                <p>{copy.states.paginationError}</p>
-                <button
-                  className="catalog-filter-button catalog-filter-button--quiet"
-                  onClick={retryNextPage}
-                  type="button"
-                >
-                  {copy.states.retry}
-                </button>
-              </div>
-            ) : null}
-            {!isLoadingMore && !paginationError && hasNext ? (
-              <button
-                className="catalog-filter-button catalog-pagination__button"
-                onClick={retryNextPage}
-                type="button"
-              >
-                {copy.states.loadMore}
-              </button>
-            ) : null}
-            {!isLoadingMore && !paginationError && !hasNext ? (
-              <p className="catalog-pagination__status">
-                {copy.states.endOfResults}
-              </p>
-            ) : null}
-          </div>
+          <CollectionPagination
+            fetching={collection.isFetchingNextPage}
+            hasNext={Boolean(collection.hasNextPage)}
+            error={collection.isFetchNextPageError}
+            messages={copy}
+            onNext={retryNextPage}
+          />
         </>
       )}
       <IgdbAttribution messages={copy} />
@@ -370,19 +220,12 @@ export function FavoritesList() {
           key={selectedGame.igdbId}
           messages={copy}
           onClose={() => setSelectedGame(null)}
-          onDelete={deleteFavorite}
-          onDetailLoaded={syncFavoriteSnapshot}
+          onDelete={(id) => deleteMutation.mutateAsync(id)}
+          onDetailLoaded={async (detail) => {
+            await snapshotMutation.mutateAsync(detail);
+          }}
         />
       ) : null}
     </>
   );
-}
-
-function requireAccessToken(getAccessToken: () => string | null): string {
-  const token = getAccessToken();
-  if (!token) {
-    throw new Error("A valid session is required to query favorites.");
-  }
-
-  return token;
 }

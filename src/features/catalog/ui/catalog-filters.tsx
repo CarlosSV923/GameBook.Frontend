@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { createIgdbCatalogClient } from "@/features/catalog/api/igdb-catalog-client";
 import { usePreferences } from "@/features/preferences/ui/preferences-provider";
@@ -8,6 +9,7 @@ import type {
   IgdbGameSuggestion,
   IgdbPlatformSuggestion,
 } from "@/features/catalog/model/igdb";
+import { suggestionKey as suggestionQueryKey } from "@/shared/query/query-keys";
 
 export type AppliedCatalogFilters = {
   name?: string;
@@ -37,6 +39,7 @@ type CatalogFiltersProps = {
   onApply: (filters: AppliedCatalogFilters) => void;
   suggestionProvider?: CatalogSuggestionProvider;
   eyebrow?: string;
+  suggestionSource?: string;
 };
 
 export function CatalogFilters({
@@ -44,6 +47,7 @@ export function CatalogFilters({
   heading,
   onApply,
   suggestionProvider,
+  suggestionSource = "catalog",
 }: CatalogFiltersProps) {
   const { copy } = usePreferences();
   const defaultSuggestionProvider = useMemo(
@@ -57,19 +61,9 @@ export function CatalogFilters({
   const [platformId, setPlatformId] = useState<number>();
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
-  const [gameSuggestions, setGameSuggestions] = useState<CatalogSuggestion[]>(
-    [],
-  );
-  const [gameSuggestionQuery, setGameSuggestionQuery] = useState("");
-  const [isLoadingGameSuggestions, setIsLoadingGameSuggestions] =
-    useState(false);
+  const [debouncedName, setDebouncedName] = useState("");
   const [selectedGameName, setSelectedGameName] = useState("");
-  const [platformSuggestions, setPlatformSuggestions] = useState<
-    CatalogSuggestion[]
-  >([]);
-  const [platformSuggestionQuery, setPlatformSuggestionQuery] = useState("");
-  const [isLoadingPlatformSuggestions, setIsLoadingPlatformSuggestions] =
-    useState(false);
+  const [debouncedPlatform, setDebouncedPlatform] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
 
   useEffect(() => {
@@ -77,60 +71,48 @@ export function CatalogFilters({
     if (query.length < 2) {
       return;
     }
-
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => {
-      void resolvedSuggestionProvider
-        .getGameSuggestions(query, controller.signal)
-        .then((suggestions) => {
-          if (!controller.signal.aborted) {
-            setGameSuggestions([...suggestions]);
-            setGameSuggestionQuery(query);
-            setIsLoadingGameSuggestions(false);
-          }
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) {
-            setIsLoadingGameSuggestions(false);
-          }
-        });
-    }, 250);
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [name, resolvedSuggestionProvider]);
-
+    const timeout = window.setTimeout(() => setDebouncedName(query), 250);
+    return () => window.clearTimeout(timeout);
+  }, [name]);
   useEffect(() => {
     const query = platformQuery.trim();
     if (query.length < 2) {
       return;
     }
+    const timeout = window.setTimeout(() => setDebouncedPlatform(query), 250);
+    return () => window.clearTimeout(timeout);
+  }, [platformQuery]);
 
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => {
-      void resolvedSuggestionProvider
-        .getPlatformSuggestions(query, controller.signal)
-        .then((suggestions) => {
-          if (!controller.signal.aborted) {
-            setPlatformSuggestions([...suggestions]);
-            setPlatformSuggestionQuery(query);
-            setIsLoadingPlatformSuggestions(false);
-          }
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) {
-            setIsLoadingPlatformSuggestions(false);
-          }
-        });
-    }, 250);
-
-    return () => {
-      window.clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [platformQuery, resolvedSuggestionProvider]);
+  const gameSuggestionQuery = useQuery({
+    queryKey: suggestionQueryKey(suggestionSource, "game", name.trim()),
+    enabled: name.trim().length >= 2 && debouncedName === name.trim(),
+    queryFn: ({ signal }) =>
+      resolvedSuggestionProvider.getGameSuggestions(name.trim(), signal),
+  });
+  const platformSuggestionQuery = useQuery({
+    queryKey: suggestionQueryKey(
+      suggestionSource,
+      "platform",
+      platformQuery.trim(),
+    ),
+    enabled:
+      platformQuery.trim().length >= 2 &&
+      debouncedPlatform === platformQuery.trim(),
+    queryFn: ({ signal }) =>
+      resolvedSuggestionProvider.getPlatformSuggestions(
+        platformQuery.trim(),
+        signal,
+      ),
+  });
+  const gameSuggestions = gameSuggestionQuery.data ?? [];
+  const platformSuggestions = platformSuggestionQuery.data ?? [];
+  const isLoadingGameSuggestions =
+    name.trim().length >= 2 &&
+    (debouncedName !== name.trim() || gameSuggestionQuery.isFetching);
+  const isLoadingPlatformSuggestions =
+    platformQuery.trim().length >= 2 &&
+    (debouncedPlatform !== platformQuery.trim() ||
+      platformSuggestionQuery.isFetching);
 
   const applyFilters = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -152,10 +134,6 @@ export function CatalogFilters({
     }
 
     setValidationMessage("");
-    setGameSuggestions([]);
-    setPlatformSuggestions([]);
-    setIsLoadingGameSuggestions(false);
-    setIsLoadingPlatformSuggestions(false);
     onApply({
       name: name.trim() || undefined,
       platformId,
@@ -170,10 +148,6 @@ export function CatalogFilters({
     setPlatformId(undefined);
     setYearFrom("");
     setYearTo("");
-    setGameSuggestions([]);
-    setPlatformSuggestions([]);
-    setIsLoadingGameSuggestions(false);
-    setIsLoadingPlatformSuggestions(false);
     setValidationMessage("");
     onApply({});
   };
@@ -192,8 +166,7 @@ export function CatalogFilters({
           id="catalog-name"
           label={copy.catalog.name}
           suggestions={
-            selectedGameName !== name.trim() &&
-            gameSuggestionQuery === name.trim()
+            selectedGameName !== name.trim() && debouncedName === name.trim()
               ? gameSuggestions
               : []
           }
@@ -203,13 +176,10 @@ export function CatalogFilters({
           onChange={(value) => {
             setName(value);
             setSelectedGameName("");
-            setIsLoadingGameSuggestions(value.trim().length >= 2);
           }}
           onSelect={(suggestion) => {
             setName(suggestion.name);
             setSelectedGameName(suggestion.name);
-            setGameSuggestions([]);
-            setIsLoadingGameSuggestions(false);
           }}
         />
         <SuggestionField
@@ -217,7 +187,7 @@ export function CatalogFilters({
           label={copy.catalog.platform}
           suggestions={
             platformId === undefined &&
-            platformSuggestionQuery === platformQuery.trim()
+            debouncedPlatform === platformQuery.trim()
               ? platformSuggestions
               : []
           }
@@ -227,15 +197,12 @@ export function CatalogFilters({
           onChange={(value) => {
             setPlatformQuery(value);
             setPlatformId(undefined);
-            setIsLoadingPlatformSuggestions(value.trim().length >= 2);
           }}
           onSelect={(suggestion) => {
             setPlatformQuery(suggestion.name);
             if (suggestion.id !== undefined) {
               setPlatformId(suggestion.id);
             }
-            setPlatformSuggestions([]);
-            setIsLoadingPlatformSuggestions(false);
           }}
         />
         <label className="catalog-filter-field" htmlFor="catalog-year-from">

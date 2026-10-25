@@ -178,3 +178,19 @@ test("mobile login form accepts a session", async ({ page }, testInfo) => {
   ).toBeVisible();
   await mocks.expectNoExternalRequests();
 });
+
+test("catalog loads the next page when scrolling to the sentinel", async ({
+  page,
+}) => {
+  await mockGameBook(page, { catalogPagination: true });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Pagination Example 1", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("heading", { name: "Pagination Example 20", exact: true })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole("heading", { name: "Pagination Example 21", exact: true }),
+  ).toBeVisible();
+});
