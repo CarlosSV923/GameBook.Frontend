@@ -6,7 +6,7 @@ import {
   createMockHttpClient,
   createMockTokenProvider,
 } from "@/shared/api/mocks";
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 const config = {
   apiBaseUrl: "https://api.igdb.example.test/v4",

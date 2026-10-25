@@ -2,10 +2,13 @@
 
 import { useRouter } from "next/navigation";
 
-import { createAuthUserClient } from "@/features/api/auth-user-client";
-import { AuthForm } from "@/features/auth/auth-form";
-import type { LoginUserInput, RegisterUserInput } from "@/shared/api/auth-user";
-import { AppShell } from "@/features/layout/app-shell";
+import { createAuthUserClient } from "@/features/auth/api/auth-user-client";
+import { AuthForm } from "@/features/auth/ui/auth-form";
+import type {
+  LoginUserInput,
+  RegisterUserInput,
+} from "@/features/auth/model/auth-user";
+import { AppShell } from "@/features/layout/ui/app-shell";
 
 export default function RegisterPage() {
   const router = useRouter();

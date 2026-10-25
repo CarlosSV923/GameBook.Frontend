@@ -5,7 +5,7 @@ import {
   validateChangePasswordForm,
   validateLoginForm,
   validateRegisterForm,
-} from "@/features/auth/auth-validation";
+} from "@/features/auth/model/auth-validation";
 
 const validationMessages = {
   email: "invalid email",

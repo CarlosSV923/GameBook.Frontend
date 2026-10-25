@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { createIgdbClient } from "@/server/igdb/igdb-client";
-import { IgdbClientError, type IgdbCatalogFilters } from "@/shared/api/igdb";
+import {
+  IgdbClientError,
+  type IgdbCatalogFilters,
+} from "@/features/catalog/model/igdb";
 
 export const IGDB_ROUTE_ERROR_CODE = "IGDB_INVALID_REQUEST";
 

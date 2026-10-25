@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { PreferenceIconControls } from "@/features/preferences/preference-controls";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { PreferenceIconControls } from "@/features/preferences/ui/preference-controls";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("PreferenceIconControls", () => {
   it("renders the theme icon and next-language initials with accessible actions", () => {

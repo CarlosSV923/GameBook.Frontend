@@ -7,14 +7,14 @@ import { messages } from "@/shared/i18n/messages";
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }));
-vi.mock("@/features/auth/auth-provider", () => ({
+vi.mock("@/features/auth/ui/auth-provider", () => ({
   useAuth: () => ({
     signOut: vi.fn(),
     status: "authenticated",
     user: { email: "user@example.com", fullName: "Ada", id: "user-1" },
   }),
 }));
-vi.mock("@/features/preferences/preferences-provider", () => ({
+vi.mock("@/features/preferences/ui/preferences-provider", () => ({
   usePreferences: () => ({
     copy: messages.en,
     language: "en",
@@ -23,12 +23,12 @@ vi.mock("@/features/preferences/preferences-provider", () => ({
     theme: "light",
   }),
 }));
-vi.mock("@/features/favorites/favorites-list", () => ({
+vi.mock("@/features/favorites/ui/favorites-list", () => ({
   FavoritesList: () =>
     createElement("div", { "data-testid": "favorites-list" }),
 }));
 
-import { FavoritesPage } from "@/features/favorites/favorites-page";
+import { FavoritesPage } from "@/features/favorites/ui/favorites-page";
 
 describe("FavoritesPage", () => {
   it("renders the authenticated personal shelf and its local list boundary", () => {

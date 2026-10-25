@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { AuthForm } from "@/features/auth/auth-form";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { AuthForm } from "@/features/auth/ui/auth-form";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("AuthForm", () => {
   it("renders the registration fields with accessible required inputs", () => {

@@ -8,7 +8,7 @@ import {
   MIN_TOTAL_RATING_COUNT,
   normalizeCatalogPagination,
 } from "@/server/igdb/igdb-query-builder";
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 describe("IGDB query builder", () => {
   it("builds fixed, escaped catalog queries with the v3 filters", () => {

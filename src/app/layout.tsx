@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { AuthProvider } from "@/features/auth/auth-provider";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
-import { ThemeScript } from "@/features/preferences/theme-script";
+import { AuthProvider } from "@/features/auth/ui/auth-provider";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
+import { ThemeScript } from "@/features/preferences/ui/theme-script";
 
 import "./globals.css";
 

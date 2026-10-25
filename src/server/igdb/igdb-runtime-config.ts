@@ -1,6 +1,6 @@
 import "server-only";
 
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 export type IgdbRuntimeConfig = {
   apiBaseUrl: string;

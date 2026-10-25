@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { PasswordChangedModal } from "@/features/auth/password-changed-modal";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { PasswordChangedModal } from "@/features/auth/ui/password-changed-modal";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("PasswordChangedModal", () => {
   it("explains the successful change and next sign-in step", () => {

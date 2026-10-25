@@ -1,6 +1,9 @@
 import "server-only";
 
-import { IgdbClientError, type IgdbCatalogFilters } from "@/shared/api/igdb";
+import {
+  IgdbClientError,
+  type IgdbCatalogFilters,
+} from "@/features/catalog/model/igdb";
 
 export const MIN_TOTAL_RATING_COUNT = 100;
 

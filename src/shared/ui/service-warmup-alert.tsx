@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-import { usePreferences } from "@/features/preferences/preferences-provider";
+import { usePreferences } from "@/features/preferences/ui/preferences-provider";
 import {
   dismissServiceWarmupAlert,
   getServerServiceWarmupAlertSnapshot,
