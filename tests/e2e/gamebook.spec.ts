@@ -46,14 +46,16 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
     page.getByRole("heading", { name: "Example Quest" }),
   ).toBeVisible();
 
-  await page
-    .getByRole("button", { name: "Open details for Example Quest" })
-    .click();
+  const openDetails = page.getByRole("button", {
+    name: "Open details for Example Quest",
+  });
+  await openDetails.click();
   await expect(
     page.getByRole("dialog", { name: "Example Quest" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Close game details" }).click();
+  await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(openDetails).toBeFocused();
 
   await page
     .getByRole("button", { name: "Sign in to save Example Quest to favorites" })

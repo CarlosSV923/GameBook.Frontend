@@ -6,16 +6,11 @@ import { useEffect, useRef, useState } from "react";
 
 import { createIgdbCatalogClient } from "@/features/catalog/api/igdb-catalog-client";
 import type { AuthStatus } from "@/features/auth/ui/auth-provider";
+import { GameDetailContent } from "@/features/catalog/ui/game-detail-content";
 import {
   FavoriteAction,
   FavoriteDeleteAction,
 } from "@/features/catalog/ui/favorite-action";
-import {
-  formatGamePlatforms,
-  formatGameRating,
-  formatGameYear,
-} from "@/features/catalog/model/game-card-formatting";
-import { formatGameReleaseDate } from "@/features/catalog/model/game-detail-formatting";
 import type { FavoriteCreateInput } from "@/features/favorites/model/game";
 import type {
   IgdbGameCard,
@@ -23,12 +18,15 @@ import type {
 } from "@/features/catalog/model/igdb";
 import type { Messages } from "@/shared/i18n/messages";
 import { gameDetailKey } from "@/shared/query/query-keys";
+import { IconButton } from "@/shared/ui/icon-button";
+import { IndexStrip } from "@/shared/ui/index-strip";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
 type GameDetailModalProps = {
   game: IgdbGameCard;
   favoriteStatus?: "loading" | "ready";
   isFavorite?: boolean;
+  position?: number;
   messages: Messages;
   onDelete?: (igdbId: number) => Promise<void>;
   onDetailLoaded?: (detail: IgdbGameDetail) => Promise<void>;
@@ -37,13 +35,14 @@ type GameDetailModalProps = {
   authStatus: AuthStatus;
 };
 
-type DetailStatus = "error" | "loading" | "ready";
+type DetailStatus = "error" | "loading" | "ready" | "unavailable";
 type SnapshotStatus = "error" | "idle" | "syncing" | "updated";
 
 export function GameDetailModal({
   favoriteStatus = "ready",
   game,
   isFavorite = false,
+  position,
   messages,
   onDelete,
   onDetailLoaded,
@@ -64,9 +63,11 @@ export function GameDetailModal({
   const detail = detailQuery.data ?? null;
   const status: DetailStatus = detailQuery.isPending
     ? "loading"
-    : detailQuery.isError || detail === null
+    : detailQuery.isError
       ? "error"
-      : "ready";
+      : detail === null
+        ? "unavailable"
+        : "ready";
 
   useEffect(() => {
     if (!detail || !onDetailLoaded || snapshotSyncStarted.current) return;
@@ -112,7 +113,10 @@ export function GameDetailModal({
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (event.shiftKey && document.activeElement === firstElement) {
+      if (!modal.contains(document.activeElement)) {
+        event.preventDefault();
+        firstElement.focus();
+      } else if (event.shiftKey && document.activeElement === firstElement) {
         event.preventDefault();
         lastElement.focus();
       } else if (!event.shiftKey && document.activeElement === lastElement) {
@@ -136,7 +140,7 @@ export function GameDetailModal({
     <div
       aria-labelledby="game-detail-title"
       aria-modal="true"
-      className="game-detail-modal"
+      className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-scrim p-6 motion-safe:animate-[detail-scrim-in_220ms_ease-out_both] max-[639px]:p-3"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
@@ -145,13 +149,13 @@ export function GameDetailModal({
       ref={modalRef}
       role="dialog"
     >
-      <div className="game-detail-modal__panel">
-        <header className="game-detail-modal__header">
-          <div className="game-detail-modal__media">
+      <div className="flex max-h-[calc(100svh-48px)] w-full max-w-[820px] flex-col overflow-y-auto rounded-modal border border-border bg-paper-raised shadow-raised motion-safe:animate-[detail-panel-in_220ms_cubic-bezier(0.2,0.7,0.2,1)_both]">
+        <header className="relative grid shrink-0 grid-cols-[152px_minmax(0,1fr)_44px] items-start gap-6 border-b border-border-soft p-6 max-[639px]:gap-4 max-[639px]:p-4 max-[479px]:flex max-[479px]:flex-col max-[479px]:gap-4 max-[479px]:p-3">
+          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-control border border-border-soft bg-paper-inset max-[479px]:w-[92px]">
             {coverUrl ? (
               <Image
                 alt={coverAlt}
-                className="game-detail-modal__image"
+                className="object-cover"
                 fill
                 onError={() => setCoverUrl(null)}
                 sizes="(max-width: 720px) 40vw, 180px"
@@ -160,30 +164,60 @@ export function GameDetailModal({
             ) : (
               <span
                 aria-label={messages.catalog.missingImage}
-                className="game-detail-modal__fallback"
+                className="grid size-full place-items-center content-center gap-2 border-l-[3px] border-copper bg-paper-inset font-display text-5xl text-copper-strong"
                 role="img"
               >
-                <span aria-hidden="true">
+                <span aria-hidden="true" className="text-6xl">
                   {game.name.slice(0, 1).toUpperCase()}
                 </span>
-                <span className="game-detail-modal__fallback-label">
+                <span className="max-w-[14ch] text-center font-ui text-xs text-ink-muted">
                   {messages.catalog.missingImage}
                 </span>
               </span>
             )}
           </div>
-          <div className="game-detail-modal__heading">
-            <p className="game-detail-modal__eyebrow">
+          <div className="min-w-0 self-center max-[479px]:w-full">
+            <p className="mb-3 font-ui text-[0.6875rem] font-bold uppercase leading-snug tracking-[0.1em] text-copper-strong">
               {messages.catalog.detail.eyebrow}
             </p>
-            <h2 id="game-detail-title">{game.name}</h2>
-            <p className="game-detail-modal__meta">
-              <span>{formatGameRating(game.rating)}</span>
-              <span aria-hidden="true">•</span>
-              <span>{formatGameYear(game.released)}</span>
-              <span aria-hidden="true">•</span>
-              <span>{formatGamePlatforms(game.platforms)}</span>
-            </p>
+            <h2
+              className="mb-5 text-balance font-display text-[clamp(1.8rem,4vw,2.8rem)] font-medium leading-none tracking-[-0.04em] text-ink"
+              id="game-detail-title"
+            >
+              {game.name}
+            </h2>
+          </div>
+          <IconButton
+            aria-label={messages.catalog.detail.close}
+            className="border border-border-soft max-[479px]:absolute max-[479px]:right-3 max-[479px]:top-3"
+            onClick={onClose}
+            ref={closeButtonRef}
+          >
+            <svg
+              aria-hidden="true"
+              className="size-5"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="m6 6 12 12M18 6 6 18"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.8"
+              />
+            </svg>
+          </IconButton>
+          <div className="col-span-full max-[479px]:w-full">
+            <IndexStrip
+              labels={messages.indexStrip}
+              platforms={game.platforms.map(({ name }) => name)}
+              rank={position ?? null}
+              released={game.released}
+              rating={game.rating}
+              variant="detail"
+            />
+          </div>
+          <div className="col-span-full max-[479px]:w-full">
             {onDelete && (isFavorite || onSave === undefined) ? (
               <FavoriteDeleteAction
                 game={game}
@@ -202,148 +236,84 @@ export function GameDetailModal({
               />
             ) : null}
           </div>
-          <button
-            aria-label={messages.catalog.detail.close}
-            className="game-detail-modal__close"
-            onClick={onClose}
-            ref={closeButtonRef}
-            type="button"
-          >
-            <span aria-hidden="true">×</span>
-          </button>
         </header>
 
-        <div aria-live="polite" className="game-detail-modal__body">
+        <div
+          aria-live="polite"
+          className="grid gap-6 p-6 max-[639px]:p-4 max-[479px]:p-3"
+        >
           {status === "loading" ? (
-            <p className="game-detail-modal__status" role="status">
-              <span aria-hidden="true" className="loading-spinner" />
+            <p
+              className="flex items-center gap-3 rounded-panel border-l-4 border-copper bg-paper-inset p-4 text-sm leading-relaxed text-ink-secondary"
+              role="status"
+            >
+              <span
+                aria-hidden="true"
+                className="loading-spinner loading-spinner--small"
+              />
               {messages.catalog.detail.loading}
             </p>
           ) : null}
+          {status === "unavailable" ? (
+            <div
+              className="rounded-panel border-l-4 border-copper bg-paper-inset p-4"
+              role="status"
+            >
+              <h3 className="mb-2 font-ui text-base font-semibold text-ink">
+                {messages.catalog.detail.unavailableTitle}
+              </h3>
+              <p className="m-0 text-sm leading-relaxed text-ink-secondary">
+                {messages.catalog.detail.unavailableDescription}
+              </p>
+            </div>
+          ) : null}
           {status === "error" ? (
-            <div className="game-detail-modal__error" role="alert">
-              <h3>{messages.catalog.detail.errorTitle}</h3>
-              <p>{messages.catalog.detail.errorDescription}</p>
+            <div
+              className="rounded-panel border-l-4 border-danger bg-paper-inset p-4"
+              role="alert"
+            >
+              <h3 className="mb-2 font-ui text-base font-semibold text-ink">
+                {messages.catalog.detail.errorTitle}
+              </h3>
+              <p className="m-0 text-sm leading-relaxed text-ink-secondary">
+                {messages.catalog.detail.errorDescription}
+              </p>
             </div>
           ) : null}
           {snapshotStatus === "syncing" ? (
-            <p className="game-detail-modal__sync" role="status">
-              <span aria-hidden="true" className="loading-spinner" />
+            <p
+              className="flex items-center gap-2 rounded-control border-l-[3px] border-copper bg-paper-inset px-3 py-2.5 font-ui text-xs leading-relaxed text-ink-secondary"
+              role="status"
+            >
+              <span
+                aria-hidden="true"
+                className="loading-spinner loading-spinner--small"
+              />
               {messages.catalog.detail.syncing}
             </p>
           ) : null}
           {snapshotStatus === "updated" ? (
-            <p className="game-detail-modal__sync" role="status">
+            <p
+              className="rounded-control border-l-[3px] border-moss bg-paper-inset px-3 py-2.5 font-ui text-xs leading-relaxed text-ink-secondary"
+              role="status"
+            >
               {messages.catalog.detail.updated}
             </p>
           ) : null}
           {snapshotStatus === "error" ? (
             <p
-              className="game-detail-modal__sync game-detail-modal__sync--error"
+              className="rounded-control border-l-[3px] border-danger bg-paper-inset px-3 py-2.5 font-ui text-xs leading-relaxed text-ink"
               role="alert"
             >
               {messages.catalog.detail.syncError}
             </p>
           ) : null}
           {status === "ready" && detail ? (
-            <DetailContent detail={detail} messages={messages} />
+            <GameDetailContent detail={detail} messages={messages} />
           ) : null}
         </div>
         <IgdbAttribution messages={messages} />
       </div>
-    </div>
-  );
-}
-
-type DetailContentProps = {
-  detail: IgdbGameDetail;
-  messages: Messages;
-};
-
-function DetailContent({ detail, messages }: DetailContentProps) {
-  const detailCopy = messages.catalog.detail;
-  const formattedDate = formatGameReleaseDate(
-    detail.released,
-    detail.releaseDatePrecision,
-  );
-
-  return (
-    <>
-      <section className="game-detail-modal__section">
-        <h3>{detailCopy.summary}</h3>
-        <p>{detail.summary === null ? detailCopy.noSummary : detail.summary}</p>
-      </section>
-      <dl className="game-detail-modal__facts">
-        <div>
-          <dt>{detailCopy.releaseDate}</dt>
-          <dd>{formattedDate}</dd>
-        </div>
-        <div>
-          <dt>{detailCopy.genres}</dt>
-          <dd>
-            {detail.genres.length > 0
-              ? detail.genres.join(" · ")
-              : detailCopy.noGenres}
-          </dd>
-        </div>
-        <div>
-          <dt>{detailCopy.developers}</dt>
-          <dd>
-            {detail.developers.length > 0
-              ? detail.developers.join(" · ")
-              : detailCopy.noDevelopers}
-          </dd>
-        </div>
-      </dl>
-      {detail.screenshots.length > 0 ? (
-        <section className="game-detail-modal__section">
-          <h3>{detailCopy.screenshots}</h3>
-          <div className="game-detail-modal__screenshots">
-            {detail.screenshots.map((screenshot, index) => (
-              <DetailScreenshot
-                alt={detailCopy.screenshotAlt
-                  .replace("{number}", String(index + 1))
-                  .replace("{name}", detail.name)}
-                key={`${screenshot}-${index}`}
-                missingImage={messages.catalog.missingImage}
-                src={screenshot}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-    </>
-  );
-}
-
-type DetailScreenshotProps = {
-  alt: string;
-  missingImage: string;
-  src: string;
-};
-
-function DetailScreenshot({ alt, missingImage, src }: DetailScreenshotProps) {
-  const [imageUrl, setImageUrl] = useState(src);
-
-  return (
-    <div className="game-detail-modal__screenshot">
-      {imageUrl ? (
-        <Image
-          alt={alt}
-          fill
-          onError={() => setImageUrl("")}
-          sizes="(max-width: 720px) 100vw, 50vw"
-          src={imageUrl}
-        />
-      ) : (
-        <span
-          aria-label={missingImage}
-          className="game-detail-modal__screenshot-fallback"
-          role="img"
-        >
-          {missingImage}
-        </span>
-      )}
     </div>
   );
 }

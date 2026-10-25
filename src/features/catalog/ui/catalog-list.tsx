@@ -68,6 +68,9 @@ export function CatalogList() {
     },
   });
   const favoriteIds = favoriteIdsQuery.data ?? new Set<number>();
+  const selectedGamePosition = selectedGame
+    ? items.findIndex(({ igdbId }) => igdbId === selectedGame.igdbId)
+    : -1;
   // A disabled query (anonymous visitor) is also `pending`; only a signed-in
   // user waits for their favorite IDs.
   const favoriteStatus =
@@ -197,6 +200,9 @@ export function CatalogList() {
           authStatus={authStatus}
           favoriteStatus={favoriteStatus}
           game={selectedGame}
+          position={
+            selectedGamePosition >= 0 ? selectedGamePosition + 1 : undefined
+          }
           isFavorite={favoriteIds.has(selectedGame.igdbId)}
           messages={copy}
           onDelete={(id) => deleteMutation.mutateAsync(id)}

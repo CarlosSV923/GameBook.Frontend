@@ -202,13 +202,13 @@ export function FavoriteDeleteAction({
               className="px-2.5 text-xs"
               disabled={isRemoving}
               onClick={() => setDeleteState("idle")}
-              variant="secondary"
+              variant="ghost"
             >
               {copy.removeCancel}
             </Button>
             <Button
               aria-busy={isRemoving}
-              className="bg-copper-strong px-2.5 text-xs text-white hover:brightness-95"
+              className="px-2.5 text-xs"
               disabled={isRemoving}
               onClick={confirmDelete}
               variant="primary"
