@@ -89,6 +89,52 @@ export function GameDetailModal({
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest("[data-favorite-popover]")
+      ) {
+        if (event.key === "Escape") return;
+        const favoritePopover = document.querySelector<HTMLElement>(
+          "[data-favorite-popover]",
+        );
+        const favoriteFocusables = favoritePopover
+          ? Array.from(
+              favoritePopover.querySelectorAll<HTMLElement>(
+                "button, a[href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+              ),
+            ).filter((element) => !element.hasAttribute("disabled"))
+          : [];
+        const firstFavorite = favoriteFocusables[0];
+        const lastFavorite = favoriteFocusables.at(-1);
+        const modalFocusables = modal
+          ? Array.from(
+              modal.querySelectorAll<HTMLElement>(
+                "button, a[href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+              ),
+            ).filter(
+              (element) =>
+                !element.hasAttribute("disabled") &&
+                !element.closest("[data-favorite-popover]"),
+            )
+          : [];
+        if (
+          event.key === "Tab" &&
+          event.shiftKey &&
+          document.activeElement === firstFavorite
+        ) {
+          event.preventDefault();
+          modalFocusables.at(-1)?.focus();
+        } else if (
+          event.key === "Tab" &&
+          !event.shiftKey &&
+          document.activeElement === lastFavorite
+        ) {
+          event.preventDefault();
+          modalFocusables[0]?.focus();
+        }
+        return;
+      }
+
       if (event.key === "Escape") {
         event.preventDefault();
         onClose();
