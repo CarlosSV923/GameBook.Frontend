@@ -42,7 +42,7 @@ describe("FavoriteAction", () => {
     expect(markup).toContain(
       'aria-label="Sign in to save A Short Hike to favorites"',
     );
-    expect(markup).toContain('class="favorite-action favorite-action--card"');
+    expect(markup).toContain('class="inline-grid size-11');
     expect(markup).toContain('aria-pressed="false"');
     expect(markup).not.toContain("favorite-action__prompt");
   });
@@ -59,7 +59,6 @@ describe("FavoriteAction", () => {
     );
 
     expect(markup).toContain('aria-label="Save A Short Hike to favorites"');
-    expect(markup).toContain('class="favorite-action favorite-action--modal"');
     expect(markup).not.toContain("favorite-action__prompt");
   });
 
@@ -108,6 +107,7 @@ describe("FavoriteAction", () => {
       createElement(GameCard, {
         authStatus: "anonymous",
         game,
+        position: 3,
         messages: messages.en,
         onSave,
         onSelect: () => undefined,
@@ -127,13 +127,16 @@ describe("FavoriteAction", () => {
       ),
     );
 
-    expect(cardMarkup).toContain("favorite-action--card");
-    expect(modalMarkup).toContain("favorite-action--modal");
+    expect(cardMarkup).toContain('aria-label="Position: #3;');
+    expect(modalMarkup).toContain(
+      'aria-label="Sign in to save A Short Hike to favorites"',
+    );
 
     const favoriteCardMarkup = renderToStaticMarkup(
       createElement(GameCard, {
         authStatus: "authenticated",
         game,
+        position: 1,
         messages: messages.en,
         onDelete,
         onSelect: () => undefined,
@@ -166,6 +169,7 @@ describe("FavoriteAction", () => {
       createElement(GameCard, {
         authStatus: "authenticated",
         game,
+        position: 1,
         isFavorite: true,
         messages: messages.en,
         onDelete,
@@ -191,5 +195,29 @@ describe("FavoriteAction", () => {
     expect(unsavedMarkup).toContain(
       'aria-label="Save A Short Hike to favorites"',
     );
+  });
+
+  it("renders the horizontal card structure with unavailable metadata and sibling controls", () => {
+    const markup = renderToStaticMarkup(
+      createElement(GameCard, {
+        authStatus: "anonymous",
+        game: { ...game, platforms: [], rating: null, released: null },
+        messages: messages.en,
+        onSave,
+        onSelect: () => undefined,
+      }),
+    );
+
+    expect(markup).toContain('data-variant="card"');
+    expect(markup).toContain(
+      'aria-label="Position: Unavailable; Rating / 100: Unavailable; Year: Unavailable; Platforms: Unavailable"',
+    );
+    expect(markup).toContain('aria-label="Open details for A Short Hike"');
+    expect(markup).toContain(
+      'aria-label="Sign in to save A Short Hike to favorites"',
+    );
+    expect(markup.match(/<button/g)).toHaveLength(2);
+    expect(markup.indexOf("<button")).toBeLessThan(markup.indexOf("</button>"));
+    expect(markup).toContain("72px");
   });
 });

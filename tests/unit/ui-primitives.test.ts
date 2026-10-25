@@ -107,7 +107,7 @@ describe("SegmentedControl", () => {
 });
 
 describe("IndexStrip", () => {
-  it("renders rank, score scale, year and platforms in each variant", () => {
+  it("shows values only in card strips and keeps labeled details accessible", () => {
     for (const variant of ["card", "card-compact", "detail"] as const) {
       const markup = render(
         createElement(IndexStrip, {
@@ -120,12 +120,36 @@ describe("IndexStrip", () => {
         }),
       );
       expect(markup).toContain(`data-variant="${variant}"`);
-      expect(markup).toContain("#2");
-      expect(markup).toContain("94/100");
+      expect(markup).toContain(
+        'aria-label="Position: #2; Rating / 100: 94; Year: 2024; Platforms: PC · Switch"',
+      );
+      expect(markup).toContain("02");
+      expect(markup).toContain(">94</dd>");
+      expect(markup).not.toContain("94/100");
       expect(markup).toContain("2024");
-      expect(markup).toContain("PC · Switch");
-      expect(markup).toContain("Rating / 100: 94/100");
+      if (variant === "detail") {
+        expect(markup).toContain("<dt");
+        expect(markup).toContain("Rating / 100");
+      } else {
+        expect(markup).not.toContain("<dt");
+      }
     }
+  });
+
+  it("rounds fractional ratings and prevents the score from wrapping", () => {
+    const markup = render(
+      createElement(IndexStrip, {
+        labels: messages.en.indexStrip,
+        rank: 1,
+        score: 92.4,
+        variant: "card",
+      }),
+    );
+    expect(markup).toContain(
+      'aria-label="Position: #1; Rating / 100: 92; Year: Unavailable; Platforms: Unavailable"',
+    );
+    expect(markup).toContain("whitespace-nowrap");
+    expect(markup).toContain(">92</dd>");
   });
 
   it("marks missing metadata unavailable without inventing a rank", () => {
@@ -137,7 +161,6 @@ describe("IndexStrip", () => {
     expect(markup).not.toContain("/100");
   });
 });
-
 describe("theme token maps", () => {
   it("defines every semantic color in both light and dark maps", async () => {
     const { readFile } = await import("node:fs/promises");
