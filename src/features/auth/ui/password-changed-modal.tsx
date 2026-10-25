@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { usePreferences } from "@/features/preferences/ui/preferences-provider";
+import { Button } from "@/shared/ui/button";
 
 type PasswordChangedModalProps = {
   onClose: () => void;
@@ -10,7 +11,6 @@ type PasswordChangedModalProps = {
 
 export function PasswordChangedModal({ onClose }: PasswordChangedModalProps) {
   const { copy } = usePreferences();
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function PasswordChangedModal({ onClose }: PasswordChangedModalProps) {
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
-    closeButtonRef.current?.focus();
+    modal?.querySelector<HTMLElement>("button")?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -49,7 +49,10 @@ export function PasswordChangedModal({ onClose }: PasswordChangedModalProps) {
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (event.shiftKey && document.activeElement === firstElement) {
+      if (!modal.contains(document.activeElement)) {
+        event.preventDefault();
+        firstElement.focus();
+      } else if (event.shiftKey && document.activeElement === firstElement) {
         event.preventDefault();
         lastElement.focus();
       } else if (!event.shiftKey && document.activeElement === lastElement) {
@@ -72,31 +75,38 @@ export function PasswordChangedModal({ onClose }: PasswordChangedModalProps) {
       aria-describedby="password-changed-description"
       aria-labelledby="password-changed-title"
       aria-modal="true"
-      className="auth-success-modal"
+      className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-scrim p-4 sm:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
       ref={modalRef}
       role="dialog"
     >
-      <div className="auth-success-modal__panel">
-        <span aria-hidden="true" className="auth-success-modal__marker">
+      <div className="w-full max-w-lg rounded-panel border border-border-soft bg-paper-raised p-6 shadow-raised sm:p-9">
+        <span
+          aria-hidden="true"
+          className="mb-5 grid size-10 place-items-center rounded-full border border-moss/50 bg-paper-inset font-data text-lg font-semibold text-ink"
+        >
           ✓
         </span>
-        <p className="auth-success-modal__eyebrow">
+        <p className="mb-3 font-ui text-xs font-bold uppercase tracking-[0.12em] text-copper-strong">
           {copy.auth.profile.passwordTitle}
         </p>
-        <h2 id="password-changed-title">
+        <h2
+          className="mb-3 font-display text-3xl font-medium leading-tight tracking-tight text-ink"
+          id="password-changed-title"
+        >
           {copy.auth.profile.passwordChangedTitle}
         </h2>
-        <p id="password-changed-description">
+        <p
+          className="mb-7 text-sm leading-6 text-ink-secondary"
+          id="password-changed-description"
+        >
           {copy.auth.profile.passwordChangedDescription}
         </p>
-        <button
-          className="catalog-filter-button auth-success-modal__action"
-          onClick={onClose}
-          ref={closeButtonRef}
-          type="button"
-        >
+        <Button onClick={onClose} type="button" variant="primary">
           {copy.auth.profile.passwordChangedAction}
-        </button>
+        </Button>
       </div>
     </div>
   );

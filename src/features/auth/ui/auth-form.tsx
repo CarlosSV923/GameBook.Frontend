@@ -5,6 +5,8 @@ import { useState, type FormEvent } from "react";
 
 import { PasswordInput } from "@/features/auth/ui/password-input";
 import { ApiClientError } from "@/shared/api/http";
+import { Button } from "@/shared/ui/button";
+import { TextField } from "@/shared/ui/text-field";
 import type { Messages } from "@/shared/i18n/messages";
 import { usePreferences } from "@/features/preferences/ui/preferences-provider";
 import type {
@@ -97,21 +99,36 @@ export function AuthForm({ mode, notice, onSubmit }: AuthFormProps) {
   };
 
   return (
-    <main className="auth-page">
-      <section aria-labelledby={titleId} className="auth-panel">
-        <header className="auth-panel__header">
-          <p className="eyebrow">{content.eyebrow}</p>
-          <h1 id={titleId}>{content.title}</h1>
-          <p className="auth-panel__description">{content.description}</p>
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+      <section
+        aria-labelledby={titleId}
+        className="mx-auto max-w-xl rounded-panel border border-border-soft bg-paper-raised p-6 shadow-raised sm:p-9"
+      >
+        <header className="mb-8">
+          <p className="mb-3 font-ui text-xs font-bold uppercase tracking-[0.12em] text-copper-strong">
+            {content.eyebrow}
+          </p>
+          <h1
+            className="mb-3 font-display text-4xl font-medium leading-tight tracking-tight text-ink sm:text-5xl"
+            id={titleId}
+          >
+            {content.title}
+          </h1>
+          <p className="max-w-[48ch] text-sm leading-6 text-ink-secondary">
+            {content.description}
+          </p>
         </header>
 
         {notice ? (
-          <p className="auth-form__notice" role="status">
+          <p
+            className="mb-5 border-l-2 border-moss bg-paper-inset px-4 py-3 text-sm leading-5 text-ink"
+            role="status"
+          >
             {notice}
           </p>
         ) : null}
 
-        <form className="auth-form" noValidate onSubmit={handleSubmit}>
+        <form className="grid gap-5" noValidate onSubmit={handleSubmit}>
           {mode === "register" ? (
             <AuthField
               autoComplete="name"
@@ -162,37 +179,41 @@ export function AuthForm({ mode, notice, onSubmit }: AuthFormProps) {
           ) : null}
 
           {formError ? (
-            <p className="auth-form__error" role="alert">
+            <p
+              className="border-l-2 border-danger bg-paper-inset px-4 py-3 text-sm leading-5 text-ink"
+              role="alert"
+            >
               {formError}
             </p>
           ) : null}
 
           {status === "success" ? (
-            <p className="auth-form__success" role="status">
+            <p
+              className="border-l-2 border-moss bg-paper-inset px-4 py-3 text-sm leading-5 text-ink"
+              role="status"
+            >
               {content.success}
             </p>
           ) : null}
 
-          <button
-            aria-busy={status === "submitting"}
-            className="catalog-filter-button auth-form__submit"
-            disabled={status === "submitting"}
+          <Button
+            className="w-full sm:w-auto"
+            loading={status === "submitting"}
             type="submit"
+            variant="primary"
           >
-            {status === "submitting" ? (
-              <>
-                <span aria-hidden="true" className="loading-spinner" />
-                {content.submitting}
-              </>
-            ) : (
-              content.submit
-            )}
-          </button>
+            {status === "submitting" ? content.submitting : content.submit}
+          </Button>
         </form>
 
-        <p className="auth-panel__alternate">
+        <p className="mt-7 border-t border-border-soft pt-5 text-sm leading-6 text-ink-secondary">
           {content.alternate}{" "}
-          <Link href={alternateHref}>{content.alternateAction}</Link>
+          <Link
+            className="font-semibold text-copper-strong underline decoration-copper/40 underline-offset-4 hover:decoration-current"
+            href={alternateHref}
+          >
+            {content.alternateAction}
+          </Link>
         </p>
       </section>
     </main>
@@ -222,48 +243,31 @@ function AuthField({
   type = "text",
   value,
 }: AuthFieldProps) {
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
-  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-
-  return (
-    <div className="auth-form__field">
-      <label htmlFor={id}>{label}</label>
-      {type === "password" ? (
-        <PasswordInput
-          ariaInvalid={Boolean(error)}
-          autoComplete={autoComplete}
-          describedBy={describedBy}
-          id={id}
-          name={id}
-          onChange={onChange}
-          value={value}
-        />
-      ) : (
-        <input
-          aria-describedby={describedBy}
-          aria-invalid={Boolean(error)}
-          autoComplete={autoComplete}
-          id={id}
-          inputMode={inputMode}
-          name={id}
-          onChange={(event) => onChange(event.target.value)}
-          required
-          type={type}
-          value={value}
-        />
-      )}
-      {hint ? (
-        <span className="auth-form__hint" id={hintId}>
-          {hint}
-        </span>
-      ) : null}
-      {error ? (
-        <span className="auth-form__field-error" id={errorId} role="alert">
-          {error}
-        </span>
-      ) : null}
-    </div>
+  return type === "password" ? (
+    <PasswordInput
+      autoComplete={autoComplete}
+      error={error}
+      hint={hint}
+      id={id}
+      label={label}
+      name={id}
+      onChange={onChange}
+      value={value}
+    />
+  ) : (
+    <TextField
+      autoComplete={autoComplete}
+      error={error}
+      hint={hint}
+      id={id}
+      inputMode={inputMode}
+      label={label}
+      name={id}
+      onChange={(event) => onChange(event.target.value)}
+      required
+      type={type}
+      value={value}
+    />
   );
 }
 

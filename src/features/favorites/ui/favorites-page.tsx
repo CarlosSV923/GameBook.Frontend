@@ -24,7 +24,7 @@ export function FavoritesPage() {
   if (status === "loading") {
     return (
       <AppShell authState="authenticated">
-        <main className="favorites-page">
+        <main className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8 sm:px-6 sm:py-12">
           <CatalogState context="favorites" kind="loading" messages={copy} />
         </main>
       </AppShell>
@@ -34,11 +34,26 @@ export function FavoritesPage() {
   if (!user) {
     return (
       <AppShell>
-        <main className="favorites-page">
-          <section className="favorites-required" role="alert">
-            <p className="eyebrow">{copy.favorites.eyebrow}</p>
-            <p>{copy.favorites.required}</p>
-            <Link href="/login">{copy.navigation.signIn}</Link>
+        <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+          <section
+            className="flex max-w-2xl gap-4 rounded-panel border border-border-soft bg-paper-raised p-6 shadow-raised sm:p-8"
+            role="alert"
+          >
+            <span aria-hidden="true" className="w-1 shrink-0 bg-copper" />
+            <div className="grid gap-4">
+              <p className="m-0 font-ui text-xs font-bold uppercase tracking-[0.12em] text-copper-strong">
+                {copy.favorites.eyebrow}
+              </p>
+              <p className="m-0 text-sm leading-6 text-ink-secondary">
+                {copy.favorites.required}
+              </p>
+              <Link
+                className="font-semibold text-copper-strong underline underline-offset-4"
+                href="/login"
+              >
+                {copy.navigation.signIn}
+              </Link>
+            </div>
           </section>
         </main>
       </AppShell>
@@ -47,11 +62,17 @@ export function FavoritesPage() {
 
   return (
     <AppShell authState="authenticated">
-      <main className="favorites-page">
-        <header className="favorites-page__header">
-          <p className="eyebrow">{copy.favorites.eyebrow}</p>
-          <h1>{copy.favorites.title}</h1>
-          <p>{copy.favorites.description}</p>
+      <main className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8 sm:px-6 sm:py-12">
+        <header className="grid gap-3">
+          <p className="m-0 font-ui text-xs font-bold uppercase tracking-[0.12em] text-copper-strong">
+            {copy.favorites.eyebrow}
+          </p>
+          <h1 className="m-0 font-display text-4xl font-medium leading-tight tracking-tight text-ink">
+            {copy.favorites.title}
+          </h1>
+          <p className="m-0 max-w-[56ch] text-sm leading-6 text-ink-secondary">
+            {copy.favorites.description}
+          </p>
         </header>
         <FavoritesList />
       </main>
