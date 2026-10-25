@@ -12,6 +12,7 @@ import {
 } from "@/features/catalog/ui/favorite-action";
 import { GameCard } from "@/features/catalog/ui/game-card";
 import { GameDetailModal } from "@/features/catalog/ui/game-detail-modal";
+import { QueryProvider } from "@/shared/query/query-client-provider";
 import { messages } from "@/shared/i18n/messages";
 
 const game = {
@@ -113,13 +114,17 @@ describe("FavoriteAction", () => {
       }),
     );
     const modalMarkup = renderToStaticMarkup(
-      createElement(GameDetailModal, {
-        authStatus: "anonymous",
-        game,
-        messages: messages.en,
-        onSave,
-        onClose: () => undefined,
-      }),
+      createElement(
+        QueryProvider,
+        null,
+        createElement(GameDetailModal, {
+          authStatus: "anonymous",
+          game,
+          messages: messages.en,
+          onSave,
+          onClose: () => undefined,
+        }),
+      ),
     );
 
     expect(cardMarkup).toContain("favorite-action--card");
@@ -135,13 +140,17 @@ describe("FavoriteAction", () => {
       }),
     );
     const favoriteModalMarkup = renderToStaticMarkup(
-      createElement(GameDetailModal, {
-        authStatus: "authenticated",
-        game,
-        messages: messages.en,
-        onClose: () => undefined,
-        onDelete,
-      }),
+      createElement(
+        QueryProvider,
+        null,
+        createElement(GameDetailModal, {
+          authStatus: "authenticated",
+          game,
+          messages: messages.en,
+          onClose: () => undefined,
+          onDelete,
+        }),
+      ),
     );
 
     expect(favoriteCardMarkup).toContain(

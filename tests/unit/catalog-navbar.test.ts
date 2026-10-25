@@ -9,14 +9,23 @@ vi.mock("next/navigation", () => ({
 import { AuthProvider } from "@/features/auth/ui/auth-provider";
 import { CatalogNavbar } from "@/features/layout/ui/catalog-navbar";
 import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
+import { QueryProvider } from "@/shared/query/query-client-provider";
 
 describe("CatalogNavbar", () => {
   it("shows visitor account actions without exposing authenticated links", () => {
     const markup = renderToStaticMarkup(
       createElement(
-        AuthProvider,
+        QueryProvider,
         null,
-        createElement(PreferencesProvider, null, createElement(CatalogNavbar)),
+        createElement(
+          AuthProvider,
+          null,
+          createElement(
+            PreferencesProvider,
+            null,
+            createElement(CatalogNavbar),
+          ),
+        ),
       ),
     );
 
@@ -29,12 +38,16 @@ describe("CatalogNavbar", () => {
   it("shows profile, favorites and sign-out actions for an authenticated user", () => {
     const markup = renderToStaticMarkup(
       createElement(
-        AuthProvider,
+        QueryProvider,
         null,
         createElement(
-          PreferencesProvider,
+          AuthProvider,
           null,
-          createElement(CatalogNavbar, { authState: "authenticated" }),
+          createElement(
+            PreferencesProvider,
+            null,
+            createElement(CatalogNavbar, { authState: "authenticated" }),
+          ),
         ),
       ),
     );
