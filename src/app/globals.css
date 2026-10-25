@@ -934,6 +934,12 @@ h2 {
   scroll-margin-top: 32px;
 }
 
+.catalog-ranking-note {
+  margin: 0 0 12px;
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
 .catalog-filters {
   display: grid;
   gap: 16px;
