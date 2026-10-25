@@ -214,6 +214,8 @@ export const messages = {
       noResultsDescription: "Try changing your filters.",
     },
     indexStrip: {
+      unavailable: "Unavailable",
+      rank: "Rank",
       platforms: "Platforms",
       rating: "Rating / 100",
       year: "Year",
@@ -436,6 +438,8 @@ export const messages = {
       noResultsDescription: "Prueba a cambiar los filtros.",
     },
     indexStrip: {
+      unavailable: "No disponible",
+      rank: "PosiciÃ³n",
       platforms: "Plataformas",
       rating: "Puntuación / 100",
       year: "Año",

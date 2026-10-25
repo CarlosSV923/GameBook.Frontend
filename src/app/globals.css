@@ -1,47 +1,108 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-paper: var(--token-paper);
+  --color-paper-raised: var(--token-paper-raised);
+  --color-paper-inset: var(--token-paper-inset);
+  --color-ink: var(--token-ink);
+  --color-ink-secondary: var(--token-ink-secondary);
+  --color-ink-muted: var(--token-ink-muted);
+  --color-slate: var(--token-slate);
+  --color-copper: var(--token-copper);
+  --color-copper-strong: var(--token-copper-strong);
+  --color-moss: var(--token-moss);
+  --color-warning: var(--token-warning);
+  --color-danger: var(--token-danger);
+  --color-scrim: var(--token-scrim);
+  --color-focus: var(--token-focus);
+  --color-primary-action: var(--token-primary-action);
+  --color-primary-action-text: var(--token-primary-action-text);
+  --color-border: var(--token-border);
+  --color-border-soft: var(--token-border-soft);
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-panel: 12px;
+  --radius-modal: 16px;
+  --shadow-raised: var(--token-shadow-raised);
+  --spacing: 0.25rem;
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-ui:
+    var(--font-ibm-plex-sans), "Segoe UI", Aptos, system-ui, sans-serif;
+  --font-data: var(--font-ibm-plex-mono), "SFMono-Regular", Consolas, monospace;
+}
+
 :root {
   color-scheme: light;
-  --paper: #f3efe6;
-  --paper-raised: #fbf8f1;
-  --paper-inset: #e8e1d4;
-  --ink: #252b2e;
-  --ink-secondary: #536067;
-  --ink-muted: #7a858a;
-  --slate: #344b59;
-  --copper: #a85f3b;
-  --copper-strong: #874523;
-  --moss: #55705a;
-  --warning: #9b7027;
-  --danger: #a84e49;
-  --border: rgba(37, 43, 46, 0.16);
-  --border-soft: rgba(37, 43, 46, 0.09);
-  --focus-ring: #c6794e;
-  --shadow-raised:
+  --token-paper: #f3efe6;
+  --token-paper-raised: #fbf8f1;
+  --token-paper-inset: #e8e1d4;
+  --token-ink: #252b2e;
+  --token-ink-secondary: #536067;
+  --token-ink-muted: #596368;
+  --token-slate: #344b59;
+  --token-copper: #a85f3b;
+  --token-copper-strong: #874523;
+  --token-moss: #55705a;
+  --token-warning: #9b7027;
+  --token-danger: #a84e49;
+  --token-scrim: rgb(0 0 0 / 64%);
+  --token-focus: #a85f3b;
+  --token-primary-action: #874523;
+  --token-primary-action-text: #fbf8f1;
+  --token-border: rgb(37 43 46 / 16%);
+  --token-border-soft: rgb(37 43 46 / 9%);
+  --token-shadow-raised:
     0 0 0 1px rgba(37, 43, 46, 0.06), 0 1px 2px -1px rgba(37, 43, 46, 0.06),
     0 2px 4px rgba(37, 43, 46, 0.04);
-  --font-interface: "Segoe UI", Aptos, system-ui, sans-serif;
-  --font-editorial: Georgia, "Times New Roman", serif;
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-ui:
+    var(--font-ibm-plex-sans), "Segoe UI", Aptos, system-ui, sans-serif;
+  --font-data: var(--font-ibm-plex-mono), "SFMono-Regular", Consolas, monospace;
+  --paper: var(--token-paper);
+  --paper-raised: var(--token-paper-raised);
+  --paper-inset: var(--token-paper-inset);
+  --ink: var(--token-ink);
+  --ink-secondary: var(--token-ink-secondary);
+  --ink-muted: var(--token-ink-muted);
+  --slate: var(--token-slate);
+  --copper: var(--token-copper);
+  --copper-strong: var(--token-copper-strong);
+  --moss: var(--token-moss);
+  --warning: var(--token-warning);
+  --danger: var(--token-danger);
+  --border: var(--token-border);
+  --border-soft: var(--token-border-soft);
+  --focus-ring: var(--token-focus);
+  --shadow-raised: var(--token-shadow-raised);
+  --font-editorial: var(--font-display);
+  --font-interface: var(--font-ui);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #1c252b;
-  --paper-raised: #253139;
-  --paper-inset: #141c21;
-  --ink: #edf0ea;
-  --ink-secondary: #b8c2c4;
-  --ink-muted: #89969b;
+  --token-paper: #1b2027;
+  --token-paper-raised: #222831;
+  --token-paper-inset: #161a20;
+  --token-ink: #ece6da;
+  --token-ink-secondary: #b9b2a6;
+  --token-ink-muted: #b9b2a6;
+  --token-slate: #2c333d;
+  --token-copper: #d9875a;
+  --token-copper-strong: #f2b48a;
+  --token-moss: #8eae91;
+  --token-warning: #d0a457;
+  --token-danger: #dc8279;
+  --token-scrim: rgb(0 0 0 / 64%);
+  --token-focus: #e0a078;
+  --token-primary-action: #d9875a;
+  --token-primary-action-text: #1b2027;
+  --token-border: rgb(236 230 218 / 12%);
+  --token-border-soft: rgb(236 230 218 / 7%);
+  --token-shadow-raised: 0 0 0 1px rgb(236 230 218 / 9%);
+  /* Legacy components still fill primary buttons and selections with
+     --slate; keep its previous light tone in dark mode until GB-017.03–.06
+     move them to the primary-action tokens. */
   --slate: #91a7af;
-  --copper: #d3956b;
-  --copper-strong: #e2ab80;
-  --moss: #8eae91;
-  --warning: #d0a457;
-  --danger: #dc8279;
-  --border: rgba(237, 240, 234, 0.14);
-  --border-soft: rgba(237, 240, 234, 0.08);
-  --focus-ring: #e0a078;
-  --shadow-raised: 0 0 0 1px rgba(237, 240, 234, 0.09);
 }
 
 * {
