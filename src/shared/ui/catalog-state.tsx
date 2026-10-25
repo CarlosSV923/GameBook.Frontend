@@ -84,10 +84,17 @@ export function CatalogState({
   ) : (
     <div
       aria-live={kind === "end" ? "polite" : "assertive"}
-      className={`grid min-h-48 grid-cols-[72px_minmax(0,1fr)] gap-5 rounded-panel border border-border-soft bg-paper-raised p-5 shadow-raised sm:min-h-52 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-6 sm:p-6 ${kind === "error" ? "border-danger/40" : ""} ${kind === "end" ? "min-h-0 items-center py-4" : ""}`}
+      className={`grid min-h-48 grid-cols-[72px_minmax(0,1fr)] gap-5 rounded-panel border border-border-soft bg-paper-raised p-5 shadow-raised sm:min-h-52 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-6 sm:p-6 ${kind === "error" ? "border-danger/40" : ""} ${kind === "end" ? "min-h-0 grid-cols-[8px_minmax(0,1fr)] items-center gap-4 py-4 sm:grid-cols-[8px_minmax(0,1fr)]" : ""}`}
       role={kind === "error" ? "alert" : kind === "end" ? "status" : undefined}
     >
-      <IndexStrip labels={messages.indexStrip} />
+      {kind === "end" ? (
+        <span
+          aria-hidden="true"
+          className="h-8 w-2 rounded-full bg-copper/70"
+        />
+      ) : (
+        <IndexStrip labels={messages.indexStrip} />
+      )}
       <div className="self-center">
         <p className="mb-2 font-ui text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-copper-strong">
           {sectionCopy.eyebrow}

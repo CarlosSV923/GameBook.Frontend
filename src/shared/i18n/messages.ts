@@ -157,7 +157,7 @@ export const messages = {
         disableAccountConfirm:
           "Disable this account? Your account and favorites will be kept, but you will not be able to sign in or use this email again.",
         disableAccountDescription:
-          "This permanently disables access to the account for the MVP. Your account and favorites will be retained, but the account cannot be reactivated.",
+          "This permanently disables access to the account. Your account and favorites will be retained, but the account cannot be reactivated.",
         disablingAccount: "Disabling account",
         currentPassword: "Current password",
         description:
@@ -396,7 +396,7 @@ export const messages = {
         disableAccountConfirm:
           "¿Deshabilitar esta cuenta? Tu cuenta y tus favoritos se conservarán, pero no podrás iniciar sesión ni usar de nuevo este correo.",
         disableAccountDescription:
-          "Esto deshabilita permanentemente el acceso durante el MVP. Tu cuenta y tus favoritos se conservarán, pero la cuenta no podrá reactivarse.",
+          "Esto deshabilita permanentemente el acceso a la cuenta. Tu cuenta y tus favoritos se conservarán, pero la cuenta no podrá reactivarse.",
         disablingAccount: "Deshabilitando cuenta",
         currentPassword: "Contraseña actual",
         description:

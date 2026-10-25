@@ -10,7 +10,7 @@ type AppShellProps = {
 
 export function AppShell({ authState = "anonymous", children }: AppShellProps) {
   return (
-    <div className="app-shell">
+    <div className="min-h-svh">
       <CatalogNavbar authState={authState} />
       <ServiceWarmupAlert />
       {children}

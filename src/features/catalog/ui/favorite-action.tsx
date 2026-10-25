@@ -185,7 +185,7 @@ export function FavoriteAction({
         {isSaving ? (
           <span
             aria-hidden="true"
-            className="loading-spinner loading-spinner--small"
+            className="inline-block size-3 shrink-0 animate-[catalog-suggestion-search_700ms_linear_infinite] rounded-full border-2 border-current/30 border-t-copper motion-reduce:animate-none"
           />
         ) : (
           <HeartIcon isSaved={isSaved} />

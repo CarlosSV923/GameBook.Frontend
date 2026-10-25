@@ -27,10 +27,6 @@ export function CollectionSentinel({
   }, [enabled, onIntersect]);
 
   return (
-    <div
-      aria-hidden="true"
-      className="catalog-pagination__sentinel"
-      ref={ref}
-    />
+    <div aria-hidden="true" className="pointer-events-none h-px" ref={ref} />
   );
 }

@@ -101,9 +101,11 @@
   --token-shadow-raised: 0 0 0 1px rgb(236 230 218 / 9%);
 }
 
-/* Element defaults sit in the base layer so Tailwind utilities win. */
+/* Global element defaults; component typography and layout live in utilities. */
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -120,34 +122,9 @@
     font-family: var(--font-interface);
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  a:focus-visible {
-    outline: 3px solid var(--focus-ring);
-    outline-offset: 3px;
-  }
-
-  button {
-    font: inherit;
-  }
-
-  button:focus-visible {
-    outline: 3px solid var(--focus-ring);
-    outline-offset: 3px;
-  }
-}
-
-.app-shell {
-  min-height: 100svh;
-}
-
-/* Element defaults sit in the base layer so Tailwind utilities win. */
-@layer base {
   h1,
   h2,
+  h3,
   p {
     margin-top: 0;
   }
@@ -157,213 +134,33 @@
     text-wrap: balance;
   }
 
-  h1 {
-    max-width: 12ch;
-    margin-bottom: 20px;
-    color: var(--ink);
-    font-family: var(--font-editorial);
-    font-size: clamp(2.5rem, 7vw, 5rem);
-    font-weight: 500;
-    letter-spacing: -0.045em;
-    line-height: 0.98;
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  h2 {
-    margin-bottom: 8px;
-    font-size: 1.35rem;
-    font-weight: 650;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+  a:focus-visible,
+  button:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  button {
+    font: inherit;
   }
 }
 
-.catalog-preview {
-  scroll-margin-top: 32px;
-}
-
-.catalog-filter-suggestions {
-  position: absolute;
-  z-index: 6;
-  top: calc(100% + 4px);
-  right: 0;
-  left: 0;
-  display: grid;
-  gap: 2px;
-  max-height: 220px;
-  margin: 0;
-  padding: 5px;
-  overflow-y: auto;
-  background: var(--paper-raised);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  box-shadow: var(--shadow-raised);
-  list-style: none;
-}
-
-.catalog-filter-suggestions button {
-  width: 100%;
-  padding: 9px 10px;
-  color: var(--ink-secondary);
-  background: transparent;
-  border: 0;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8125rem;
-  text-align: left;
-}
-
-.catalog-filter-suggestions button:hover {
-  color: var(--ink);
-  background: var(--paper-inset);
-}
-
-.catalog-filter-suggestions--loading {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 10px;
-  color: var(--ink-secondary);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1.4;
-  text-transform: none;
-}
-
-.catalog-filter-suggestions__spinner {
-  width: 14px;
-  height: 14px;
-  margin-right: 8px;
-  flex: 0 0 auto;
-  border: 2px solid color-mix(in srgb, var(--slate) 42%, transparent);
-  border-top-color: var(--copper);
-  border-radius: 50%;
-  animation: catalog-suggestion-search 700ms linear infinite;
-}
-
-.loading-spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-right: 8px;
-  flex: 0 0 auto;
-  border: 2px solid color-mix(in srgb, currentColor 28%, transparent);
-  border-top-color: var(--copper);
-  border-radius: 50%;
-  vertical-align: -2px;
-  animation: catalog-suggestion-search 700ms linear infinite;
-}
-
-.loading-spinner--small {
-  width: 12px;
-  height: 12px;
-  margin-right: 0;
-  border-width: 2px;
-}
-
+/* Shared motion primitives used by search, pagination and detail surfaces. */
 @keyframes catalog-suggestion-search {
   to {
     transform: rotate(1turn);
   }
 }
 
-.catalog-filter-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 10px 14px;
-  color: var(--token-primary-action-text);
-  background: var(--token-primary-action);
-  border: 1px solid var(--token-primary-action);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  transition:
-    background-color 160ms ease-out,
-    border-color 160ms ease-out,
-    transform 120ms ease-out;
-}
-
-.catalog-filter-button:hover {
-  filter: brightness(0.95);
-}
-
-.catalog-filter-button:active {
-  transform: scale(0.97);
-}
-
-.catalog-filter-button--quiet {
-  color: var(--ink-secondary);
-  background: transparent;
-  border-color: var(--border);
-}
-
-.catalog-filter-button--quiet:hover {
-  color: var(--ink);
-  background: var(--paper-inset);
-  border-color: var(--border);
-}
-
-.catalog-favorites-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 16px;
-  color: var(--ink-muted);
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.catalog-pagination__sentinel {
-  height: 1px;
-  pointer-events: none;
-}
-
-.catalog-pagination {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  min-height: 42px;
-  margin-top: 24px;
-}
-
-.catalog-pagination__status {
-  display: inline-flex;
-  align-items: center;
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  text-align: center;
-}
-
-.catalog-pagination__error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: var(--danger);
-  font-size: 0.8125rem;
-  text-align: center;
-}
-
-.catalog-pagination__error p {
-  margin: 0;
-}
-
-.catalog-pagination__button {
-  min-width: 120px;
-}
-
 @keyframes detail-scrim-in {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -374,57 +171,8 @@
     opacity: 0;
     transform: translateY(8px) scale(0.985);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
-  }
-}
-
-.igdb-attribution {
-  margin: 0;
-  padding: 14px 24px 18px;
-  color: var(--ink-muted);
-  border-top: 1px solid var(--border-soft);
-  font-size: 0.6875rem;
-  line-height: 1.45;
-  text-align: center;
-}
-
-.igdb-attribution a {
-  color: var(--copper-strong);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.igdb-attribution a:hover {
-  color: var(--ink);
-}
-
-@media (max-width: 720px) {
-  .igdb-attribution {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .catalog-filter-button {
-    width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalog-filter-button {
-    transition: none;
-  }
-
-  .catalog-filter-suggestions__spinner {
-    animation: none;
-  }
-
-  .loading-spinner {
-    animation: none;
   }
 }
