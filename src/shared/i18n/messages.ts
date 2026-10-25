@@ -91,6 +91,9 @@ export const messages = {
         errorTitle: "Details are temporarily unavailable",
         errorDescription:
           "The catalog card is still available, but IGDB could not provide the full detail right now.",
+        unavailableTitle: "Details are not available for this game",
+        unavailableDescription:
+          "The catalog card is still available, but IGDB has no additional detail to show.",
         summary: "Summary",
         genres: "Genres",
         developers: "Developers",
@@ -320,6 +323,9 @@ export const messages = {
         errorTitle: "El detalle no está disponible temporalmente",
         errorDescription:
           "La tarjeta del catálogo sigue disponible, pero IGDB no pudo entregar el detalle completo en este momento.",
+        unavailableTitle: "No hay detalles disponibles para este juego",
+        unavailableDescription:
+          "La tarjeta del catálogo sigue disponible, pero IGDB no tiene más detalles para mostrar.",
         summary: "Descripción",
         genres: "Géneros",
         developers: "Desarrolladores",

@@ -93,6 +93,9 @@ export function FavoritesList() {
       page.hasNext ? getNextFavoritePage(page) : undefined,
   });
   const items = flattenCollection<Favorite>(collection.data);
+  const selectedGamePosition = selectedGame
+    ? items.findIndex(({ igdbId }) => igdbId === selectedGame.igdbId)
+    : -1;
   const applyFilters = (nextFilters: AppliedCatalogFilters) => {
     if (user?.id) {
       queryClient.removeQueries({
@@ -222,6 +225,9 @@ export function FavoritesList() {
           game={selectedGame}
           key={selectedGame.igdbId}
           messages={copy}
+          position={
+            selectedGamePosition >= 0 ? selectedGamePosition + 1 : undefined
+          }
           onClose={() => setSelectedGame(null)}
           onDelete={(id) => deleteMutation.mutateAsync(id)}
           onDetailLoaded={async (detail) => {
