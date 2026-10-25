@@ -14,6 +14,7 @@ type CollectionOptions<
   queryKey: readonly unknown[];
   queryPage: (param: TParam, signal: AbortSignal) => Promise<TPage>;
   getNextPageParam: (page: TPage) => TParam | undefined;
+  staleTime?: number;
 };
 
 export function flattenCollection<T extends { igdbId: number }>(
@@ -35,6 +36,7 @@ export function useInfiniteCollection<
   queryKey,
   queryPage,
   getNextPageParam,
+  staleTime,
 }: CollectionOptions<TPage, T, TParam>) {
   return useInfiniteQuery<
     TPage,
@@ -48,5 +50,6 @@ export function useInfiniteCollection<
     initialPageParam,
     queryFn: ({ pageParam, signal }) => queryPage(pageParam as TParam, signal),
     getNextPageParam,
+    staleTime,
   });
 }

@@ -8,6 +8,11 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
     "Covered by focused mobile journeys.",
   );
   const mocks = await mockGameBook(page);
+  const catalogRequests: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname === "/api/igdb/games")
+      catalogRequests.push(request.url());
+  });
 
   await page.goto("/");
   await expect(
@@ -26,6 +31,7 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
     ),
   ).toBeVisible();
   await expect(page.locator('[aria-label="Rating / 100: 92"]')).toBeVisible();
+  expect(catalogRequests).toEqual([]);
 
   await page.getByRole("combobox", { name: "Game name" }).fill("Example");
   await expect(
@@ -146,6 +152,14 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await mocks.expectNoExternalRequests();
 });
 
+test("initial HTML contains the server-prefetched catalog page", async ({
+  request,
+}) => {
+  const response = await request.get("/");
+  expect(response.ok()).toBeTruthy();
+  expect(await response.text()).toContain("Example Quest");
+});
+
 test("mobile public catalog and detail", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Runs in the mobile project.");
   const mocks = await mockGameBook(page);
@@ -184,6 +198,10 @@ test("catalog loads the next page when scrolling to the sentinel", async ({
 }) => {
   await mockGameBook(page, { catalogPagination: true });
   await page.goto("/");
+  // The unfiltered first page is server-rendered; a filtered search is
+  // paginated by the browser and answered by the pagination fixtures.
+  await page.getByRole("spinbutton", { name: "From year" }).fill("2000");
+  await page.getByRole("button", { name: "Search" }).click();
   await expect(
     page.getByRole("heading", { name: "Pagination Example 1", exact: true }),
   ).toBeVisible();

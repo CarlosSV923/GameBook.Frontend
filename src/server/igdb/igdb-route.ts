@@ -8,8 +8,13 @@ import {
 
 export const IGDB_ROUTE_ERROR_CODE = "IGDB_INVALID_REQUEST";
 
+let serverClient: ReturnType<typeof createIgdbClient> | null = null;
+
+// One client per server process so the Twitch application token is cached
+// across requests instead of being requested again for every call.
 export function getIgdbServerClient() {
-  return createIgdbClient();
+  serverClient ??= createIgdbClient();
+  return serverClient;
 }
 
 export function parseCatalogFilters(

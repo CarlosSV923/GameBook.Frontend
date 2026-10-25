@@ -51,6 +51,8 @@ export function CatalogList() {
       ),
     getNextPageParam: (page) =>
       page.hasNext ? getNextCatalogOffset(page) : undefined,
+    // Keeps the server-prefetched first page fresh on hydration.
+    staleTime: 60_000,
   });
   const items = flattenCollection<IgdbGameCard>(catalog.data);
   const favoriteIdsQuery = useQuery({
