@@ -220,7 +220,7 @@ export const messages = {
     },
     indexStrip: {
       unavailable: "Unavailable",
-      rank: "Rank",
+      rank: "Position",
       platforms: "Platforms",
       rating: "Rating / 100",
       year: "Year",
@@ -449,7 +449,7 @@ export const messages = {
     },
     indexStrip: {
       unavailable: "No disponible",
-      rank: "PosiciÃ³n",
+      rank: "Posición",
       platforms: "Plataformas",
       rating: "Puntuación / 100",
       year: "Año",
