@@ -25,6 +25,7 @@ import {
   readAccessToken,
   writeAccessToken,
 } from "@/shared/auth/session-storage";
+import { useQueryClient } from "@tanstack/react-query";
 
 export type AuthStatus = "loading" | "anonymous" | "authenticated";
 
@@ -58,16 +59,25 @@ const discardableSessionErrorCodes = new Set([
 ]);
 
 export function AuthProvider({ children, client }: AuthProviderProps) {
+  const queryClient = useQueryClient();
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<UserIdentity | null>(null);
   const userRef = useRef<UserIdentity | null>(null);
 
   const clearSession = useCallback(() => {
+    queryClient.removeQueries({
+      predicate: ({ queryKey }) =>
+        (queryKey[0] === "collection" && queryKey[1] === "favorites") ||
+        queryKey[0] === "favorite-ids" ||
+        (queryKey[0] === "suggestions" &&
+          typeof queryKey[1] === "string" &&
+          queryKey[1].startsWith("favorites:")),
+    });
     clearAccessToken();
     userRef.current = null;
     setUser(null);
     setStatus("anonymous");
-  }, []);
+  }, [queryClient]);
 
   const authClient = useMemo(() => client ?? createAuthUserClient(), [client]);
 

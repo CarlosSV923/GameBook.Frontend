@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 import { createIgdbCatalogClient } from "@/features/catalog/api/igdb-catalog-client";
@@ -21,6 +22,7 @@ import type {
   IgdbGameDetail,
 } from "@/features/catalog/model/igdb";
 import type { Messages } from "@/shared/i18n/messages";
+import { gameDetailKey } from "@/shared/query/query-keys";
 import { IgdbAttribution } from "@/shared/ui/igdb-attribution";
 
 type GameDetailModalProps = {
@@ -49,53 +51,31 @@ export function GameDetailModal({
   onClose,
   authStatus,
 }: GameDetailModalProps) {
-  const [detail, setDetail] = useState<IgdbGameDetail | null>(null);
-  const [status, setStatus] = useState<DetailStatus>("loading");
   const [snapshotStatus, setSnapshotStatus] = useState<SnapshotStatus>("idle");
   const [coverUrl, setCoverUrl] = useState(game.imageUrl);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const snapshotSyncStarted = useRef(false);
+  const detailQuery = useQuery({
+    queryKey: gameDetailKey(game.igdbId),
+    queryFn: ({ signal }) =>
+      createIgdbCatalogClient().getGameDetail(game.igdbId, signal),
+  });
+  const detail = detailQuery.data ?? null;
+  const status: DetailStatus = detailQuery.isPending
+    ? "loading"
+    : detailQuery.isError || detail === null
+      ? "error"
+      : "ready";
 
   useEffect(() => {
-    const controller = new AbortController();
-    let isActive = true;
-
-    void createIgdbCatalogClient()
-      .getGameDetail(game.igdbId, controller.signal)
-      .then((nextDetail) => {
-        if (!isActive) {
-          return;
-        }
-
-        setDetail(nextDetail);
-        setStatus(nextDetail ? "ready" : "error");
-
-        if (nextDetail && onDetailLoaded) {
-          setSnapshotStatus("syncing");
-          void onDetailLoaded(nextDetail)
-            .then(() => {
-              if (isActive) {
-                setSnapshotStatus("updated");
-              }
-            })
-            .catch(() => {
-              if (isActive) {
-                setSnapshotStatus("error");
-              }
-            });
-        }
-      })
-      .catch(() => {
-        if (isActive && !controller.signal.aborted) {
-          setStatus("error");
-        }
-      });
-
-    return () => {
-      isActive = false;
-      controller.abort();
-    };
-  }, [game.igdbId, onDetailLoaded]);
+    if (!detail || !onDetailLoaded || snapshotSyncStarted.current) return;
+    snapshotSyncStarted.current = true;
+    setSnapshotStatus("syncing");
+    void onDetailLoaded(detail)
+      .then(() => setSnapshotStatus("updated"))
+      .catch(() => setSnapshotStatus("error"));
+  }, [detail, onDetailLoaded]);
 
   useEffect(() => {
     const previousActiveElement =
