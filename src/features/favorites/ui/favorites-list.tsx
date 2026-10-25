@@ -165,7 +165,6 @@ export function FavoritesList() {
   return (
     <>
       <CatalogFilters
-        eyebrow={copy.favorites.eyebrow}
         onApply={applyFilters}
         suggestionProvider={suggestionProvider}
         suggestionSource={`favorites:${user?.id ?? ""}`}

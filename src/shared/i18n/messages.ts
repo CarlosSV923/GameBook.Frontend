@@ -13,6 +13,9 @@ export const messages = {
       catalog: "Catalog",
       createAccount: "Create account",
       favorites: "Favorite games",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
+      mobileMenu: "Mobile navigation",
       primary: "Primary navigation",
       profile: "Profile",
       signIn: "Sign in",
@@ -37,6 +40,7 @@ export const messages = {
       description:
         "Search the archive by name, platform, or launch year when the catalog is connected.",
       rankingNote: "The ranking uses IGDB’s combined critic and player rating.",
+      rankingTitle: "Top rated of all time",
       emptyDescription:
         "Your next search will bring the shelves to life. The same view will later hold public results and your saved games.",
       emptyTitle: "The shelves are ready for your next search.",
@@ -47,6 +51,7 @@ export const messages = {
       attribution: "Game data and images provided by",
       attributionLink: "IGDB",
       filters: "Filters",
+      closeFilters: "Close filters",
       name: "Game name",
       platform: "Platform",
       yearFrom: "From year",
@@ -237,6 +242,9 @@ export const messages = {
       catalog: "Catálogo",
       createAccount: "Crear cuenta",
       favorites: "Juegos favoritos",
+      openMenu: "Abrir menú",
+      closeMenu: "Cerrar menú",
+      mobileMenu: "Navegación móvil",
       primary: "Navegación principal",
       profile: "Perfil",
       signIn: "Iniciar sesión",
@@ -262,6 +270,7 @@ export const messages = {
         "Busca en el archivo por nombre, plataforma o año de lanzamiento cuando el catálogo esté conectado.",
       rankingNote:
         "La clasificación usa la puntuación combinada de la crítica y los jugadores de IGDB.",
+      rankingTitle: "Mejor valorados de todos los tiempos",
       emptyDescription:
         "Tu próxima búsqueda dará vida a las estanterías. Después, esta vista reunirá resultados públicos y juegos guardados.",
       emptyTitle: "Las estanterías esperan tu próxima búsqueda.",
@@ -272,6 +281,7 @@ export const messages = {
       attribution: "Datos e imágenes proporcionados por",
       attributionLink: "IGDB",
       filters: "Filtros",
+      closeFilters: "Cerrar filtros",
       name: "Nombre del juego",
       platform: "Plataforma",
       yearFrom: "Desde año",

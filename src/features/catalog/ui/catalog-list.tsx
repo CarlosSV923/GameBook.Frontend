@@ -123,7 +123,14 @@ export function CatalogList() {
 
   return (
     <>
-      <p className="catalog-ranking-note">{copy.catalog.rankingNote}</p>
+      <header className="mb-3 grid gap-1">
+        <h2 className="m-0 font-display text-2xl font-semibold tracking-tight text-ink">
+          {copy.catalog.rankingTitle}
+        </h2>
+        <p className="m-0 text-sm leading-relaxed text-ink-muted">
+          {copy.catalog.rankingNote}
+        </p>
+      </header>
       <CatalogFilters onApply={applyFilters} />
       {status !== "ready" ? (
         <CatalogState
