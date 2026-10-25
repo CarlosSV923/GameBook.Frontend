@@ -102,6 +102,26 @@ describe("GameBook UI message catalog", () => {
     expect(messages.es.catalog.clearFilters).toBe("Limpiar");
   });
 
+  it("describes permanent account deactivation without MVP wording", () => {
+    for (const language of [messages.en, messages.es]) {
+      expect(language.auth.profile.disableAccountDescription).not.toMatch(
+        /mvp/i,
+      );
+      expect(language.auth.profile.disableAccountDescription).toMatch(
+        /retained|conservar/,
+      );
+      expect(language.auth.profile.disableAccountDescription).toMatch(
+        /reactivat|reactivar/,
+      );
+    }
+    expect(messages.en.auth.profile.disableAccountDescription).toContain(
+      "permanently disables access",
+    );
+    expect(messages.es.auth.profile.disableAccountDescription).toContain(
+      "permanentemente el acceso",
+    );
+  });
+
   it("describes suggestion searches in both languages", () => {
     expect(messages.en.catalog.searchingSuggestions).toBe(
       "Searching suggestions…",

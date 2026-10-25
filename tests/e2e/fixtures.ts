@@ -1,4 +1,11 @@
 import { expect, type Page, type Route } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+// Playwright loads these fixtures as CommonJS, so resolve from __dirname.
+const exampleCover = readFileSync(
+  path.join(__dirname, "assets", "example-cover.svg"),
+);
 
 const user = {
   id: "7b7f3d2e-6d8d-4e8c-9e0c-2a96f2fb11aa",
@@ -10,7 +17,8 @@ export const exampleGame = {
   igdbId: 42,
   name: "Example Quest",
   released: "2015-06-12",
-  imageUrl: null,
+  imageUrl:
+    "https://images.igdb.com/igdb/image/upload/t_cover_big/example-cover.jpg",
   rating: 92.4,
   platforms: [{ id: 6, name: "PC" }],
 };
@@ -26,11 +34,6 @@ const detail = {
 
 type Favorite = typeof exampleGame;
 
-const transparentPng = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-  "base64",
-);
-
 export async function mockGameBook(
   page: Page,
   options: { catalogPagination?: boolean } = {},
@@ -44,7 +47,10 @@ export async function mockGameBook(
     if (url.origin === "http://127.0.0.1:3180") {
       // Serve covers locally so the image optimizer never fetches IGDB.
       if (url.pathname === "/_next/image") {
-        await route.fulfill({ contentType: "image/png", body: transparentPng });
+        await route.fulfill({
+          contentType: "image/svg+xml",
+          body: exampleCover,
+        });
         return;
       }
       if (url.pathname.startsWith("/api/igdb/")) {

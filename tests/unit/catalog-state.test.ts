@@ -45,6 +45,9 @@ describe("CatalogState", () => {
     expect(error).toContain('role="alert"');
     expect(end).toContain(messages.en.states.endOfResults);
     expect(end).toContain('role="status"');
-    expect(end).toContain('data-variant="card"');
+    expect(end).not.toContain('data-variant="card"');
+    expect(end).toContain('aria-hidden="true"');
+    expect(end).toContain("bg-copper/70");
+    expect(end).not.toContain(messages.en.indexStrip.unavailable);
   });
 });
