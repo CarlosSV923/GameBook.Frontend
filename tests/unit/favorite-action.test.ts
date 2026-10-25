@@ -1,14 +1,11 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
-}));
+import { describe, expect, it } from "vitest";
 
 import {
   FavoriteAction,
   FavoriteDeleteAction,
+  nextFavoriteSaveState,
 } from "@/features/catalog/ui/favorite-action";
 import { GameCard } from "@/features/catalog/ui/game-card";
 import { GameDetailModal } from "@/features/catalog/ui/game-detail-modal";
@@ -28,7 +25,7 @@ const onSave = async () => undefined;
 const onDelete = async () => undefined;
 
 describe("FavoriteAction", () => {
-  it("routes anonymous visitors to sign in without rendering a tooltip", () => {
+  it("renders the anonymous contextual action without navigating or saving", () => {
     const markup = renderToStaticMarkup(
       createElement(FavoriteAction, {
         game,
@@ -42,12 +39,26 @@ describe("FavoriteAction", () => {
     expect(markup).toContain(
       'aria-label="Sign in to save A Short Hike to favorites"',
     );
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain('aria-controls="favorite-action-');
     expect(markup).toContain('class="inline-grid size-11');
     expect(markup).toContain('aria-pressed="false"');
-    expect(markup).not.toContain("favorite-action__prompt");
+    expect(markup).not.toContain('href="/login"');
+    expect(nextFavoriteSaveState("anonymous", "idle", "activate")).toBe(
+      "confirming",
+    );
+    expect(nextFavoriteSaveState("anonymous", "confirming", "confirm")).toBe(
+      "confirming",
+    );
+    expect(nextFavoriteSaveState("anonymous", "confirming", "escape")).toBe(
+      "idle",
+    );
+    expect(nextFavoriteSaveState("anonymous", "confirming", "outside")).toBe(
+      "idle",
+    );
   });
 
-  it("renders a direct authenticated save action", () => {
+  it("requires explicit confirmation before an authenticated save", () => {
     const markup = renderToStaticMarkup(
       createElement(FavoriteAction, {
         game,
@@ -59,7 +70,16 @@ describe("FavoriteAction", () => {
     );
 
     expect(markup).toContain('aria-label="Save A Short Hike to favorites"');
-    expect(markup).not.toContain("favorite-action__prompt");
+    expect(markup).toContain('aria-expanded="false"');
+    expect(nextFavoriteSaveState("authenticated", "idle", "activate")).toBe(
+      "confirming",
+    );
+    expect(nextFavoriteSaveState("authenticated", "confirming", "cancel")).toBe(
+      "idle",
+    );
+    expect(
+      nextFavoriteSaveState("authenticated", "confirming", "confirm"),
+    ).toBe("saving");
   });
 
   it("does not expose a save interaction while the session is loading", () => {
@@ -89,16 +109,21 @@ describe("FavoriteAction", () => {
 
     expect(markup).toContain('aria-label="Remove A Short Hike from favorites"');
     expect(markup).toContain('aria-expanded="false"');
-    expect(markup).not.toContain("favorite-action__prompt");
     expect(markup).not.toContain("Sign in");
   });
 
-  it("keeps the direct-action copy in both languages", () => {
+  it("keeps contextual action copy in both languages", () => {
     expect(messages.en.catalog.favorite.signIn).toBe(
       "Sign in to save {name} to favorites",
     );
     expect(messages.es.catalog.favorite.signIn).toBe(
       "Inicia sesión para guardar {name} en favoritos",
+    );
+    expect(messages.en.catalog.favorite.anonymousPrompt).toBe(
+      "To save to favorites, you need to:",
+    );
+    expect(messages.es.catalog.favorite.anonymousPrompt).toBe(
+      "Para guardar en favoritos debes:",
     );
   });
 
