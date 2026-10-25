@@ -34,7 +34,7 @@ export default async function Home() {
 
   return (
     <AppShell>
-      <main className="home-shell">
+      <main className="mx-auto grid w-[calc(100%-32px)] max-w-[1120px] gap-6 pb-16 pt-6 md:w-[calc(100%-48px)] md:gap-8 md:pt-8">
         <HomeIntro />
         <HydrationBoundary state={dehydrate(queryClient)}>
           <section className="catalog-preview" id="catalog">

@@ -33,6 +33,9 @@ describe("CatalogNavbar", () => {
     expect(markup).toContain('href="/register"');
     expect(markup).not.toContain('href="/profile"');
     expect(markup).not.toContain('href="/favorites"');
+    expect(markup).toContain('aria-label="Open menu"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain('aria-controls="mobile-navigation-panel"');
   });
 
   it("shows profile, favorites and sign-out actions for an authenticated user", () => {
@@ -58,5 +61,6 @@ describe("CatalogNavbar", () => {
     expect(markup).toContain("Sign out");
     expect(markup).not.toContain('href="/login"');
     expect(markup).not.toContain('href="/register"');
+    expect(markup).toContain('aria-label="Open menu"');
   });
 });

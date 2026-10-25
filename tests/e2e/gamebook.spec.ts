@@ -178,6 +178,33 @@ test("mobile public catalog and detail", async ({ page }, testInfo) => {
   await mocks.expectNoExternalRequests();
 });
 
+test("mobile navigation and catalog filters open and close accessibly", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Runs in the mobile project.");
+  const mocks = await mockGameBook(page);
+
+  await page.goto("/");
+  const menuButton = page.getByRole("button", { name: "Open menu" });
+  await menuButton.click();
+  await expect(
+    page.getByRole("region", { name: "Mobile navigation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Close menu" }),
+  ).toHaveAttribute("aria-expanded", "true");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+
+  const filtersButton = page.getByRole("button", { name: "Filters" });
+  await filtersButton.click();
+  await expect(page.getByRole("region", { name: "Filters" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Filters" })).toBeFocused();
+  await expect(page.getByRole("combobox", { name: "Game name" })).toBeVisible();
+  await mocks.expectNoExternalRequests();
+});
+
 test("mobile login form accepts a session", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Runs in the mobile project.");
   const mocks = await mockGameBook(page);
@@ -187,6 +214,8 @@ test("mobile login form accepts a session", async ({ page }, testInfo) => {
   await page.getByLabel("Password", { exact: true }).fill("GameBook@2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL("/");
+  // On phones the account navigation lives in the header menu.
+  await page.getByRole("button", { name: "Open menu" }).click();
   await expect(
     page.getByRole("link", { name: "Favorite games" }),
   ).toBeVisible();
@@ -195,11 +224,15 @@ test("mobile login form accepts a session", async ({ page }, testInfo) => {
 
 test("catalog loads the next page when scrolling to the sentinel", async ({
   page,
-}) => {
+}, testInfo) => {
   await mockGameBook(page, { catalogPagination: true });
   await page.goto("/");
   // The unfiltered first page is server-rendered; a filtered search is
   // paginated by the browser and answered by the pagination fixtures.
+  if (testInfo.project.name === "mobile") {
+    // Year filters sit in the mobile filters panel.
+    await page.getByRole("button", { name: "Filters" }).click();
+  }
   await page.getByRole("spinbutton", { name: "From year" }).fill("2000");
   await page.getByRole("button", { name: "Search" }).click();
   await expect(

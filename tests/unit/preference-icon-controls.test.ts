@@ -19,9 +19,10 @@ describe("PreferenceIconControls", () => {
     expect(markup).toContain('aria-label="Switch to dark mode"');
     expect(markup).toContain('data-preference="language"');
     expect(markup).toContain('aria-label="Switch to Spanish"');
-    expect(markup).toContain(">ES</span>");
+    expect(markup).toContain('aria-pressed="true"');
+    expect(markup).toContain(">EN</button>");
+    expect(markup).toContain(">ES</button>");
     expect(markup).not.toContain(">Switch to dark mode<");
     expect(markup).not.toContain(">Switch to Spanish<");
-    expect(markup).not.toContain('data-preference="language"><svg');
   });
 });

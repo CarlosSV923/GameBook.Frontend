@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { createIgdbCatalogClient } from "@/features/catalog/api/igdb-catalog-client";
@@ -10,6 +10,9 @@ import type {
   IgdbPlatformSuggestion,
 } from "@/features/catalog/model/igdb";
 import { suggestionKey as suggestionQueryKey } from "@/shared/query/query-keys";
+import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
+import { TextField } from "@/shared/ui/text-field";
 
 export type AppliedCatalogFilters = {
   name?: string;
@@ -38,12 +41,10 @@ type CatalogFiltersProps = {
   heading?: string;
   onApply: (filters: AppliedCatalogFilters) => void;
   suggestionProvider?: CatalogSuggestionProvider;
-  eyebrow?: string;
   suggestionSource?: string;
 };
 
 export function CatalogFilters({
-  eyebrow,
   heading,
   onApply,
   suggestionProvider,
@@ -65,6 +66,15 @@ export function CatalogFilters({
   const [selectedGameName, setSelectedGameName] = useState("");
   const [debouncedPlatform, setDebouncedPlatform] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const advancedPanelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (advancedOpen) {
+      advancedPanelRef.current
+        ?.querySelector<HTMLElement>("input, button")
+        ?.focus();
+    }
+  }, [advancedOpen]);
 
   useEffect(() => {
     const query = name.trim();
@@ -134,6 +144,7 @@ export function CatalogFilters({
     }
 
     setValidationMessage("");
+    closeMobilePanel();
     onApply({
       name: name.trim() || undefined,
       platformId,
@@ -149,19 +160,25 @@ export function CatalogFilters({
     setYearFrom("");
     setYearTo("");
     setValidationMessage("");
+    closeMobilePanel();
     onApply({});
   };
 
-  return (
-    <form className="catalog-filters" onSubmit={applyFilters}>
-      <div className="catalog-filters__heading">
-        <p className="catalog-filters__kicker">
-          {eyebrow ?? copy.catalog.eyebrow}
-        </p>
-        <h2>{heading ?? copy.catalog.filters}</h2>
-      </div>
+  const closeMobilePanel = () => {
+    setAdvancedOpen(false);
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      requestAnimationFrame(() =>
+        document.getElementById("catalog-filter-toggle")?.focus(),
+      );
+    }
+  };
 
-      <div className="catalog-filters__fields">
+  return (
+    <form
+      className="sticky top-[70px] z-20 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 rounded-panel border border-border-soft bg-paper-raised p-3 shadow-raised md:top-[74px] md:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1.1fr)_minmax(112px,.6fr)_minmax(112px,.6fr)_auto] md:gap-3 md:p-4"
+      onSubmit={applyFilters}
+    >
+      <div className="min-w-0">
         <SuggestionField
           id="catalog-name"
           label={copy.catalog.name}
@@ -181,7 +198,49 @@ export function CatalogFilters({
             setName(suggestion.name);
             setSelectedGameName(suggestion.name);
           }}
+          searchIcon
         />
+      </div>
+      <Button
+        aria-controls="catalog-advanced-filters"
+        aria-expanded={advancedOpen}
+        className="md:hidden"
+        id="catalog-filter-toggle"
+        onClick={() => setAdvancedOpen((open) => !open)}
+        variant="secondary"
+      >
+        {copy.catalog.filters}
+      </Button>
+      <div
+        aria-label={heading ?? copy.catalog.filters}
+        className={
+          advancedOpen
+            ? "col-span-2 grid grid-cols-2 gap-3 md:contents"
+            : "hidden md:contents"
+        }
+        id="catalog-advanced-filters"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            closeMobilePanel();
+          }
+        }}
+        ref={advancedPanelRef}
+        role="region"
+      >
+        <div className="col-span-2 flex items-center justify-between md:hidden">
+          <span className="font-ui text-sm font-semibold text-ink">
+            {heading ?? copy.catalog.filters}
+          </span>
+          <IconButton
+            aria-label={copy.catalog.closeFilters}
+            onClick={() => {
+              closeMobilePanel();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
         <SuggestionField
           id="catalog-platform"
           label={copy.catalog.platform}
@@ -205,51 +264,52 @@ export function CatalogFilters({
             }
           }}
         />
-        <label className="catalog-filter-field" htmlFor="catalog-year-from">
-          <span>{copy.catalog.yearFrom}</span>
-          <input
-            id="catalog-year-from"
-            inputMode="numeric"
-            max="9999"
-            min="1"
-            onChange={(event) => setYearFrom(event.target.value)}
-            placeholder="YYYY"
-            type="number"
-            value={yearFrom}
-          />
-        </label>
-        <label className="catalog-filter-field" htmlFor="catalog-year-to">
-          <span>{copy.catalog.yearTo}</span>
-          <input
-            id="catalog-year-to"
-            inputMode="numeric"
-            max="9999"
-            min="1"
-            onChange={(event) => setYearTo(event.target.value)}
-            placeholder="YYYY"
-            type="number"
-            value={yearTo}
-          />
-        </label>
-      </div>
+        <TextField
+          className="font-data"
+          id="catalog-year-from"
+          label={copy.catalog.yearFrom}
+          inputMode="numeric"
+          max="9999"
+          min="1"
+          onChange={(event) => setYearFrom(event.target.value)}
+          placeholder="YYYY"
+          type="number"
+          value={yearFrom}
+        />
+        <TextField
+          className="font-data"
+          id="catalog-year-to"
+          label={copy.catalog.yearTo}
+          inputMode="numeric"
+          max="9999"
+          min="1"
+          onChange={(event) => setYearTo(event.target.value)}
+          placeholder="YYYY"
+          type="number"
+          value={yearTo}
+        />
 
-      {validationMessage ? (
-        <p className="catalog-filters__validation" role="alert">
-          {validationMessage}
-        </p>
-      ) : null}
+        {validationMessage ? (
+          <p
+            className="col-span-2 m-0 text-sm text-danger md:col-span-5"
+            role="alert"
+          >
+            {validationMessage}
+          </p>
+        ) : null}
 
-      <div className="catalog-filters__actions">
-        <button
-          className="catalog-filter-button catalog-filter-button--quiet"
-          onClick={clearFilters}
-          type="button"
-        >
-          {copy.catalog.clearFilters}
-        </button>
-        <button className="catalog-filter-button" type="submit">
-          {copy.catalog.applyFilters}
-        </button>
+        <div className="col-span-2 flex flex-col-reverse gap-2 md:col-span-1 md:flex-row">
+          <Button
+            className="w-full md:w-auto"
+            onClick={clearFilters}
+            variant="ghost"
+          >
+            {copy.catalog.clearFilters}
+          </Button>
+          <Button className="w-full md:w-auto" type="submit" variant="primary">
+            {copy.catalog.applyFilters}
+          </Button>
+        </div>
       </div>
     </form>
   );
@@ -289,6 +349,7 @@ type SuggestionFieldProps = {
   value: string;
   onChange: (value: string) => void;
   onSelect: (suggestion: CatalogSuggestion) => void;
+  searchIcon?: boolean;
 };
 
 function SuggestionField({
@@ -300,6 +361,7 @@ function SuggestionField({
   value,
   onChange,
   onSelect,
+  searchIcon = false,
 }: SuggestionFieldProps) {
   const [isFocused, setIsFocused] = useState(false);
   const hasSuggestions = isFocused && suggestions.length > 0;
@@ -307,7 +369,7 @@ function SuggestionField({
 
   return (
     <div
-      className="catalog-filter-field catalog-filter-field--suggestion"
+      className="relative grid min-w-0 gap-2 font-ui text-sm"
       onBlur={(event) => {
         const nextTarget = event.relatedTarget;
         if (
@@ -321,17 +383,19 @@ function SuggestionField({
       }}
       onFocus={() => setIsFocused(true)}
     >
-      <label htmlFor={id}>{label}</label>
-      <input
+      <TextField
         aria-autocomplete="list"
         aria-busy={isLoading}
         aria-controls={`${id}-suggestions`}
         aria-expanded={isOpen}
         autoComplete="off"
+        className="pr-3"
+        icon={searchIcon ? <SearchIcon /> : undefined}
+        id={id}
+        label={label}
         onChange={(event) => onChange(event.target.value)}
         role="combobox"
         value={value}
-        id={id}
         type="search"
       />
       {isOpen && isLoading ? (
@@ -379,6 +443,44 @@ function SuggestionField({
         </ul>
       ) : null}
     </div>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-[18px] text-ink-muted"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        cx="10.8"
+        cy="10.8"
+        r="6.8"
+        stroke="currentColor"
+        strokeWidth="1.7"
+      />
+      <path
+        d="m16 16 4.5 4.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.7"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg aria-hidden="true" className="size-5" fill="none" viewBox="0 0 24 24">
+      <path
+        d="m6 6 12 12M18 6 6 18"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.8"
+      />
+    </svg>
   );
 }
 

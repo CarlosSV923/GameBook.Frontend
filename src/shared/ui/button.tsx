@@ -73,7 +73,19 @@ export function Button(props: GameBookButtonProps) {
     );
   }
 
-  const { disabled = false, type = "button", ...buttonProps } = props;
+  const {
+    children: _children,
+    className: _className,
+    loading: _loading,
+    variant: _variant,
+    disabled = false,
+    type = "button",
+    ...buttonProps
+  } = props;
+  void _children;
+  void _className;
+  void _loading;
+  void _variant;
   return (
     <button
       {...buttonProps}
