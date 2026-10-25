@@ -105,7 +105,7 @@ describe("IGDB client", () => {
     ]);
 
     expect(requests[0].body).toContain(
-      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
+      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null & total_rating_count >= 100",
     );
     expect(requests[1].body).toContain(
       "fields id,name,first_release_date,cover.image_id,total_rating,platforms.id,platforms.name",
@@ -113,6 +113,7 @@ describe("IGDB client", () => {
     expect(requests[1].body).toContain(
       "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
     );
+    expect(requests[1].body).not.toContain("total_rating_count");
   });
 
   it("refreshes the application token once after an IGDB auth failure", async () => {
