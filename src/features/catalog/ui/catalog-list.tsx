@@ -154,13 +154,17 @@ export function CatalogList() {
               {copy.catalog.favorite.syncError}
             </p>
           ) : null}
-          <ul aria-label={copy.catalog.title} className="catalog-grid">
-            {items.map((game) => (
+          <ul
+            aria-label={copy.catalog.title}
+            className="m-0 grid list-none grid-cols-1 gap-3 p-0 min-[768px]:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] min-[768px]:gap-5"
+          >
+            {items.map((game, index) => (
               <li key={game.igdbId}>
                 <GameCard
                   authStatus={authStatus}
                   favoriteStatus={favoriteStatus}
                   game={game}
+                  position={index + 1}
                   isFavorite={favoriteIds.has(game.igdbId)}
                   messages={copy}
                   onDelete={(id) => deleteMutation.mutateAsync(id)}

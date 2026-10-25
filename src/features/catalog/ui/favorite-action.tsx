@@ -7,6 +7,8 @@ import type { AuthStatus } from "@/features/auth/ui/auth-provider";
 import type { FavoriteCreateInput } from "@/features/favorites/model/game";
 import { ApiClientError } from "@/shared/api/http";
 import type { Messages } from "@/shared/i18n/messages";
+import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 
 type FavoriteActionProps = {
   favoriteStatus?: "loading" | "ready";
@@ -104,16 +106,15 @@ export function FavoriteAction({
   };
 
   return (
-    <div className={`favorite-action favorite-action--${placement}`}>
-      <button
+    <div className={`relative z-10 ${placement === "modal" ? "mt-4" : ""}`}>
+      <IconButton
         aria-label={label}
-        aria-pressed={isSaved}
-        className="favorite-action__button"
+        className={isSaved ? "text-copper-strong" : ""}
         data-saved={isSaved}
         data-saving={isSaving}
         disabled={isLoading || isSaving || isSaved}
         onClick={handleAction}
-        type="button"
+        pressed={isSaved}
       >
         {isSaving ? (
           <span
@@ -123,9 +124,12 @@ export function FavoriteAction({
         ) : (
           <HeartIcon isSaved={isSaved} />
         )}
-      </button>
+      </IconButton>
       {saveState === "error" || saveState === "duplicate" ? (
-        <span className="favorite-action__status" role="alert">
+        <span
+          className="absolute right-0 top-full mt-2 w-max max-w-[220px] rounded-control border border-border bg-paper-raised p-2 font-ui text-xs leading-snug text-danger shadow-md"
+          role="alert"
+        >
           {saveState === "duplicate" ? duplicateLabel : errorLabel}
         </span>
       ) : null}
@@ -170,42 +174,44 @@ export function FavoriteDeleteAction({
 
   return (
     <div
-      className={`favorite-action favorite-action--${placement}`}
+      className={`relative z-10 ${placement === "modal" ? "mt-4" : ""}`}
       onBlur={handleBlur}
     >
-      <button
+      <IconButton
         aria-expanded={isConfirming}
         aria-label={actionLabel}
-        className="favorite-action__button"
+        className="text-copper-strong"
         data-saved="true"
         disabled={isRemoving}
         onClick={() => setDeleteState("confirming")}
         type="button"
       >
         <HeartIcon isSaved />
-      </button>
+      </IconButton>
       {isConfirming || isRemoving || deleteState === "error" ? (
         <div
           aria-label={copy.removeConfirm}
-          className="favorite-action__confirmation"
+          className={`z-20 w-[min(220px,calc(100vw-32px))] rounded-panel border border-border bg-paper-raised p-3 text-ink shadow-lg ${placement === "card" ? "absolute right-0 top-full mt-2" : "relative mt-2"}`}
           role="group"
         >
-          <p>{copy.removeConfirmDescription.replace("{name}", name)}</p>
-          <div className="favorite-action__confirmation-actions">
-            <button
-              className="favorite-action__cancel"
+          <p className="mb-2.5 font-ui text-xs leading-relaxed text-ink-secondary">
+            {copy.removeConfirmDescription.replace("{name}", name)}
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button
+              className="px-2.5 text-xs"
               disabled={isRemoving}
               onClick={() => setDeleteState("idle")}
-              type="button"
+              variant="secondary"
             >
               {copy.removeCancel}
-            </button>
-            <button
+            </Button>
+            <Button
               aria-busy={isRemoving}
-              className="favorite-action__confirm"
+              className="bg-copper-strong px-2.5 text-xs text-white hover:brightness-95"
               disabled={isRemoving}
               onClick={confirmDelete}
-              type="button"
+              variant="primary"
             >
               {isRemoving ? (
                 <>
@@ -218,10 +224,13 @@ export function FavoriteDeleteAction({
               ) : (
                 copy.removeConfirmAction
               )}
-            </button>
+            </Button>
           </div>
           {deleteState === "error" ? (
-            <span className="favorite-action__status" role="alert">
+            <span
+              className="mt-2 block font-ui text-xs text-danger"
+              role="alert"
+            >
               {errorLabel}
             </span>
           ) : null}
@@ -233,7 +242,15 @@ export function FavoriteDeleteAction({
 
 function HeartIcon({ isSaved }: { isSaved: boolean }) {
   return (
-    <svg aria-hidden="true" data-saved={isSaved} viewBox="0 0 24 24">
+    <svg
+      aria-hidden="true"
+      className="size-5"
+      data-saved={isSaved}
+      fill={isSaved ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
       <path d="M20.8 8.7c0 5.1-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.8 2.7Z" />
     </svg>
   );

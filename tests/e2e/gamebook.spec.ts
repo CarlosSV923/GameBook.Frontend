@@ -30,7 +30,7 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
       "The ranking uses IGDB’s combined critic and player rating.",
     ),
   ).toBeVisible();
-  await expect(page.locator('[aria-label="Rating / 100: 92"]')).toBeVisible();
+  await expect(page.locator('[aria-label*="Rating / 100: 92"]')).toBeVisible();
   expect(catalogRequests).toEqual([]);
 
   await page.getByRole("combobox", { name: "Game name" }).fill("Example");
@@ -147,7 +147,7 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
     ),
   ).toBeVisible();
   await expect(
-    page.locator('[aria-label="Puntuación / 100: 92"]'),
+    page.locator('[aria-label*="Puntuación / 100: 92"]'),
   ).toBeVisible();
   await mocks.expectNoExternalRequests();
 });

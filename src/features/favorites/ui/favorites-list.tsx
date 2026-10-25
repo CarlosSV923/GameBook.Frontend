@@ -181,12 +181,16 @@ export function FavoritesList() {
         />
       ) : (
         <>
-          <ul aria-label={copy.favorites.title} className="catalog-grid">
-            {items.map((game) => (
+          <ul
+            aria-label={copy.favorites.title}
+            className="m-0 grid list-none grid-cols-1 gap-3 p-0 min-[768px]:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] min-[768px]:gap-5"
+          >
+            {items.map((game, index) => (
               <li key={game.igdbId}>
                 <GameCard
                   authStatus="authenticated"
                   game={game}
+                  position={index + 1}
                   messages={copy}
                   onDelete={(id) => deleteMutation.mutateAsync(id)}
                   onSelect={() => setSelectedGame(game)}

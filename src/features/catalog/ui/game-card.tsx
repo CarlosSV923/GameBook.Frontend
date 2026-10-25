@@ -8,18 +8,15 @@ import {
   FavoriteAction,
   FavoriteDeleteAction,
 } from "@/features/catalog/ui/favorite-action";
-import {
-  formatGamePlatforms,
-  formatGameRating,
-  formatGameYear,
-} from "@/features/catalog/model/game-card-formatting";
 import type { FavoriteCreateInput } from "@/features/favorites/model/game";
 import type { IgdbGameCard as IgdbGameCardData } from "@/features/catalog/model/igdb";
 import type { Messages } from "@/shared/i18n/messages";
+import { IndexStrip } from "@/shared/ui/index-strip";
 
 type GameCardProps = {
   game: IgdbGameCardData;
   messages: Messages;
+  position?: number;
   favoriteStatus?: "loading" | "ready";
   isFavorite?: boolean;
   onDelete?: (igdbId: number) => Promise<void>;
@@ -37,101 +34,113 @@ export function GameCard({
   onDelete,
   onSave,
   onSelect,
+  position,
 }: GameCardProps) {
   const [imageUrl, setImageUrl] = useState(game.imageUrl);
   const titleId = `game-card-${game.igdbId}`;
   const coverAlt = messages.catalog.coverAlt.replace("{name}", game.name);
+  const platformNames = game.platforms.map(({ name }) => name);
+  const metaUnavailable = messages.indexStrip.unavailable;
+  const year = game.released?.slice(0, 4) || metaUnavailable;
+  const platforms = platformNames.length
+    ? platformNames.join(" · ")
+    : metaUnavailable;
 
   return (
-    <article aria-labelledby={titleId} className="game-card">
+    <article
+      aria-labelledby={titleId}
+      className="group relative flex min-h-[148px] min-w-0 overflow-visible rounded-panel border border-border bg-paper-raised shadow-sm transition-shadow hover:shadow-md min-[768px]:grid min-[768px]:min-h-0 min-[768px]:grid-cols-[64px_minmax(0,1fr)]"
+    >
+      <IndexStrip
+        labels={messages.indexStrip}
+        platforms={platformNames}
+        rank={position ?? null}
+        released={game.released}
+        rating={game.rating}
+        variant="card"
+      />
       <button
         aria-label={messages.catalog.detail.open.replace("{name}", game.name)}
-        className="game-card__trigger"
+        className="flex min-w-0 flex-1 items-stretch gap-3 rounded-r-panel p-3 text-left text-ink outline-none focus-visible:z-10 focus-visible:outline-3 focus-visible:outline-focus focus-visible:outline-offset-2 min-[768px]:flex-col min-[768px]:gap-0 min-[768px]:p-0"
         onClick={onSelect}
         type="button"
       >
-        <span className="game-card__media">
+        <span className="relative hidden aspect-[4/3] w-full shrink-0 self-center overflow-hidden rounded-tr-panel bg-paper-inset min-[768px]:block">
           {imageUrl ? (
             <Image
               alt={coverAlt}
-              className="game-card__image"
+              className="object-cover"
               fill
               onError={() => setImageUrl(null)}
-              sizes="(max-width: 480px) 100vw, (max-width: 720px) 40vw, (max-width: 980px) 30vw, 20vw"
+              sizes="(min-width: 768px) 320px, 112px"
               src={imageUrl}
             />
           ) : (
             <span
               aria-label={messages.catalog.missingImage}
-              className="game-card__fallback"
-              title={messages.catalog.missingImage}
+              className="grid size-full place-items-center border-l-[3px] border-copper bg-paper-inset font-display text-3xl text-copper-strong"
               role="img"
             >
-              <span aria-hidden="true">
-                {game.name.slice(0, 1).toUpperCase()}
-              </span>
-              <span className="game-card__fallback-label">
-                {messages.catalog.missingImage}
-              </span>
+              <span>{game.name.slice(0, 1).toUpperCase()}</span>
             </span>
           )}
         </span>
-        <span className="game-card__content">
+        <span className="relative -ml-3 -my-3 grid w-[72px] shrink-0 place-items-center overflow-hidden rounded-none bg-paper-inset min-[768px]:hidden">
+          {imageUrl ? (
+            <Image
+              alt={coverAlt}
+              className="object-cover"
+              fill
+              onError={() => setImageUrl(null)}
+              sizes="72px"
+              src={imageUrl}
+            />
+          ) : (
+            <span
+              aria-label={messages.catalog.missingImage}
+              className="grid size-full place-items-center border-l-[3px] border-copper bg-paper-inset font-display text-2xl text-copper-strong"
+              role="img"
+            >
+              <span>{game.name.slice(0, 1).toUpperCase()}</span>
+            </span>
+          )}
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-1 sm:py-0 min-[768px]:flex-row min-[768px]:items-center min-[768px]:min-h-14 min-[768px]:px-3 min-[768px]:py-3 min-[768px]:pr-14">
           <span
             aria-level={3}
-            className="game-card__title"
+            className="line-clamp-2 min-w-0 flex-1 font-ui text-sm font-semibold leading-snug text-ink sm:text-base"
             id={titleId}
             role="heading"
           >
             {game.name}
           </span>
-          <span className="game-card__details">
-            <span
-              aria-label={`${messages.indexStrip.rating}: ${formatGameRating(game.rating)}`}
-              className={`game-card__rating${game.rating === null ? " game-card__rating--missing" : ""}`}
-            >
-              <StarIcon />
-              <span>{formatGameRating(game.rating)}</span>
-            </span>
-            <span
-              aria-label={`${messages.indexStrip.year}: ${formatGameYear(game.released)}; ${messages.indexStrip.platforms}: ${formatGamePlatforms(game.platforms)}`}
-              className="game-card__subline"
-              title={formatGamePlatforms(game.platforms)}
-            >
-              <span>{formatGameYear(game.released)}</span>
-              <span aria-hidden="true">•</span>
-              <span className="game-card__platforms">
-                {formatGamePlatforms(game.platforms)}
-              </span>
-            </span>
+          <span
+            aria-label={`${messages.indexStrip.year}: ${year}; ${messages.indexStrip.platforms}: ${platforms}`}
+            className="line-clamp-2 font-data text-[0.6875rem] leading-4 text-ink-secondary min-[768px]:hidden"
+          >
+            {year} · {platforms}
           </span>
         </span>
       </button>
-      {onDelete && (isFavorite || onSave === undefined) ? (
-        <FavoriteDeleteAction
-          game={game}
-          messages={messages}
-          onDelete={onDelete}
-          placement="card"
-        />
-      ) : onSave ? (
-        <FavoriteAction
-          favoriteStatus={favoriteStatus}
-          game={game}
-          messages={messages}
-          onSave={onSave}
-          placement="card"
-          status={authStatus}
-        />
-      ) : null}
+      <div className="flex shrink-0 items-center px-1 sm:pr-2 min-[768px]:absolute min-[768px]:bottom-1.5 min-[768px]:right-1.5">
+        {onDelete && (isFavorite || onSave === undefined) ? (
+          <FavoriteDeleteAction
+            game={game}
+            messages={messages}
+            onDelete={onDelete}
+            placement="card"
+          />
+        ) : onSave ? (
+          <FavoriteAction
+            favoriteStatus={favoriteStatus}
+            game={game}
+            messages={messages}
+            onSave={onSave}
+            placement="card"
+            status={authStatus}
+          />
+        ) : null}
+      </div>
     </article>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
-      <path d="m12 3.5 2.6 5.2 5.8.8-4.2 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.2-4 5.8-.8L12 3.5Z" />
-    </svg>
   );
 }
