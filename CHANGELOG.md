@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.11.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.10.0...gamebook-frontend-v0.11.0) (2026-10-27)
+
+
+### Features
+
+* **catalog:** require a minimum rating count for ranked lists ([6ce9b05](https://github.com/CarlosSV923/GameBook.Frontend/commit/6ce9b05835a597f45455c092c2cd46a63d5ed440))
+* **catalog:** require a minimum rating count for ranked lists ([87ecf14](https://github.com/CarlosSV923/GameBook.Frontend/commit/87ecf14148b3965ffd16d0ce38c3e6aa39e6b7ea))
+* **catalog:** server-render the first catalog page ([254e132](https://github.com/CarlosSV923/GameBook.Frontend/commit/254e1327ed1857293ee566eeae30c342200190e9))
+* **catalog:** server-render the first catalog page ([c891b15](https://github.com/CarlosSV923/GameBook.Frontend/commit/c891b15f00a8970d9ce25e712dce8a7d77320d76))
+* **design:** add Archive Refined tokens, fonts and UI primitives ([5d7c158](https://github.com/CarlosSV923/GameBook.Frontend/commit/5d7c1582040a59ab8483ffcb1aee20725ac35655))
+* **design:** add Archive Refined tokens, fonts and UI primitives ([b78cb45](https://github.com/CarlosSV923/GameBook.Frontend/commit/b78cb455219fd5bb56e99b502544591106296a19))
+* **design:** archive cards with an index strip ([c378f7e](https://github.com/CarlosSV923/GameBook.Frontend/commit/c378f7e956dc03788c7768191ecb7709a8b2654a))
+* **design:** archive cards with an index strip ([e40ea0c](https://github.com/CarlosSV923/GameBook.Frontend/commit/e40ea0ccdbff7d9f02f9552ec8e73bd8e3643fbb))
+* **design:** Archive Refined game detail modal ([5208ad1](https://github.com/CarlosSV923/GameBook.Frontend/commit/5208ad1290a7dc66193c65f294352862e7f7e1b1))
+* **design:** Archive Refined game detail modal ([46c58f3](https://github.com/CarlosSV923/GameBook.Frontend/commit/46c58f35223a8d0a896d7c0006e63b4b43939149))
+* **design:** finish the Archive Refined migration ([5a7cb07](https://github.com/CarlosSV923/GameBook.Frontend/commit/5a7cb0797a8a023dfac77018ca1087f18676e6a7))
+* **design:** finish the Archive Refined migration ([aee6ce7](https://github.com/CarlosSV923/GameBook.Frontend/commit/aee6ce7dde962a5b10a7f2e8c8c8a1f172989f61))
+* **design:** one-row header, compact hero and sticky filter bar ([69a24fc](https://github.com/CarlosSV923/GameBook.Frontend/commit/69a24fc0d7649afeeb58e555129ffcd70ef18673))
+* **design:** one-row header, compact hero and sticky filter bar ([18c171f](https://github.com/CarlosSV923/GameBook.Frontend/commit/18c171fc56c43f3c05e8726691b06f941c349084))
+* **design:** restyle account, profile, states and notices ([3d6f7f6](https://github.com/CarlosSV923/GameBook.Frontend/commit/3d6f7f62d52aa638e2ea9d7ebdc681b36f0ee287))
+* **design:** restyle account, profile, states and notices ([d347541](https://github.com/CarlosSV923/GameBook.Frontend/commit/d3475415539a95bcbb5cf319b06ebfdef9102c29))
+
+
+### Bug Fixes
+
+* **catalog:** restore the contextual favorite save flow ([e33066e](https://github.com/CarlosSV923/GameBook.Frontend/commit/e33066e1b4353711dde744df6a254b2972729ea4))
+* **catalog:** restore the contextual favorite save flow ([12873e9](https://github.com/CarlosSV923/GameBook.Frontend/commit/12873e922a7f34ef0a62cbb9458b36165b0bed36))
+
 ## [0.10.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.9.0...gamebook-frontend-v0.10.0) (2026-09-30)
 
 
