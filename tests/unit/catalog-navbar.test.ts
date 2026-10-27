@@ -6,17 +6,26 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-import { AuthProvider } from "@/features/auth/auth-provider";
-import { CatalogNavbar } from "@/features/navigation/catalog-navbar";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { AuthProvider } from "@/features/auth/ui/auth-provider";
+import { CatalogNavbar } from "@/features/layout/ui/catalog-navbar";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
+import { QueryProvider } from "@/shared/query/query-client-provider";
 
 describe("CatalogNavbar", () => {
   it("shows visitor account actions without exposing authenticated links", () => {
     const markup = renderToStaticMarkup(
       createElement(
-        AuthProvider,
+        QueryProvider,
         null,
-        createElement(PreferencesProvider, null, createElement(CatalogNavbar)),
+        createElement(
+          AuthProvider,
+          null,
+          createElement(
+            PreferencesProvider,
+            null,
+            createElement(CatalogNavbar),
+          ),
+        ),
       ),
     );
 
@@ -24,17 +33,24 @@ describe("CatalogNavbar", () => {
     expect(markup).toContain('href="/register"');
     expect(markup).not.toContain('href="/profile"');
     expect(markup).not.toContain('href="/favorites"');
+    expect(markup).toContain('aria-label="Open menu"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain('aria-controls="mobile-navigation-panel"');
   });
 
   it("shows profile, favorites and sign-out actions for an authenticated user", () => {
     const markup = renderToStaticMarkup(
       createElement(
-        AuthProvider,
+        QueryProvider,
         null,
         createElement(
-          PreferencesProvider,
+          AuthProvider,
           null,
-          createElement(CatalogNavbar, { authState: "authenticated" }),
+          createElement(
+            PreferencesProvider,
+            null,
+            createElement(CatalogNavbar, { authState: "authenticated" }),
+          ),
         ),
       ),
     );
@@ -45,5 +61,6 @@ describe("CatalogNavbar", () => {
     expect(markup).toContain("Sign out");
     expect(markup).not.toContain('href="/login"');
     expect(markup).not.toContain('href="/register"');
+    expect(markup).toContain('aria-label="Open menu"');
   });
 });

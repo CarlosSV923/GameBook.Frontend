@@ -27,12 +27,27 @@ describe("CatalogState", () => {
         onRetry: () => undefined,
       }),
     );
+    const end = renderToStaticMarkup(
+      createElement(CatalogState, {
+        kind: "end",
+        messages: messages.en,
+      }),
+    );
 
     expect(loading).toContain(messages.en.states.loading);
+    expect(loading).toContain('aria-live="polite"');
+    expect(loading).toContain('data-variant="card"');
+    expect(loading).toContain("animate-pulse");
     expect(empty).toContain(messages.es.states.noResultsTitle);
     expect(empty).toContain(messages.es.states.noResultsDescription);
     expect(error).toContain(messages.en.states.errorTitle);
     expect(error).toContain(messages.en.states.retry);
     expect(error).toContain('role="alert"');
+    expect(end).toContain(messages.en.states.endOfResults);
+    expect(end).toContain('role="status"');
+    expect(end).not.toContain('data-variant="card"');
+    expect(end).toContain('aria-hidden="true"');
+    expect(end).toContain("bg-copper/70");
+    expect(end).not.toContain(messages.en.indexStrip.unavailable);
   });
 });

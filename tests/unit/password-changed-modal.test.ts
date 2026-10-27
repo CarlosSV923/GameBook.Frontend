@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { PasswordChangedModal } from "@/features/auth/password-changed-modal";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { PasswordChangedModal } from "@/features/auth/ui/password-changed-modal";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("PasswordChangedModal", () => {
   it("explains the successful change and next sign-in step", () => {
@@ -17,6 +17,11 @@ describe("PasswordChangedModal", () => {
 
     expect(markup).toContain('role="dialog"');
     expect(markup).toContain('aria-modal="true"');
+    expect(markup).toContain('aria-labelledby="password-changed-title"');
+    expect(markup).toContain('aria-describedby="password-changed-description"');
+    expect(markup).toContain("bg-scrim");
+    expect(markup).toContain("bg-paper-raised");
+    expect(markup).toContain('type="button"');
     expect(markup).toContain("Password updated");
     expect(markup).toContain("Your session will close now");
     expect(markup).toContain("Sign in again");

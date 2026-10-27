@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { createAuthUserClient } from "@/features/api/auth-user-client";
-import { createGameClient } from "@/features/api/game-client";
+import { createAuthUserClient } from "@/features/auth/api/auth-user-client";
+import { createGameClient } from "@/features/favorites/api/game-client";
 import { createMockHttpClient } from "@/shared/api/mocks";
 
 describe("AuthUser client", () => {

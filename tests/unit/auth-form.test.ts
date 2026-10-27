@@ -2,8 +2,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { AuthForm } from "@/features/auth/auth-form";
-import { PreferencesProvider } from "@/features/preferences/preferences-provider";
+import { AuthForm } from "@/features/auth/ui/auth-form";
+import { PreferencesProvider } from "@/features/preferences/ui/preferences-provider";
 
 describe("AuthForm", () => {
   it("renders the registration fields with accessible required inputs", () => {
@@ -21,11 +21,15 @@ describe("AuthForm", () => {
     expect(markup).toContain("Create your GameBook account.");
     expect(markup).toContain('id="register-full-name"');
     expect(markup).toContain('id="register-password-confirmation"');
+    expect(markup).toContain('for="register-full-name"');
+    expect(markup).toContain('aria-label="Show password"');
+    expect(markup).toContain('aria-pressed="false"');
+    expect(markup).toContain("bg-primary-action");
     expect((markup.match(/ required/g) ?? []).length).toBe(4);
     expect(markup).toContain('type="password"');
-    expect((markup.match(/auth-form__password-toggle/g) ?? []).length).toBe(2);
     expect((markup.match(/aria-label="Show password"/g) ?? []).length).toBe(2);
     expect(markup).toContain("At least 8 characters");
+    expect(markup).toContain('id="register-password-hint"');
   });
 
   it("renders the login form without registration-only fields", () => {
@@ -46,7 +50,8 @@ describe("AuthForm", () => {
     expect(markup).toContain('id="login-email"');
     expect(markup).not.toContain('id="register-full-name"');
     expect(markup).not.toContain('id="register-password-confirmation"');
-    expect((markup.match(/auth-form__password-toggle/g) ?? []).length).toBe(1);
+    expect((markup.match(/aria-label="Show password"/g) ?? []).length).toBe(1);
     expect(markup).toContain('aria-label="Show password"');
+    expect(markup).toContain('for="login-email"');
   });
 });

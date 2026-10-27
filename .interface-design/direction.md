@@ -1,110 +1,58 @@
 # GameBook — Dirección de interfaz
 
-Estado: propuesta para GB-006.01; requiere aprobación del autor antes de convertirla en el sistema visual implementable.
+Estado: **GB-006 es el origen de la identidad aprobada** «archivo de juegos / guía de campo». El autor eligió **Dirección A «Archive Refined»** como dirección vigente el **2026-10-24**. La dirección A conserva esa identidad y la vuelve más concreta; no la sustituye. La referencia de composición son los artboards aprobados `Main.dc.html` (escritorio, 1440) y `ArchivePhone.dc.html` (teléfono, 390). El sistema implementable está en [system.md](system.md) y sirve de contrato para GB-017.02–.08.
 
-## Intento
+## Intención
 
-GameBook debe sentirse como un archivo curado de videojuegos para una persona que quiere descubrir, comparar y conservar juegos relevantes. La experiencia está dirigida a visitantes que llegan sin contexto y a personas reclutadoras que deben entender la solución rápidamente: primero debe comunicar criterio y claridad; después, profundidad de catálogo.
+GameBook es un archivo curado para descubrir, comparar y conservar videojuegos. La persona llega para consultar un ranking fiable, identificar un juego y decidir si quiere guardarlo en su colección. La interfaz se siente como una guía de campo bien impresa: editorial, técnica y tranquila. La información del catálogo y la tira de índice deben conducir la mirada; la decoración no compite con ellas.
 
-La acción principal de la vista pública es explorar una selección de juegos y abrir una ficha. La acción principal de una persona autenticada es volver a su colección sin perder el mismo lenguaje de catálogo. El tono será editorial, técnico y tranquilo: una guía de campo bien impresa, no una sala arcade ni un panel administrativo.
+El dominio aporta el vocabulario visual: archivo y estantería, ficha de juego, índice de plataformas, cronología de lanzamientos, puntuación agregada, colección personal y curaduría. El mundo material es papel marfil, tinta grafito, carbón azulado, azul pizarra, cobre envejecido, verde musgo y superficies elevadas de papel cálido. La **tira de índice** es la firma propia: reúne posición, puntuación sobre 100, año y plataformas junto a cada juego, como un lomo consultable.
 
-## Exploración del dominio
+## Dirección A: «Archive Refined»
 
-### Dominio
+La composición aprobada reduce la introducción para que el ranking llegue pronto al primer plano. En escritorio, una cuadrícula de fichas horizontales integra imagen y datos junto a la tira de índice. En teléfono, las fichas conservan esa lectura horizontal y la tira sigue visible sin hover. Newsreader aporta el carácter editorial; IBM Plex Sans ordena controles y lectura; IBM Plex Mono da estabilidad a posiciones, puntuaciones y años.
 
-- archivo y estantería
-- ficha o monografía de un juego
-- índice de plataformas
-- cronología de lanzamientos
-- puntuación editorial y consenso
-- colección personal
-- búsqueda y curaduría
+### Cambios respecto a la UI publicada
 
-### Mundo de color
+La revisión de portfolio del 2026-10-24 identificó estos desajustes que la dirección A corrige:
 
-La referencia física es una biblioteca de consulta contemporánea al final de la tarde: papel marfil, tinta grafito, carbón azuloso, lomos azul pizarra, cobre envejecido para las marcas importantes, verde musgo en estados de confirmación y blanco cálido en superficies elevadas. El color debe parecer material del archivo, no una capa decorativa aplicada encima.
+- **La tira de índice no aparece en las tarjetas:** pasa a ser obligatoria en catálogo y favoritos, y acompaña el detalle y los estados de catálogo.
+- **Grid genérico con imagen arriba:** se reemplaza por fichas horizontales de archivo; en escritorio se disponen en cuadrícula y en móvil en una columna compacta. La portada queda integrada en la ficha, no como patrón repetido de póster sobre texto.
+- **Acciones primarias que parecen deshabilitadas:** usan cobre de producto, texto contrastado, peso y estado de interacción inequívocos. Las acciones secundarias siguen siendo neutras.
+- **Hero demasiado grande:** pasa de aproximadamente el 45 % del primer viewport a una introducción compacta, de hasta cerca de un tercio de 1440 × 900. El ranking aparece antes del pliegue.
+- **Scrim de modal lavado:** el modal usa una capa oscura semitransparente tanto en tema claro como oscuro; portada, título y puntuación mantienen la prioridad y los metadatos se leen como ficha técnica.
+- **Cabecera móvil de tres filas:** se reduce a una fila con marca, control de tema y menú. La búsqueda permanece visible; filtros y navegación se abren en paneles accesibles.
+- **Puntuación presentada como 0–10:** se muestra la escala real de IGDB, de 0 a 100, con cifras tabulares y sin conversión ambigua.
 
-### Firma visual
+La cabecera de escritorio también queda en una fila. Bajo el hero, filtros de nombre, plataforma y año comparten una barra horizontal pegajosa al desplazarse. El encabezado del catálogo dice «Top rated of all time» (traducido según el idioma) y la atribución de IGDB permanece visible. Las sugerencias de nombre y plataforma siguen funcionando por clic y teclado; los filtros combinados y el desplazamiento infinito conservan el comportamiento MVP.
 
-La firma de GameBook será la **tira de índice**: una franja estrecha inspirada en el lomo y las pestañas de un libro que acompaña cada ficha. En ella se concentran la puntuación, el año y las plataformas mediante una jerarquía vertical breve. La misma tira aparece, con distinta escala, en la selección pública, los resultados filtrados, la vista de detalle y la colección personal. Así la identidad visual también ayuda a escanear información.
+## Vistas y alcance
 
-## Dirección recomendada: «archivo de juegos / guía de campo»
+| Vista                       | Jerarquía                                           | Composición                                                                          |
+| --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Catálogo                    | Ranking y fichas; filtros y contexto después        | Hero compacto, barra de filtros pegajosa y grid de fichas con tira de índice.        |
+| Favoritos                   | Colección personal y cada ficha                     | Misma tarjeta y tira; acción contextual de eliminar con confirmación.                |
+| Detalle                     | Portada, título y puntuación; después ficha técnica | Modal centrado con scrim oscuro, metadatos, atribución y cierre accesible.           |
+| Inicio de sesión y registro | Formulario y acción principal                       | Panel editorial compacto, errores asociados a campos y navegación entre formularios. |
+| Perfil                      | Cambio de contraseña y desactivación                | Secciones legibles, confirmación antes de desactivar y estados visibles.             |
 
-### Composición
+La dirección cubre catálogo, detalle, favoritos, autenticación, perfil, filtros y sugerencias, carga, vacío, error, final de resultados, alertas de disponibilidad, avisos de éxito/duplicado/error, confirmaciones y estados de carga, en claro/oscuro y EN/ES, en escritorio y móvil. Se mantienen las preferencias persistidas, el tooltip sin sesión y los textos originales de IGDB.
 
-- La vista pública tendrá una barra superior ligera, una introducción breve y una selección destacada como foco principal.
-- Debajo, los resultados se organizarán como una estantería editorial: piezas con proporciones relacionadas, pero no una cuadrícula de tarjetas idénticas.
-- El bloque de filtros se leerá como un índice de consulta y permanecerá cerca del catálogo, no escondido en una sidebar permanente.
-- La vista de detalle pondrá la portada, el título y la puntuación en primer plano; los metadatos se ordenarán como una ficha técnica secundaria.
-- La colección autenticada conservará el mismo patrón de archivo y cambiará el verbo principal a guardar, consultar o eliminar.
+### Acciones de favoritos: corrección obligatoria
 
-### Jerarquía de vistas
+Se restablece el comportamiento especificado en `mvp.md` §4.4 y §4.5, tanto en tarjeta como en modal. Sin sesión, activar guardar abre junto a la acción el elemento contextual accesible **«Para guardar en favoritos debes:»**, con **«Iniciar sesión»** y **«Crear cuenta»**; en inglés, **“To save to favorites, you need to:”**, **“Sign in”** y **“Create account”**. Usa el mismo mensaje en ambos contextos, permite Escape y clic fuera, gestiona foco y comunica `aria-expanded`/`aria-controls`. No navega ni guarda hasta que la persona elija uno de los enlaces. Con sesión, guardar abre una confirmación contextual y solo confirmar ejecuta la mutación. Éxito, duplicado y error se anuncian; eliminar conserva la confirmación existente de `mvp.md` §6.
 
-| Vista | Foco | Segundo nivel | Elementos de apoyo |
-| --- | --- | --- | --- |
-| Catálogo público | Juego destacado y llamada a explorar | Resultados ordenados por `total_rating` | filtros, plataformas, año, carga adicional |
-| Detalle | Identidad del juego: portada, título y puntuación | fecha, plataformas y descripción | atribución, sincronización, volver |
-| Colección | Lista propia de favoritos | filtros y sugerencias | eliminar, estados vacío/error |
-| Acceso | Acción única del formulario | explicación breve de la sesión | cambio entre registro e inicio de sesión |
+## Patrones que siguen rechazados
 
-La composición desktop usará una columna de lectura dominante y una columna auxiliar estrecha para metadatos. En móvil se apilará el contenido en el mismo orden de importancia; la tira de índice seguirá visible y no dependerá de hover.
+1. Neón, glow y glassmorphism de videojuego → superficies materiales y cobre escaso.
+2. Sidebar permanente de SaaS → controles de catálogo junto al contenido.
+3. Grid homogéneo de cards con imagen arriba → fichas de archivo con tira de índice.
+4. Dashboard de métricas como portada → ranking y puntuación dentro de la ficha del juego.
+5. Acciones ambiguas basadas solo en iconos, color o hover → controles etiquetados, estados explícitos y foco visible.
+6. Hero dominante que empuja el catálogo bajo el pliegue → introducción editorial compacta.
+7. Scrim claro o translúcido sin suficiente separación → scrim oscuro constante en ambos temas.
+8. Presentar la puntuación de 0–100 como 0–10 → conservar y rotular la escala real.
 
-## Lenguaje visual
+## Continuidad GB-017
 
-### Color
-
-La implementación posterior debe convertir esta dirección en tokens semánticos, no en hexágonos repetidos en componentes.
-
-- `paper`: canvas claro de papel marfil.
-- `paper-raised`: superficie cálida para fichas y controles.
-- `ink`: texto principal grafito, no negro puro.
-- `ink-secondary` y `ink-muted`: dos niveles explícitos de lectura secundaria.
-- `slate`: azul pizarra para estructura y navegación discreta.
-- `copper`: único acento de producto para puntuación, selección y acciones primarias.
-- `moss`, `warning` y `danger`: colores semánticos reservados para estados, no decoración.
-- En oscuro, el canvas será carbón azulado y las superficies subirán solo algunos puntos de luminosidad; el cobre se desaturará para no deslumbrar.
-
-No habrá gradientes, neón ni `*` como color de acento. El cobre debe ocupar una fracción pequeña de la pantalla y señalar significado: foco, puntuación o acción.
-
-### Tipografía
-
-- **Titulares y nombres de juegos:** una serif editorial de alto contraste moderado, con `text-wrap: balance` y tracking óptico ligeramente negativo en tamaños grandes.
-- **Interfaz, filtros y metadatos:** una sans técnica legible, con tres pesos deliberados: valor, etiqueta y metadato.
-- **Números de puntuación y años:** cifras tabulares para evitar saltos de layout.
-- La escala partirá de un cuerpo de 14–16 px y una proporción cercana a 1.25; la diferencia entre niveles la harán peso, color y espacio además del tamaño.
-
-### Profundidad y superficies
-
-Se usará una estrategia de **cambios de superficie y bordes silenciosos**. Las fichas no flotarán como tarjetas de dashboard: se distinguirán por tono, ritmo y una línea de separación de baja opacidad. Los controles tendrán una superficie de entrada ligeramente más profunda que el canvas y un anillo de foco claramente visible. No se mezclarán sombras dramáticas con bordes gruesos.
-
-### Ritmo y densidad
-
-- Base de espaciado: 4 px; los grupos principales usarán múltiplos de 8 px.
-- Densidad: compacta en filtros y metadatos, respirada alrededor del foco editorial.
-- Los controles tendrán al menos 40 px de altura visual y un área accionable de 44 px cuando sea necesario.
-- Radios pequeños para controles, medios para fichas y uno mayor solo para superficies principales; nunca una píldora global.
-
-## Estados que deben existir desde el diseño
-
-La dirección incluye estados, no solo el caso de éxito: carga de catálogo, catálogo vacío, error de IGDB, ausencia de imagen, filtro sin coincidencias, sesión vencida, AuthUser/Game no disponible, favorito guardado, favorito duplicado y eliminación confirmada. Cada estado conservará la tira de índice o una variante de marcador de archivo para que la interfaz no parezca otra aplicación cuando falten datos.
-
-El foco de teclado será visible en cobre, los mensajes se asociarán a sus controles, el contraste se comprobará en ambos temas y ninguna información dependerá de color o hover. El movimiento será breve, basado en opacidad/transformación y respetará `prefers-reduced-motion`.
-
-## Patrones genéricos rechazados
-
-1. **Neón, glow y glassmorphism de videojuego** → archivo editorial con cobre escaso y superficies materiales.
-2. **Sidebar permanente de SaaS** → barra de catálogo y filtros junto al contenido que se consulta.
-3. **Grid homogéneo de cards con imagen arriba** → pieza focal más una estantería de fichas con tira de índice.
-4. **Dashboard de métricas para la portada** → puntuación como señal editorial dentro de la historia de cada juego.
-5. **Iconos sin etiqueta y acciones ambiguas** → controles nativos, texto claro y estados accesibles.
-
-## Criterios para las siguientes tareas
-
-- GB-006.02 puede inicializar la aplicación sin inventar componentes visuales ni cambiar esta composición.
-- GB-006.03 debe traducir `paper`, `ink`, `slate`, `copper` y los estados semánticos a tokens claro/oscuro, además de implementar las preferencias acordadas.
-- GB-006.05 debe conservar la barra de catálogo, la tira de índice y el orden de foco de las vistas.
-- GB-006.06 debe revisar desktop y móvil, ambos temas, inglés y español, y verificar carga, vacío, error y foco.
-
-## Decisión pendiente
-
-Esta propuesta evita código de UI y no crea todavía `.interface-design/system.md`. La aprobación del autor debe confirmar el concepto «archivo de juegos / guía de campo» y la firma de la tira de índice antes de consolidar tokens y componentes en GB-006.03–GB-006.05.
+GB-017.02 establece tokens Tailwind CSS 4, `next/font` y primitivas; .03 compone cabecera, hero y filtros; .04 lleva la tira a catálogo y favoritos; .05 define detalle y confirmaciones; .06 cubre cuenta, perfil, estados y avisos; .08 restaura la acción contextual y la confirmación de guardado. GB-017.07 retira el CSS heredado y revisa la experiencia completa. Los criterios de aceptación relacionados son `../specs/improvements.md` §9, criterios 2–4.

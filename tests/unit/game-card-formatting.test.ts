@@ -4,12 +4,12 @@ import {
   formatGamePlatforms,
   formatGameRating,
   formatGameYear,
-} from "@/features/catalog/game-card-formatting";
+} from "@/features/catalog/model/game-card-formatting";
 
 describe("GameBook card metadata", () => {
-  it("converts IGDB ratings from 0-100 to one-decimal 0-10 values", () => {
-    expect(formatGameRating(83)).toBe("8.3");
-    expect(formatGameRating(88.5)).toBe("8.9");
+  it("shows rounded IGDB ratings on the 0-100 scale", () => {
+    expect(formatGameRating(83)).toBe("83");
+    expect(formatGameRating(88.5)).toBe("89");
     expect(formatGameRating(null)).toBe("—");
   });
 

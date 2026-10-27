@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }));
 
-vi.mock("@/features/auth/auth-provider", () => ({
+vi.mock("@/features/auth/ui/auth-provider", () => ({
   useAuth: () => ({
     getAccessToken: () => "jwt-token",
     signOut: vi.fn(),
@@ -25,7 +25,7 @@ vi.mock("@/features/auth/auth-provider", () => ({
   }),
 }));
 
-vi.mock("@/features/preferences/preferences-provider", async () => {
+vi.mock("@/features/preferences/ui/preferences-provider", async () => {
   const actual = await vi.importActual<typeof import("@/shared/i18n/messages")>(
     "@/shared/i18n/messages",
   );
@@ -41,12 +41,12 @@ vi.mock("@/features/preferences/preferences-provider", async () => {
   };
 });
 
-vi.mock("@/features/favorites/favorites-list", () => ({
+vi.mock("@/features/favorites/ui/favorites-list", () => ({
   FavoritesList: () =>
     createElement("div", { "data-testid": "favorites-list" }),
 }));
 
-import { FavoritesPage } from "@/features/favorites/favorites-page";
+import { FavoritesPage } from "@/features/favorites/ui/favorites-page";
 import { messages } from "@/shared/i18n/messages";
 
 describe("FavoritesPage review states", () => {

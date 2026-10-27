@@ -1,6 +1,6 @@
 "use client";
 
-import { ProfilePage } from "@/features/profile/profile-page";
+import { ProfilePage } from "@/features/profile/ui/profile-page";
 
 export default function ProfileRoute() {
   return <ProfilePage />;

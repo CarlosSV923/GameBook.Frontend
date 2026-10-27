@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toFavoriteSnapshot } from "@/features/favorites/favorite-snapshot";
+import { toFavoriteSnapshot } from "@/features/favorites/model/favorite-snapshot";
 
 describe("favorite snapshot", () => {
   it("keeps only the basic IGDB fields owned by the Game snapshot", () => {

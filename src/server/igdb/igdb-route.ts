@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
 
 import { createIgdbClient } from "@/server/igdb/igdb-client";
-import { IgdbClientError, type IgdbCatalogFilters } from "@/shared/api/igdb";
+import {
+  IgdbClientError,
+  type IgdbCatalogFilters,
+} from "@/features/catalog/model/igdb";
 
 export const IGDB_ROUTE_ERROR_CODE = "IGDB_INVALID_REQUEST";
 
+let serverClient: ReturnType<typeof createIgdbClient> | null = null;
+
+// One client per server process so the Twitch application token is cached
+// across requests instead of being requested again for every call.
 export function getIgdbServerClient() {
-  return createIgdbClient();
+  serverClient ??= createIgdbClient();
+  return serverClient;
 }
 
 export function parseCatalogFilters(

@@ -13,6 +13,9 @@ export const messages = {
       catalog: "Catalog",
       createAccount: "Create account",
       favorites: "Favorite games",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
+      mobileMenu: "Mobile navigation",
       primary: "Primary navigation",
       profile: "Profile",
       signIn: "Sign in",
@@ -36,6 +39,8 @@ export const messages = {
     catalog: {
       description:
         "Search the archive by name, platform, or launch year when the catalog is connected.",
+      rankingNote: "The ranking uses IGDB’s combined critic and player rating.",
+      rankingTitle: "Top rated of all time",
       emptyDescription:
         "Your next search will bring the shelves to life. The same view will later hold public results and your saved games.",
       emptyTitle: "The shelves are ready for your next search.",
@@ -46,6 +51,7 @@ export const messages = {
       attribution: "Game data and images provided by",
       attributionLink: "IGDB",
       filters: "Filters",
+      closeFilters: "Close filters",
       name: "Game name",
       platform: "Platform",
       yearFrom: "From year",
@@ -60,6 +66,13 @@ export const messages = {
         "The start year must be before or equal to the end year.",
       favorite: {
         action: "Save {name} to favorites",
+        anonymousPrompt: "To save to favorites, you need to:",
+        signInLink: "Sign in",
+        createAccountLink: "Create account",
+        saveConfirm: "Confirm saving {name}",
+        saveConfirmDescription: "Save {name} to your personal shelf?",
+        saveConfirmAction: "Save",
+        saveCancel: "Cancel",
         duplicate: "{name} is already in your favorites.",
         error: "Could not save {name}. Try again.",
         loading: "Checking your session",
@@ -85,6 +98,9 @@ export const messages = {
         errorTitle: "Details are temporarily unavailable",
         errorDescription:
           "The catalog card is still available, but IGDB could not provide the full detail right now.",
+        unavailableTitle: "Details are not available for this game",
+        unavailableDescription:
+          "The catalog card is still available, but IGDB has no additional detail to show.",
         summary: "Summary",
         genres: "Genres",
         developers: "Developers",
@@ -141,7 +157,7 @@ export const messages = {
         disableAccountConfirm:
           "Disable this account? Your account and favorites will be kept, but you will not be able to sign in or use this email again.",
         disableAccountDescription:
-          "This permanently disables access to the account for the MVP. Your account and favorites will be retained, but the account cannot be reactivated.",
+          "This permanently disables access to the account. Your account and favorites will be retained, but the account cannot be reactivated.",
         disablingAccount: "Disabling account",
         currentPassword: "Current password",
         description:
@@ -213,8 +229,10 @@ export const messages = {
       noResultsDescription: "Try changing your filters.",
     },
     indexStrip: {
+      unavailable: "Unavailable",
+      rank: "Position",
       platforms: "Platforms",
-      rating: "Rating",
+      rating: "Rating / 100",
       year: "Year",
     },
     serviceWarmup: {
@@ -234,6 +252,9 @@ export const messages = {
       catalog: "Catálogo",
       createAccount: "Crear cuenta",
       favorites: "Juegos favoritos",
+      openMenu: "Abrir menú",
+      closeMenu: "Cerrar menú",
+      mobileMenu: "Navegación móvil",
       primary: "Navegación principal",
       profile: "Perfil",
       signIn: "Iniciar sesión",
@@ -257,6 +278,9 @@ export const messages = {
     catalog: {
       description:
         "Busca en el archivo por nombre, plataforma o año de lanzamiento cuando el catálogo esté conectado.",
+      rankingNote:
+        "La clasificación usa la puntuación combinada de la crítica y los jugadores de IGDB.",
+      rankingTitle: "Mejor valorados de todos los tiempos",
       emptyDescription:
         "Tu próxima búsqueda dará vida a las estanterías. Después, esta vista reunirá resultados públicos y juegos guardados.",
       emptyTitle: "Las estanterías esperan tu próxima búsqueda.",
@@ -267,6 +291,7 @@ export const messages = {
       attribution: "Datos e imágenes proporcionados por",
       attributionLink: "IGDB",
       filters: "Filtros",
+      closeFilters: "Cerrar filtros",
       name: "Nombre del juego",
       platform: "Plataforma",
       yearFrom: "Desde año",
@@ -280,6 +305,13 @@ export const messages = {
       invalidYearRange: "El año inicial debe ser menor o igual al año final.",
       favorite: {
         action: "Guardar {name} en favoritos",
+        anonymousPrompt: "Para guardar en favoritos debes:",
+        signInLink: "Iniciar sesión",
+        createAccountLink: "Crear cuenta",
+        saveConfirm: "Confirmar que se guarda {name}",
+        saveConfirmDescription: "¿Guardar {name} en tu estantería personal?",
+        saveConfirmAction: "Guardar",
+        saveCancel: "Cancelar",
         duplicate: "{name} ya está en tus favoritos.",
         error: "No se pudo guardar {name}. Inténtalo de nuevo.",
         loading: "Comprobando tu sesión",
@@ -305,6 +337,9 @@ export const messages = {
         errorTitle: "El detalle no está disponible temporalmente",
         errorDescription:
           "La tarjeta del catálogo sigue disponible, pero IGDB no pudo entregar el detalle completo en este momento.",
+        unavailableTitle: "No hay detalles disponibles para este juego",
+        unavailableDescription:
+          "La tarjeta del catálogo sigue disponible, pero IGDB no tiene más detalles para mostrar.",
         summary: "Descripción",
         genres: "Géneros",
         developers: "Desarrolladores",
@@ -361,7 +396,7 @@ export const messages = {
         disableAccountConfirm:
           "¿Deshabilitar esta cuenta? Tu cuenta y tus favoritos se conservarán, pero no podrás iniciar sesión ni usar de nuevo este correo.",
         disableAccountDescription:
-          "Esto deshabilita permanentemente el acceso durante el MVP. Tu cuenta y tus favoritos se conservarán, pero la cuenta no podrá reactivarse.",
+          "Esto deshabilita permanentemente el acceso a la cuenta. Tu cuenta y tus favoritos se conservarán, pero la cuenta no podrá reactivarse.",
         disablingAccount: "Deshabilitando cuenta",
         currentPassword: "Contraseña actual",
         description:
@@ -433,8 +468,10 @@ export const messages = {
       noResultsDescription: "Prueba a cambiar los filtros.",
     },
     indexStrip: {
+      unavailable: "No disponible",
+      rank: "Posición",
       platforms: "Plataformas",
-      rating: "Puntuación",
+      rating: "Puntuación / 100",
       year: "Año",
     },
     serviceWarmup: {

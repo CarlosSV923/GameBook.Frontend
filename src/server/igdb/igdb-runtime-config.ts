@@ -1,6 +1,6 @@
 import "server-only";
 
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 export type IgdbRuntimeConfig = {
   apiBaseUrl: string;
@@ -23,9 +23,30 @@ export function getIgdbRuntimeConfig(
   }
 
   return {
-    apiBaseUrl: "https://api.igdb.com/v4",
+    apiBaseUrl:
+      getLocalhostOverride(env.IGDB_API_BASE_URL) ?? "https://api.igdb.com/v4",
     clientId,
     clientSecret,
-    twitchTokenUrl: "https://id.twitch.tv/oauth2/token",
+    twitchTokenUrl:
+      getLocalhostOverride(env.TWITCH_TOKEN_URL) ??
+      "https://id.twitch.tv/oauth2/token",
   };
+}
+
+export function getLocalhostOverride(value?: string): string | undefined {
+  if (!value) return undefined;
+
+  try {
+    const url = new URL(value);
+    if (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      (url.hostname === "127.0.0.1" || url.hostname === "localhost")
+    ) {
+      return url.toString().replace(/\/$/, "");
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatGameReleaseDate } from "@/features/catalog/game-detail-formatting";
+import { formatGameReleaseDate } from "@/features/catalog/model/game-detail-formatting";
 
 describe("game detail formatting", () => {
   it("shows only the precision confirmed by IGDB", () => {

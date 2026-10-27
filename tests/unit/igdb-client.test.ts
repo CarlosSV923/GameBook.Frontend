@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { buildGamesQuery, createIgdbClient } from "@/server/igdb/igdb-client";
+import { createIgdbClient } from "@/server/igdb/igdb-client";
 import { createTwitchApplicationTokenProvider } from "@/server/igdb/twitch-token-client";
 import {
   createMockHttpClient,
   createMockTokenProvider,
 } from "@/shared/api/mocks";
-import { IgdbClientError } from "@/shared/api/igdb";
+import { IgdbClientError } from "@/features/catalog/model/igdb";
 
 const config = {
   apiBaseUrl: "https://api.igdb.example.test/v4",
@@ -35,35 +35,6 @@ const rawDetail = {
   screenshots: [{ image_id: "screen-id" }],
   summary: "A game summary.",
 };
-
-describe("IGDB query adapter", () => {
-  it("builds fixed, escaped catalog queries with the v3 filters", () => {
-    const query = buildGamesQuery({
-      limit: 20,
-      name: 'A "quoted" game',
-      offset: 10,
-      platformId: 6,
-      yearFrom: 2020,
-      yearTo: 2024,
-    });
-
-    expect(query).toContain('search "A \\"quoted\\" game"');
-    expect(query).toContain("platforms = 6");
-    expect(query).toContain("first_release_date >= 1577836800");
-    expect(query).toContain("first_release_date < 1735689600");
-    expect(query).toContain("limit 21");
-    expect(query).toContain("offset 10");
-    expect(query).toContain("name != null");
-    expect(query).toContain("cover != null");
-    expect(query).toContain("first_release_date != null");
-    expect(query).toContain("total_rating != null");
-    expect(query).toContain("platforms != null");
-
-    const defaultQuery = buildGamesQuery({});
-    expect(defaultQuery).toContain("total_rating != null");
-    expect(defaultQuery).toContain("sort total_rating desc");
-  });
-});
 
 describe("IGDB client", () => {
   it("uses the fixed games endpoint and maps the catalog response", async () => {
@@ -134,7 +105,7 @@ describe("IGDB client", () => {
     ]);
 
     expect(requests[0].body).toContain(
-      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
+      "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null & total_rating_count >= 100",
     );
     expect(requests[1].body).toContain(
       "fields id,name,first_release_date,cover.image_id,total_rating,platforms.id,platforms.name",
@@ -142,6 +113,7 @@ describe("IGDB client", () => {
     expect(requests[1].body).toContain(
       "where name != null & cover != null & first_release_date != null & total_rating != null & platforms != null",
     );
+    expect(requests[1].body).not.toContain("total_rating_count");
   });
 
   it("refreshes the application token once after an IGDB auth failure", async () => {
