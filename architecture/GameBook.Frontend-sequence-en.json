@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Public Catalog Request Sequence",
+    "subtitle": "Server prefetch, hydration, then client pagination",
+    "output": "GameBook.Frontend-sequence-en.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/CarlosSV923/GameBook.Frontend.git",
+      "revision": "5a7cb0797a8a023dfac77018ca1087f18676e6a7",
+      "provider": "github",
+      "link_mode": "web"
+    },
+    "locale": "en"
+  },
+  "participants": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser",
+      "sublabel": "Browser",
+      "sources": [
+        {
+          "path": "src/app/page.tsx",
+          "line": 35,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "query-cache",
+      "type": "frontend",
+      "label": "Query cache",
+      "sublabel": "Query state",
+      "sources": [
+        {
+          "path": "src/shared/query/query-client-provider.tsx",
+          "line": 6,
+          "end_line": 18
+        },
+        {
+          "path": "src/features/catalog/ui/catalog-list.tsx",
+          "line": 44,
+          "end_line": 56
+        },
+        {
+          "path": "src/features/catalog/api/igdb-catalog-client.ts",
+          "line": 104,
+          "end_line": 140
+        }
+      ]
+    },
+    {
+      "id": "next-server",
+      "type": "backend",
+      "label": "Next server",
+      "sublabel": "SSR page",
+      "sources": [
+        {
+          "path": "src/app/page.tsx",
+          "line": 19,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "api-route",
+      "type": "backend",
+      "label": "API route",
+      "sublabel": "Next route",
+      "sources": [
+        {
+          "path": "src/app/api/igdb/games/route.ts",
+          "line": 9,
+          "end_line": 24
+        },
+        {
+          "path": "src/server/igdb/igdb-route.ts",
+          "line": 11,
+          "end_line": 17
+        }
+      ]
+    },
+    {
+      "id": "igdb-client",
+      "type": "backend",
+      "label": "IGDB client",
+      "sublabel": "Server client",
+      "sources": [
+        {
+          "path": "src/server/igdb/igdb-client.ts",
+          "line": 47,
+          "end_line": 75
+        },
+        {
+          "path": "src/server/igdb/igdb-query-builder.ts",
+          "line": 55,
+          "end_line": 108
+        },
+        {
+          "path": "src/server/igdb/igdb-mapper.ts",
+          "line": 21,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "token-cache",
+      "type": "security",
+      "label": "Token cache",
+      "sublabel": "OAuth cache",
+      "sources": [
+        {
+          "path": "src/server/igdb/igdb-route.ts",
+          "line": 11,
+          "end_line": 17
+        },
+        {
+          "path": "src/server/igdb/twitch-token-client.ts",
+          "line": 15,
+          "end_line": 24
+        }
+      ]
+    },
+    {
+      "id": "twitch",
+      "type": "external",
+      "label": "Twitch",
+      "sublabel": "OAuth",
+      "sources": [
+        {
+          "path": "src/server/igdb/twitch-token-client.ts",
+          "line": 27,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "igdb",
+      "type": "external",
+      "label": "IGDB",
+      "sublabel": "Games API",
+      "sources": [
+        {
+          "path": "src/server/igdb/igdb-client.ts",
+          "line": 62,
+          "end_line": 75
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 140,
+      "to": 496,
+      "label": "Server render · first page"
+    },
+    {
+      "from": 504,
+      "to": 830,
+      "label": "Hydration · pagination"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m01",
+      "from": "browser",
+      "to": "next-server",
+      "y": 160,
+      "label": "GET / · public catalog",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m02",
+      "from": "next-server",
+      "to": "igdb-client",
+      "y": 188,
+      "label": "getCatalog · first page",
+      "note": "Server Component prefetch with TanStack Query."
+    },
+    {
+      "id": "m03",
+      "from": "igdb-client",
+      "to": "token-cache",
+      "y": 232,
+      "label": "getToken()",
+      "variant": "security"
+    },
+    {
+      "id": "m04",
+      "from": "token-cache",
+      "to": "twitch",
+      "y": 260,
+      "label": "POST client_credentials",
+      "variant": "security",
+      "note": "Cache miss only."
+    },
+    {
+      "id": "m05",
+      "from": "twitch",
+      "to": "token-cache",
+      "y": 304,
+      "label": "app access token",
+      "variant": "return"
+    },
+    {
+      "id": "m06",
+      "from": "token-cache",
+      "to": "igdb-client",
+      "y": 332,
+      "label": "cached token",
+      "variant": "return"
+    },
+    {
+      "id": "m07",
+      "from": "igdb-client",
+      "to": "igdb",
+      "y": 360,
+      "label": "POST /games · APICalypse",
+      "note": "Rate-limited queue."
+    },
+    {
+      "id": "m08",
+      "from": "igdb",
+      "to": "igdb-client",
+      "y": 404,
+      "label": "game records",
+      "variant": "return"
+    },
+    {
+      "id": "m09",
+      "from": "igdb-client",
+      "to": "next-server",
+      "y": 432,
+      "label": "mapped catalog page",
+      "variant": "return",
+      "note": "Zod validation, then mapping to the catalog model."
+    },
+    {
+      "id": "m10",
+      "from": "next-server",
+      "to": "browser",
+      "y": 476,
+      "label": "HTML + dehydrated query",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "browser",
+      "to": "query-cache",
+      "y": 544,
+      "label": "hydrate first page",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m12",
+      "from": "query-cache",
+      "to": "api-route",
+      "y": 572,
+      "label": "GET /api/igdb/games?offset=N",
+      "note": "Next page on scroll; credentials stay server-side."
+    },
+    {
+      "id": "m13",
+      "from": "api-route",
+      "to": "igdb-client",
+      "y": 616,
+      "label": "getCatalog · offset"
+    },
+    {
+      "id": "m14",
+      "from": "igdb-client",
+      "to": "token-cache",
+      "y": 644,
+      "label": "getToken() · cache hit",
+      "variant": "security"
+    },
+    {
+      "id": "m15",
+      "from": "token-cache",
+      "to": "igdb-client",
+      "y": 672,
+      "label": "cached token",
+      "variant": "return"
+    },
+    {
+      "id": "m16",
+      "from": "igdb-client",
+      "to": "igdb",
+      "y": 700,
+      "label": "POST /games · APICalypse"
+    },
+    {
+      "id": "m17",
+      "from": "igdb",
+      "to": "igdb-client",
+      "y": 728,
+      "label": "game records",
+      "variant": "return"
+    },
+    {
+      "id": "m18",
+      "from": "igdb-client",
+      "to": "api-route",
+      "y": 756,
+      "label": "mapped page",
+      "variant": "return"
+    },
+    {
+      "id": "m19",
+      "from": "api-route",
+      "to": "query-cache",
+      "y": 784,
+      "label": "JSON page",
+      "variant": "return"
+    },
+    {
+      "id": "m20",
+      "from": "query-cache",
+      "to": "browser",
+      "y": 812,
+      "label": "append cards",
+      "variant": "return"
+    }
+  ]
+}
