@@ -24,7 +24,7 @@ The browser stores the GameBook JWT in `sessionStorage`. Authenticated requests 
 
 The repository architecture diagram is available in English and Spanish. The embedded previews use the validated dark theme; the standalone HTML files retain Archify's interactive viewer.
 
-[![GameBook.Frontend architecture — English](architecture/GameBook.Frontend-architecture-en-dark.png)](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
+[![GameBook.Frontend architecture — English](architecture/GameBook.Frontend-architecture-en.svg)](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
 
 - [Open the interactive diagram](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
 

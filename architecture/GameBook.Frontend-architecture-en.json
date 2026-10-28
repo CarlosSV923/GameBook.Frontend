@@ -3,52 +3,303 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "GameBook Frontend Architecture",
+    "subtitle": "Implemented runtime and deployment boundaries",
     "output": "GameBook.Frontend-architecture-en.html",
-    "locale": "en",
     "quality_profile": "showcase",
     "repository": {
-      "url": "https://github.com/CarlosSV923/GameBook.Frontend",
+      "url": "https://github.com/CarlosSV923/GameBook.Frontend.git",
+      "revision": "5a7cb0797a8a023dfac77018ca1087f18676e6a7",
       "provider": "github",
-      "link_mode": "web",
-      "revision": "6cd310e341ef958ef639540868d565bf054073ac"
+      "link_mode": "web"
     },
-    "views": [
-      { "id": "public-catalog", "label": "Public catalog", "focus": ["browser", "next-app", "igdb-routes", "igdb-api"], "note": "Follow a public catalog request from the browser to the server-side IGDB boundary." },
-      { "id": "authenticated-actions", "label": "Authenticated actions", "focus": ["browser", "next-app", "auth-adapter", "authuser", "game-adapter", "game"], "note": "Follow JWT-backed account and favorite operations through the service adapters." },
-      { "id": "external-auth", "label": "External IGDB access", "focus": ["igdb-routes", "igdb-runtime", "twitch", "igdb-api"], "note": "Inspect the server-only OAuth and IGDB path that keeps provider credentials out of the browser." }
-    ]
+    "locale": "en"
   },
   "components": [
-    { "id": "browser", "type": "external", "label": "Browser", "sublabel": "Public and authenticated UI", "pos": [40, 300], "size": [150, 68], "sources": [{ "path": "src/app/page.tsx", "label": "catalog UI" }] },
-    { "id": "next-app", "type": "frontend", "label": "Next.js Frontend", "sublabel": "App Router + session UI", "pos": [280, 300], "size": [170, 68], "tag": "Vercel", "sources": [{ "path": "src/app/layout.tsx", "label": "App Router" }, { "path": "src/shared/auth/session-storage.ts", "label": "sessionStorage" }] },
-    { "id": "auth-adapter", "type": "frontend", "label": "AuthUser adapter", "sublabel": "Axios + RxJS", "pos": [520, 150], "size": [170, 68], "sources": [{ "path": "src/features/api/auth-user-client.ts", "label": "service client" }, { "path": "src/shared/api/http.ts", "label": "HTTP transport" }] },
-    { "id": "game-adapter", "type": "frontend", "label": "Game adapter", "sublabel": "JWT + healthcheck", "pos": [520, 450], "size": [170, 68], "sources": [{ "path": "src/features/api/game-client.ts", "label": "service client" }, { "path": "src/shared/api/healthcheck.ts", "label": "healthcheck" }] },
-    { "id": "igdb-routes", "type": "backend", "label": "IGDB server routes", "sublabel": "Next.js API routes", "pos": [520, 300], "size": [170, 68], "sources": [{ "path": "src/app/api/igdb/games/route.ts", "label": "catalog route" }] },
-    { "id": "authuser", "type": "backend", "label": "AuthUser", "sublabel": "Render microservice", "pos": [800, 150], "size": [170, 68], "tag": "JWT issuer" },
-    { "id": "game", "type": "backend", "label": "Game", "sublabel": "Render microservice", "pos": [800, 450], "size": [170, 68], "tag": "Favorites API" },
-    { "id": "igdb-runtime", "type": "backend", "label": "IGDB runtime", "sublabel": "Server-only provider client", "pos": [800, 300], "size": [170, 68], "sources": [{ "path": "src/server/igdb/igdb-runtime-config.ts", "label": "provider runtime" }, { "path": "src/server/igdb/igdb-client.ts", "label": "IGDB client" }] },
-    { "id": "twitch", "type": "external", "label": "Twitch OAuth", "sublabel": "Application token", "pos": [1070, 230], "size": [170, 68] },
-    { "id": "igdb-api", "type": "external", "label": "IGDB API", "sublabel": "Game metadata", "pos": [1070, 370], "size": [170, 68] }
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor browser",
+      "sublabel": "Catalog and account UI",
+      "sources": [
+        {
+          "path": "src/app/page.tsx",
+          "line": 35,
+          "end_line": 44
+        }
+      ],
+      "pos": [
+        20,
+        300
+      ],
+      "size": [
+        150,
+        68
+      ]
+    },
+    {
+      "id": "client-app",
+      "type": "frontend",
+      "label": "Browser application",
+      "sublabel": "Feature modules; TanStack Query",
+      "sources": [
+        {
+          "path": "src/features/catalog/ui/catalog-list.tsx",
+          "line": 1,
+          "end_line": 56
+        },
+        {
+          "path": "src/shared/query/query-client-provider.tsx",
+          "line": 1,
+          "end_line": 18
+        },
+        {
+          "path": "src/features/catalog/api/igdb-catalog-client.ts",
+          "line": 104,
+          "end_line": 140
+        }
+      ],
+      "pos": [
+        220,
+        300
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "next-server",
+      "type": "backend",
+      "label": "Next.js server",
+      "sublabel": "Server page and IGDB routes",
+      "sources": [
+        {
+          "path": "src/app/page.tsx",
+          "line": 19,
+          "end_line": 44
+        },
+        {
+          "path": "src/app/api/igdb/games/route.ts",
+          "line": 9,
+          "end_line": 24
+        },
+        {
+          "path": "README.md",
+          "line": 56,
+          "end_line": 58
+        }
+      ],
+      "pos": [
+        530,
+        300
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "igdb-adapter",
+      "type": "backend",
+      "label": "IGDB adapter",
+      "sublabel": "APICalypse, Zod mapping, Axios",
+      "sources": [
+        {
+          "path": "src/server/igdb/igdb-client.ts",
+          "line": 1,
+          "end_line": 53
+        },
+        {
+          "path": "src/server/igdb/igdb-query-builder.ts",
+          "line": 55,
+          "end_line": 108
+        },
+        {
+          "path": "src/server/igdb/igdb-mapper.ts",
+          "line": 1,
+          "end_line": 31
+        }
+      ],
+      "pos": [
+        790,
+        300
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "twitch-oauth",
+      "type": "external",
+      "label": "Twitch OAuth",
+      "sublabel": "Application access token",
+      "sources": [
+        {
+          "path": "src/server/igdb/twitch-token-client.ts",
+          "line": 15,
+          "end_line": 24
+        },
+        {
+          "path": "src/server/igdb/twitch-token-client.ts",
+          "line": 27,
+          "end_line": 71
+        }
+      ],
+      "pos": [
+        790,
+        130
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "igdb-api",
+      "type": "external",
+      "label": "IGDB catalog API",
+      "sublabel": "Game and platform data",
+      "sources": [
+        {
+          "path": "src/server/igdb/igdb-client.ts",
+          "line": 62,
+          "end_line": 75
+        },
+        {
+          "path": "src/server/igdb/igdb-runtime-config.ts",
+          "line": 25,
+          "end_line": 33
+        }
+      ],
+      "pos": [
+        790,
+        500
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "authuser",
+      "type": "backend",
+      "label": "Render AuthUser API",
+      "sublabel": "Accounts and sessions",
+      "sources": [
+        {
+          "path": "src/features/auth/api/auth-user-client.ts",
+          "line": 31,
+          "end_line": 43
+        },
+        {
+          "path": "README.md",
+          "line": 56,
+          "end_line": 58
+        }
+      ],
+      "pos": [
+        150,
+        500
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "game",
+      "type": "backend",
+      "label": "Render Game API",
+      "sublabel": "Favorite games",
+      "sources": [
+        {
+          "path": "src/features/favorites/api/game-client.ts",
+          "line": 32,
+          "end_line": 49
+        },
+        {
+          "path": "README.md",
+          "line": 56,
+          "end_line": 58
+        }
+      ],
+      "pos": [
+        360,
+        500
+      ],
+      "size": [
+        170,
+        68
+      ]
+    }
   ],
   "boundaries": [
-    { "kind": "region", "label": "Browser", "wraps": ["browser"] },
-    { "kind": "region", "label": "Next.js server boundary", "wraps": ["next-app", "igdb-routes", "igdb-runtime"] },
-    { "kind": "security-group", "label": "Server-only IGDB credentials", "wraps": ["igdb-runtime", "twitch", "igdb-api"] }
+    {
+      "kind": "region",
+      "label": "Vercel Next.js runtime",
+      "wraps": [
+        "next-server",
+        "igdb-adapter"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Render services",
+      "wraps": [
+        "authuser",
+        "game"
+      ]
+    }
   ],
   "connections": [
-    { "id": "browser-to-next", "from": "browser", "to": "next-app", "label": "HTTPS", "variant": "emphasis" },
-    { "id": "next-to-auth-adapter", "from": "next-app", "to": "auth-adapter", "label": "account requests", "fromSide": "right", "toSide": "left" },
-    { "id": "auth-adapter-to-authuser", "from": "auth-adapter", "to": "authuser", "label": "healthcheck + REST/JWT", "variant": "security", "labelDy": 58 },
-    { "id": "next-to-game-adapter", "from": "next-app", "to": "game-adapter", "label": "favorite requests", "fromSide": "right", "toSide": "left" },
-    { "id": "game-adapter-to-game", "from": "game-adapter", "to": "game", "label": "healthcheck + Bearer", "variant": "security" },
-    { "id": "next-to-igdb-routes", "from": "next-app", "to": "igdb-routes", "label": "catalog / detail", "fromSide": "right", "toSide": "left", "labelDx": 100, "labelDy": -28 },
-    { "id": "routes-to-runtime", "from": "igdb-routes", "to": "igdb-runtime", "label": "normalized queries" },
-    { "id": "runtime-to-twitch", "from": "igdb-runtime", "to": "twitch", "label": "OAuth token", "variant": "security", "fromSide": "right", "toSide": "left" },
-    { "id": "runtime-to-igdb", "from": "igdb-runtime", "to": "igdb-api", "label": "Client-ID + Bearer", "variant": "security", "fromSide": "right", "toSide": "left" }
-  ],
-  "cards": [
-    { "dot": "cyan", "title": "Frontend boundary", "items": ["Next.js serves the UI and server-side IGDB routes", "The browser never receives IGDB provider credentials"] },
-    { "dot": "emerald", "title": "GameBook services", "items": ["AuthUser owns account and JWT flows", "Game owns authenticated favorites", "Healthchecks precede AuthUser and Game requests"] },
-    { "dot": "rose", "title": "Provider security", "items": ["Twitch OAuth issues the application token", "The IGDB runtime calls IGDB server-side and normalizes responses"] }
+    {
+      "id": "visitor-to-client-app",
+      "from": "visitor",
+      "to": "client-app",
+      "label": "Browse catalog and account"
+    },
+    {
+      "id": "client-app-to-next-server",
+      "from": "client-app",
+      "to": "next-server",
+      "label": "Later pages · /api/igdb"
+    },
+    {
+      "id": "next-server-to-client-app",
+      "from": "next-server",
+      "to": "client-app",
+      "label": "Dehydrated HTML"
+    },
+    {
+      "id": "next-server-to-igdb-adapter",
+      "from": "next-server",
+      "to": "igdb-adapter",
+      "label": "Server prefetch and API route"
+    },
+    {
+      "id": "igdb-adapter-to-twitch-oauth",
+      "from": "igdb-adapter",
+      "to": "twitch-oauth",
+      "label": "Client credentials; cached token"
+    },
+    {
+      "id": "igdb-adapter-to-igdb-api",
+      "from": "igdb-adapter",
+      "to": "igdb-api",
+      "label": "Rate-limited APICalypse POST"
+    },
+    {
+      "id": "client-app-to-authuser",
+      "from": "client-app",
+      "to": "authuser",
+      "label": "Axios + RxJS; health and account"
+    },
+    {
+      "id": "client-app-to-game",
+      "from": "client-app",
+      "to": "game",
+      "label": "Axios + RxJS; health and favorites"
+    }
   ]
 }

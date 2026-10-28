@@ -132,7 +132,6 @@ describe("FavoriteAction", () => {
       createElement(GameCard, {
         authStatus: "anonymous",
         game,
-        position: 3,
         messages: messages.en,
         onSave,
         onSelect: () => undefined,
@@ -152,7 +151,10 @@ describe("FavoriteAction", () => {
       ),
     );
 
-    expect(cardMarkup).toContain('aria-label="Position: #3;');
+    expect(cardMarkup).not.toContain("Position");
+    expect(cardMarkup).toContain(
+      'aria-label="Sign in to save A Short Hike to favorites"',
+    );
     expect(modalMarkup).toContain(
       'aria-label="Sign in to save A Short Hike to favorites"',
     );
@@ -161,7 +163,6 @@ describe("FavoriteAction", () => {
       createElement(GameCard, {
         authStatus: "authenticated",
         game,
-        position: 1,
         messages: messages.en,
         onDelete,
         onSelect: () => undefined,
@@ -194,7 +195,6 @@ describe("FavoriteAction", () => {
       createElement(GameCard, {
         authStatus: "authenticated",
         game,
-        position: 1,
         isFavorite: true,
         messages: messages.en,
         onDelete,
@@ -222,7 +222,7 @@ describe("FavoriteAction", () => {
     );
   });
 
-  it("renders the horizontal card structure with unavailable metadata and sibling controls", () => {
+  it("renders the poster card with unavailable metadata and sibling controls", () => {
     const markup = renderToStaticMarkup(
       createElement(GameCard, {
         authStatus: "anonymous",
@@ -233,9 +233,12 @@ describe("FavoriteAction", () => {
       }),
     );
 
-    expect(markup).toContain('data-variant="card"');
-    expect(markup).toContain(
-      'aria-label="Position: Unavailable; Rating / 100: Unavailable; Year: Unavailable; Platforms: Unavailable"',
+    expect(markup).not.toContain("data-variant");
+    expect(markup).toContain("aspect-[3/4]");
+    expect(markup).toContain('aria-label="Rating / 100: Unavailable"');
+    expect(markup).toContain('title="Unavailable · Unavailable"');
+    expect(markup).toMatch(
+      /<h3[^>]*id="game-card-\d+"[^>]*>A Short Hike<\/h3>/,
     );
     expect(markup).toContain('aria-label="Open details for A Short Hike"');
     expect(markup).toContain(
@@ -243,6 +246,31 @@ describe("FavoriteAction", () => {
     );
     expect(markup.match(/<button/g)).toHaveLength(2);
     expect(markup.indexOf("<button")).toBeLessThan(markup.indexOf("</button>"));
-    expect(markup).toContain("72px");
+  });
+
+  it("rounds the rating badge and keeps the full metadata line in its title", () => {
+    const markup = renderToStaticMarkup(
+      createElement(GameCard, {
+        authStatus: "anonymous",
+        game: {
+          ...game,
+          platforms: [
+            { id: 6, name: "PC" },
+            { id: 130, name: "Nintendo Switch" },
+          ],
+          rating: 91.6,
+          released: "2019-07-30",
+        },
+        messages: messages.es,
+        onSave,
+        onSelect: () => undefined,
+      }),
+    );
+
+    expect(markup).toContain('aria-label="Puntuación / 100: 92"');
+    expect(markup).toContain(">92</span>");
+    expect(markup).toContain('title="2019 · PC · Nintendo Switch"');
+    expect(markup).toContain("truncate");
+    expect(markup).toContain("line-clamp-2");
   });
 });

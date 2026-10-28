@@ -169,7 +169,7 @@ export function FavoriteAction({
   }, [isOpen, portalRoot, status]);
 
   return (
-    <div className={`relative z-10 ${placement === "modal" ? "mt-4" : ""}`}>
+    <div className={placement === "modal" ? "relative z-10 mt-4" : undefined}>
       <IconButton
         aria-controls={popoverId}
         aria-expanded={isOpen}
@@ -271,7 +271,7 @@ export function FavoriteAction({
         : null}
       {saveState === "error" || saveState === "duplicate" ? (
         <span
-          className="absolute right-0 top-full mt-2 flex w-max max-w-[240px] items-start gap-2 rounded-control border border-border bg-paper-raised p-3 font-ui text-xs leading-5 text-ink shadow-raised"
+          className={`z-10 flex items-start gap-2 rounded-control border border-border bg-paper-raised p-3 font-ui text-xs leading-5 text-ink shadow-raised ${placement === "card" ? "absolute inset-x-0 top-full mt-2" : "absolute right-0 top-full mt-2 w-max max-w-[240px]"}`}
           role="alert"
         >
           <span

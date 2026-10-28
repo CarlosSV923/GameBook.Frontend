@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+  <defs>
+    <linearGradient id="ground" x2="0" y2="1">
+      <stop stop-color="#16303a" />
+      <stop offset="1" stop-color="#3f6d73" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#ground)" />
+  <circle cx="300" cy="250" r="96" fill="#f2c46d" fill-opacity=".85" /><path d="M0 440c100-40 200 40 300 0s200-40 300 0v360H0z" fill="#0f2229" fill-opacity=".8" /><path d="M0 500c100-40 200 40 300 0s200-40 300 0" fill="none" stroke="#f3efe6" stroke-opacity=".35" stroke-width="6" />
+  <text x="48" y="676" fill="#fbf8f1" font-family="Georgia,serif" font-size="40" letter-spacing="4">LANTERN</text>
+  <text x="48" y="728" fill="#fbf8f1" fill-opacity=".72" font-family="Georgia,serif" font-size="28" letter-spacing="4">TIDE</text>
+  <rect x="48" y="610" width="64" height="6" fill="#f2c46d" />
+</svg>

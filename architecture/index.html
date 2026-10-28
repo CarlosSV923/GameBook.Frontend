@@ -1,0 +1,111 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GameBook Frontend diagrams</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 48rem;
+        margin: 3rem auto;
+        padding: 0 1.25rem;
+        background: Canvas;
+        color: CanvasText;
+      }
+      h1,
+      h2 {
+        line-height: 1.2;
+      }
+      section {
+        margin-block: 2rem;
+      }
+      ul {
+        padding-inline-start: 1.4rem;
+      }
+      li {
+        margin-block: 0.65rem;
+      }
+      a {
+        color: LinkText;
+        text-underline-offset: 0.18em;
+      }
+      a:focus-visible {
+        outline: 3px solid Highlight;
+        outline-offset: 3px;
+      }
+      .languages {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+        gap: 1rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #171a1f;
+          color: #f3f4f6;
+        }
+        a {
+          color: #a8c7fa;
+        }
+      }
+      @media (prefers-color-scheme: light) {
+        body {
+          background: #fff;
+          color: #202124;
+        }
+        a {
+          color: #174ea6;
+        }
+      }
+      section[lang="es"] {
+        border-top: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+        padding-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>GameBook Frontend architecture</h1>
+      <p>
+        Explore the implemented frontend architecture and public catalog request
+        flow.
+      </p>
+    </header>
+    <main class="languages">
+      <section lang="en" aria-labelledby="english-title">
+        <h2 id="english-title">English</h2>
+        <ul>
+          <li>
+            <a href="GameBook.Frontend-architecture-en.html"
+              >Frontend architecture</a
+            >
+          </li>
+          <li>
+            <a href="GameBook.Frontend-sequence-en.html"
+              >Public catalog request sequence</a
+            >
+          </li>
+        </ul>
+      </section>
+      <section lang="es" aria-labelledby="spanish-title">
+        <h2 id="spanish-title">Español</h2>
+        <ul>
+          <li>
+            <a href="GameBook.Frontend-architecture-es.html"
+              >Arquitectura del frontend</a
+            >
+          </li>
+          <li>
+            <a href="GameBook.Frontend-sequence-es.html"
+              >Secuencia del catálogo público</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

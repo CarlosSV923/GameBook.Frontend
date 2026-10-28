@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { exampleGame, mockGameBook } from "./fixtures";
 
@@ -30,6 +30,7 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await expect(
     page.getByRole("heading", { name: "Example Quest" }),
   ).toBeVisible();
+  await expectUniformPosterGrid(page, 4);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(
@@ -236,6 +237,7 @@ test("mobile public catalog and detail", async ({ page }, testInfo) => {
   await expect(
     page.getByRole("heading", { name: exampleGame.name }),
   ).toBeVisible();
+  await expectUniformPosterGrid(page, 2);
   const favoriteTrigger = page.getByRole("button", {
     name: `Sign in to save ${exampleGame.name} to favorites`,
   });
@@ -336,3 +338,25 @@ test("catalog loads the next page when scrolling to the sentinel", async ({
     page.getByRole("heading", { name: "Pagination Example 21", exact: true }),
   ).toBeVisible();
 });
+
+// Poster cards in a grid row share one height and keep a 3:4 cover, whatever
+// the title or platform list length.
+async function expectUniformPosterGrid(page: Page, columns: number) {
+  const cards = page.locator("[data-game-card]");
+  await expect(cards).toHaveCount(4);
+  const boxes = await Promise.all(
+    [0, 1, 2, 3].map(async (index) => (await cards.nth(index).boundingBox())!),
+  );
+  const firstRow = boxes.filter(({ y }) => Math.abs(y - boxes[0].y) < 1);
+  expect(firstRow).toHaveLength(columns);
+  for (const box of boxes) {
+    const rowStart = boxes[Math.floor(boxes.indexOf(box) / columns) * columns];
+    expect(Math.abs(box.y - rowStart.y)).toBeLessThan(1);
+    expect(Math.abs(box.height - rowStart.height)).toBeLessThanOrEqual(1);
+  }
+  const cover = (await cards
+    .first()
+    .getByRole("button", { name: /^Open details for / })
+    .boundingBox())!;
+  expect(cover.height / cover.width).toBeCloseTo(4 / 3, 1);
+}

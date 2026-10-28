@@ -175,7 +175,7 @@ export function CatalogFilters({
 
   return (
     <form
-      className="sticky top-[70px] z-20 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 rounded-panel border border-border-soft bg-paper-raised p-3 shadow-raised md:top-[74px] md:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1.1fr)_minmax(112px,.6fr)_minmax(112px,.6fr)_auto] md:gap-3 md:p-4"
+      className="sticky top-[70px] z-20 mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 rounded-panel border border-border-soft bg-paper-raised p-3 shadow-raised md:top-[74px] md:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1.1fr)_minmax(112px,.6fr)_minmax(112px,.6fr)_auto] md:mb-6 md:gap-3 md:p-4"
       onSubmit={applyFilters}
     >
       <div className="min-w-0">
