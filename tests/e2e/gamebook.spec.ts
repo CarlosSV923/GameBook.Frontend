@@ -162,6 +162,12 @@ test("visitor and signed-in favorite journey", async ({ page }, testInfo) => {
   await expect(
     page.getByRole("heading", { name: exampleGame.name }),
   ).toBeVisible();
+  const favoritesEnd = page
+    .getByRole("status")
+    .filter({ hasText: "You have reached the end of your favorites." });
+  await expect(favoritesEnd).toBeVisible();
+  await expect(favoritesEnd).toContainText("Personal shelf");
+  await expect(page.getByText("Public catalog")).toHaveCount(0);
   await page.getByRole("combobox", { name: "Game name" }).fill("Example");
   await expect(
     page.getByRole("option", { name: exampleGame.name }),

@@ -4,12 +4,14 @@ import { CatalogState } from "@/shared/ui/catalog-state";
 import { Button } from "@/shared/ui/button";
 
 export function CollectionPagination({
+  context = "catalog",
   fetching,
   hasNext,
   error,
   messages,
   onNext,
 }: {
+  context?: "catalog" | "favorites";
   fetching: boolean;
   hasNext: boolean;
   error: boolean;
@@ -54,7 +56,7 @@ export function CollectionPagination({
         </Button>
       ) : null}
       {!fetching && !error && !hasNext ? (
-        <CatalogState kind="end" messages={messages} />
+        <CatalogState context={context} kind="end" messages={messages} />
       ) : null}
     </div>
   );

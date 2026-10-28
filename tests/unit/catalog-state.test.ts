@@ -51,4 +51,21 @@ describe("CatalogState", () => {
     expect(end).toContain("bg-copper/70");
     expect(end).not.toContain(messages.en.indexStrip.unavailable);
   });
+
+  it("uses the favorites copy at the end of the personal shelf", () => {
+    for (const language of ["en", "es"] as const) {
+      const end = renderToStaticMarkup(
+        createElement(CatalogState, {
+          context: "favorites",
+          kind: "end",
+          messages: messages[language],
+        }),
+      );
+
+      expect(end).toContain(messages[language].favorites.endOfResults);
+      expect(end).toContain(messages[language].favorites.eyebrow);
+      expect(end).not.toContain(messages[language].catalog.eyebrow);
+      expect(end).not.toContain(messages[language].states.endOfResults);
+    }
+  });
 });
