@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.11.0...gamebook-frontend-v0.12.0) (2026-10-28)
+
+
+### Features
+
+* **catalog:** show games as 3:4 poster cards ([8e42f64](https://github.com/CarlosSV923/GameBook.Frontend/commit/8e42f643abaaf3b9a33c0b9637db36a02acd1f63))
+* **catalog:** show games as 3:4 poster cards ([a06ab68](https://github.com/CarlosSV923/GameBook.Frontend/commit/a06ab68a9f3caba0cba585f6e3574c7c479f1a1a))
+
 ## [0.11.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.10.0...gamebook-frontend-v0.11.0) (2026-10-27)
 
 
