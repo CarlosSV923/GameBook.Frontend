@@ -6,7 +6,7 @@ export type IndexStripLabels = {
   year: string;
 };
 
-export type IndexStripVariant = "card" | "card-compact" | "detail";
+export type IndexStripVariant = "card" | "detail";
 
 export type IndexStripProps = {
   labels: IndexStripLabels;
@@ -52,7 +52,7 @@ export function IndexStrip({
   return (
     <aside
       aria-label={`${labels.rank}: ${rankValue}; ${labels.rating}: ${scoreValue}; ${labels.year}: ${year}; ${labels.platforms}: ${platformValue}`}
-      className={`grid min-w-0 bg-paper-inset text-ink ${variant === "detail" ? "grid-cols-2 gap-3 rounded-panel p-2 sm:grid-cols-4" : `${variant === "card-compact" ? "w-[52px] p-1.5" : "w-16 p-2 max-[767px]:w-[52px] max-[767px]:p-1.5"} content-start gap-3 max-[767px]:gap-2 border-r border-border-soft`}`}
+      className={`grid min-w-0 bg-paper-inset text-ink ${variant === "detail" ? "grid-cols-2 gap-3 rounded-panel p-2 sm:grid-cols-4" : `w-16 p-2 max-[767px]:w-[52px] max-[767px]:p-1.5 content-start gap-3 max-[767px]:gap-2 border-r border-border-soft`}`}
       data-variant={variant}
     >
       <dl className={variant === "detail" ? "contents" : "grid gap-3"}>
@@ -67,7 +67,7 @@ export function IndexStrip({
               </dt>
             ) : null}
             <dd
-              className={`m-0 min-w-0 ${index === 3 && variant !== "detail" ? "font-data text-[9px] leading-3 [writing-mode:vertical-rl]" : index === 1 ? `whitespace-nowrap font-display tabular-nums ${variant === "card-compact" ? "text-[22px] leading-6" : "text-[28px] leading-8 max-[767px]:text-[22px] max-[767px]:leading-6"} ${variant === "detail" ? "text-ink" : ""}` : `font-data text-xs leading-4 tabular-nums ${variant === "detail" ? "text-ink" : "text-[0.625rem] leading-3"}`}`}
+              className={`m-0 min-w-0 ${index === 3 && variant !== "detail" ? "font-data text-[9px] leading-3 [writing-mode:vertical-rl]" : index === 1 ? `whitespace-nowrap font-display tabular-nums text-[28px] leading-8 max-[767px]:text-[22px] max-[767px]:leading-6 ${variant === "detail" ? "text-ink" : ""}` : `font-data text-xs leading-4 tabular-nums ${variant === "detail" ? "text-ink" : "text-[0.625rem] leading-3"}`}`}
             >
               {variant === "detail" || index !== 0 ? value : visibleRank}
             </dd>

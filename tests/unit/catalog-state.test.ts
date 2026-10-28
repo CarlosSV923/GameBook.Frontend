@@ -36,7 +36,8 @@ describe("CatalogState", () => {
 
     expect(loading).toContain(messages.en.states.loading);
     expect(loading).toContain('aria-live="polite"');
-    expect(loading).toContain('data-variant="card"');
+    expect(loading).not.toContain('data-variant="card"');
+    expect(loading).toContain("aspect-[3/4]");
     expect(loading).toContain("animate-pulse");
     expect(empty).toContain(messages.es.states.noResultsTitle);
     expect(empty).toContain(messages.es.states.noResultsDescription);

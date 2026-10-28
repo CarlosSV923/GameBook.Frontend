@@ -3,8 +3,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 // Playwright loads these fixtures as CommonJS, so resolve from __dirname.
-const exampleCover = readFileSync(
-  path.join(__dirname, "assets", "example-cover.svg"),
+const covers = new Map(
+  ["example", "lantern-tide", "paper-orbit", "quiet-archivist"].map((id) => [
+    `${id}-cover`,
+    readFileSync(path.join(__dirname, "assets", `${id}-cover.svg`)),
+  ]),
 );
 
 const user = {
@@ -32,6 +35,49 @@ const detail = {
   summary: "A fictional game fixture for browser tests.",
 };
 
+// Fictional first page; keep in sync with tests/e2e/fake-igdb-server.mjs.
+export const catalogGames = [
+  exampleGame,
+  {
+    igdbId: 43,
+    name: "Lantern Tide",
+    released: "2021-03-18",
+    imageUrl:
+      "https://images.igdb.com/igdb/image/upload/t_cover_big/lantern-tide-cover.jpg",
+    rating: 89.6,
+    platforms: [
+      { id: 6, name: "PC" },
+      { id: 130, name: "Nintendo Switch" },
+      { id: 167, name: "PlayStation 5" },
+      { id: 169, name: "Xbox Series X|S" },
+    ],
+  },
+  {
+    igdbId: 44,
+    name: "Paper Orbit",
+    released: "2018-09-04",
+    imageUrl:
+      "https://images.igdb.com/igdb/image/upload/t_cover_big/paper-orbit-cover.jpg",
+    rating: 86.2,
+    platforms: [
+      { id: 6, name: "PC" },
+      { id: 48, name: "PlayStation 4" },
+    ],
+  },
+  {
+    igdbId: 45,
+    name: "The Quiet Archivist of Saltmarsh Hollow",
+    released: "2012-11-20",
+    imageUrl:
+      "https://images.igdb.com/igdb/image/upload/t_cover_big/quiet-archivist-cover.jpg",
+    rating: 81.4,
+    platforms: [
+      { id: 9, name: "PlayStation 3" },
+      { id: 12, name: "Xbox 360" },
+    ],
+  },
+];
+
 type Favorite = typeof exampleGame;
 
 export async function mockGameBook(
@@ -47,9 +93,11 @@ export async function mockGameBook(
     if (url.origin === "http://127.0.0.1:3180") {
       // Serve covers locally so the image optimizer never fetches IGDB.
       if (url.pathname === "/_next/image") {
+        const source = url.searchParams.get("url") ?? "";
+        const coverId = source.match(/([a-z-]+-cover).jpg/)?.[1];
         await route.fulfill({
           contentType: "image/svg+xml",
-          body: exampleCover,
+          body: covers.get(coverId ?? "") ?? covers.get("example-cover"),
         });
         return;
       }
@@ -108,12 +156,11 @@ async function fulfillIgdb(route: Route, url: URL, catalogPagination: boolean) {
       });
       return;
     }
-    const gameMatches = matchesFilters(url, exampleGame);
     await route.fulfill({
       contentType: "application/json",
       body: JSON.stringify({
         hasNext: false,
-        items: gameMatches ? [exampleGame] : [],
+        items: catalogGames.filter((game) => matchesFilters(url, game)),
         limit: Number(url.searchParams.get("limit") ?? 20),
         offset: Number(url.searchParams.get("offset") ?? 0),
       }),

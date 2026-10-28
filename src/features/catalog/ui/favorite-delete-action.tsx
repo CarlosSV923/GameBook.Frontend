@@ -50,7 +50,7 @@ export function FavoriteDeleteAction({
 
   return (
     <div
-      className={`relative z-10 ${placement === "modal" ? "mt-4" : ""}`}
+      className={placement === "modal" ? "relative z-10 mt-4" : undefined}
       onBlur={handleBlur}
     >
       <IconButton
@@ -67,7 +67,7 @@ export function FavoriteDeleteAction({
       {isConfirming || isRemoving || deleteState === "error" ? (
         <div
           aria-label={copy.removeConfirm}
-          className={`z-20 w-[min(220px,calc(100vw-32px))] rounded-panel border border-border bg-paper-raised p-3 text-ink shadow-lg ${placement === "card" ? "absolute right-0 top-full mt-2" : "relative mt-2"}`}
+          className={`z-10 rounded-panel border border-border bg-paper-raised p-3 text-ink shadow-lg ${placement === "card" ? "absolute inset-x-0 top-full mt-2" : "relative mt-2 w-[min(220px,calc(100vw-32px))]"}`}
           role="group"
         >
           <p className="mb-2.5 font-ui text-xs leading-relaxed text-ink-secondary">

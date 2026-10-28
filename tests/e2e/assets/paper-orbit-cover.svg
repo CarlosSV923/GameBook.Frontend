@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+  <defs>
+    <linearGradient id="ground" x2="0" y2="1">
+      <stop stop-color="#2c2440" />
+      <stop offset="1" stop-color="#6d4b6e" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#ground)" />
+  <ellipse cx="300" cy="320" rx="210" ry="70" fill="none" stroke="#f3efe6" stroke-opacity=".5" stroke-width="6" transform="rotate(-18 300 320)" /><circle cx="300" cy="320" r="92" fill="#e8a0b4" fill-opacity=".8" /><circle cx="470" cy="230" r="22" fill="#f3efe6" />
+  <text x="48" y="676" fill="#fbf8f1" font-family="Georgia,serif" font-size="40" letter-spacing="4">PAPER</text>
+  <text x="48" y="728" fill="#fbf8f1" fill-opacity=".72" font-family="Georgia,serif" font-size="28" letter-spacing="4">ORBIT</text>
+  <rect x="48" y="610" width="64" height="6" fill="#e8a0b4" />
+</svg>
