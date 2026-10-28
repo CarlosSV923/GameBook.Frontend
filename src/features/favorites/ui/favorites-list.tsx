@@ -209,6 +209,7 @@ export function FavoritesList() {
             }
           />
           <CollectionPagination
+            context="favorites"
             fetching={collection.isFetchingNextPage}
             hasNext={Boolean(collection.hasNextPage)}
             error={collection.isFetchNextPageError}

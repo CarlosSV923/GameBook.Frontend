@@ -43,7 +43,10 @@ export function CatalogState({
           : messages.states.errorTitle,
     },
     end: {
-      description: messages.states.endOfResults,
+      description:
+        context === "favorites"
+          ? messages.favorites.endOfResults
+          : messages.states.endOfResults,
       title: sectionCopy.title,
     },
     loading: {

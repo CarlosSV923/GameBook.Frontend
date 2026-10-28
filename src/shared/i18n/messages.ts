@@ -28,6 +28,7 @@ export const messages = {
       emptyDescription:
         "Save a game from the public catalog and it will return here as part of your personal shelf.",
       emptyTitle: "Your personal shelf is waiting.",
+      endOfResults: "You have reached the end of your favorites.",
       errorDescription:
         "Your personal shelf could not be reached. Try again without losing your filters.",
       errorTitle: "Your favorites are temporarily unavailable.",
@@ -267,6 +268,7 @@ export const messages = {
       emptyDescription:
         "Guarda un juego desde el catálogo público y volverá aquí como parte de tu estantería personal.",
       emptyTitle: "Tu estantería personal está esperando.",
+      endOfResults: "Has llegado al final de tus favoritos.",
       errorDescription:
         "No se pudo acceder a tu estantería personal. Inténtalo de nuevo sin perder tus filtros.",
       errorTitle: "Tus favoritos no están disponibles temporalmente.",
