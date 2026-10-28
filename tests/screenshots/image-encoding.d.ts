@@ -1,8 +1,8 @@
 declare module "gifenc" {
-  export function applyPalette(
-    rgba: Uint8Array | Uint8ClampedArray,
+  export function nearestColorIndex(
     palette: number[][],
-  ): Uint8Array;
+    color: number[],
+  ): number;
 
   export function GIFEncoder(): {
     bytes(): Uint8Array;
