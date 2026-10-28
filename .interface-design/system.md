@@ -67,8 +67,8 @@ Usar cifras tabulares para números variables. Titulares con `text-wrap: balance
 - **Hero:** una introducción de una fila/columnas equilibradas, Newsreader 64 px en escritorio. Su bloque no supera aproximadamente 300 px (un tercio de 900 px); debe dejar visible el inicio del filtro o ranking en el primer viewport. En móvil: padding superior 24 px y titular de 36 px.
 - **Filtros en escritorio:** una sola fila sticky bajo la cabecera, controles de al menos 44 px, superficie `paper-raised`, sin encabezado «Filters» duplicado. Campo de búsqueda amplio, plataforma y años más compactos y acción «Apply filters» junto a ellos. Anclar la posición sticky de acuerdo con la altura real de la cabecera.
 - **Filtros en móvil:** búsqueda visible junto al botón «Filters» de 44 px; este abre una hoja/panel con filtros combinables, sugerencias y acción para aplicar/limpiar. El panel se puede cerrar con Escape, conserva foco y no oculta la búsqueda principal.
-- **Catálogo escritorio:** título de ranking y atribución IGDB visibles; grid autoajustable con fichas de al menos 280 px y separación de 20 px (tres o cuatro columnas según espacio). Tarjeta horizontal con tira lateral fija, portada integrada y bloque de texto/acción.
-- **Catálogo móvil:** una columna con fichas horizontales y separación de 12 px. Tira lateral de 52 px, imagen de 72 px, bloque de título y metadatos flexible y acción de 44 px. La tira no depende de hover.
+- **Catálogo escritorio (2026-10-27):** título de ranking y atribución IGDB visibles; grid `auto-fill` de pósters de al menos 190 px, separación de 20 px en horizontal y 24 px en vertical (cinco columnas en 1120 px). Las fichas de una fila comparten altura.
+- **Catálogo móvil (2026-10-27):** dos columnas de pósters hasta 480 px, separación de 12 px en horizontal y 20 px en vertical; acción de 44 px junto al título.
 - **Detalle:** modal máximo 820 px, altura máxima del viewport menos 48 px, contenido desplazable y padding exterior de 24 px (12 px en móvil). En móvil, encabezado apilable con portada, título y cierre sin desbordar.
 
 ## Componentes: anatomía y estados
@@ -101,17 +101,16 @@ Todas las acciones usan elementos HTML semánticos y los primitives existentes; 
 
 ### IndexStrip
 
-- **Anatomía común:** franja inspirada en pestaña/lomo de archivo con rango/posición, etiqueta explícita de puntuación `0–100`, año y plataformas; metadatos faltantes se representan como dato no disponible, nunca inventado. Cifras tabulares; nombre accesible localizado. Se mantiene visible en catálogo, favoritos, detalle y estados de catálogo.
-- **Tarjeta escritorio:** ancho 64 px; fondo `paper-inset`; rango mono 12 px, puntuación protagonista Newsreader 28 px, año mono 12 px y plataformas en lectura vertical compacta con etiqueta accesible.
-- **Tarjeta móvil:** ancho 52 px; rango mono 11 px y puntuación Newsreader 22 px. El año y las plataformas aparecen también junto al título de la ficha en horizontal, para evitar texto girado ilegible.
+- **Anatomía común:** franja inspirada en pestaña/lomo de archivo con rango/posición, etiqueta explícita de puntuación `0–100`, año y plataformas; metadatos faltantes se representan como dato no disponible, nunca inventado. Cifras tabulares; nombre accesible localizado. Desde 2026-10-27 se usa en el detalle y en los paneles de estado; las fichas de catálogo y favoritos muestran la puntuación en la etiqueta del póster.
+- **Panel de estado (`card`):** ancho 64 px (52 px en móvil); fondo `paper-inset`; rango mono 12 px, puntuación protagonista Newsreader 28 px, año mono 12 px y plataformas en lectura vertical compacta con etiqueta accesible.
 - **Detalle:** variante horizontal/expandida con posición, puntuación, año y plataformas en bloques de ficha técnica, sin barra vertical estrecha.
 - **Estados:** valores disponibles, parciales y ausentes; carga usa marcadores/skeleton con las mismas proporciones. No inferir ranking cuando no se provee.
 
 ### GameCard
 
-- **Anatomía:** elemento de lista semántico; ficha horizontal de 10 px de radio; IndexStrip lateral, portada 4:3 en escritorio o panel de 72 px en móvil, título, año/plataformas, control de acción y foco que cubre el disparador de detalle. La imagen tiene fallback de archivo y texto alternativo adecuado.
+- **Anatomía (póster, 2026-10-27):** elemento de lista semántico sin marco; portada 3:4 (la proporción de IGDB) con radio de 10 px, borde `border-soft` y `object-cover`, que es el disparador de detalle; etiqueta de puntuación 0–100 redondeada arriba a la izquierda (`paper-raised` al 90 %, cobre fuerte, IBM Plex Mono); debajo, título `h3` en dos líneas como máximo, acción de favorito de 44 px a su lado y una línea «año · plataformas» truncada con la lista completa en `title`. Sin posición en el listado. Fallback con la inicial del juego en Newsreader.
 - **Variante catálogo:** abre detalle al activar el área de título/portada; acción de favorito independiente y con nombre que incluye el juego. Evitar botones anidados dentro de un botón.
-- **Variante favoritos:** conserva la misma estructura y tira; la acción primaria de la ficha es eliminar, con confirmación contextual. Puede abrir el mismo detalle.
+- **Variante favoritos:** conserva el mismo póster; la acción primaria de la ficha es eliminar, con confirmación contextual. Puede abrir el mismo detalle.
 - **Estados:** default, hover discreto, focus-visible, loading/skeleton, imagen ausente, guardado, no guardado, mutation pending, duplicado y error. Mantener dimensiones durante carga y anuncios de resultado asociados a la acción.
 
 ### DetailModal
@@ -128,7 +127,7 @@ Todas las acciones usan elementos HTML semánticos y los primitives existentes; 
 
 ### Estados de catálogo y avisos
 
-- **Loading:** estado anunciado como polite; conserva la silueta de IndexStrip/tarjeta y presenta skeleton estable. Movimiento breve o ninguno con reducción de movimiento.
+- **Loading:** estado anunciado como polite; presenta pósters esqueleto con la misma proporción 3:4 y la misma cuadrícula. Movimiento breve o ninguno con reducción de movimiento.
 - **Empty / sin resultados:** mensaje específico para colección vacía o filtros sin coincidencia, con lenguaje de archivo y una acción existente de recuperación cuando aplique.
 - **Error:** mensaje directo y opción de reintento donde ya exista; rol alert para error que requiere atención. La tira/marker mantiene continuidad visual.
 - **Fin de resultados:** estado terminal discreto después del último elemento; detener nuevas solicitudes y no mostrar spinner persistente.

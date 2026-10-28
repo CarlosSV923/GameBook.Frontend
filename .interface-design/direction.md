@@ -10,14 +10,14 @@ El dominio aporta el vocabulario visual: archivo y estantería, ficha de juego, 
 
 ## Dirección A: «Archive Refined»
 
-La composición aprobada reduce la introducción para que el ranking llegue pronto al primer plano. En escritorio, una cuadrícula de fichas horizontales integra imagen y datos junto a la tira de índice. En teléfono, las fichas conservan esa lectura horizontal y la tira sigue visible sin hover. Newsreader aporta el carácter editorial; IBM Plex Sans ordena controles y lectura; IBM Plex Mono da estabilidad a posiciones, puntuaciones y años.
+La composición aprobada reduce la introducción para que el ranking llegue pronto al primer plano. Enmienda 2026-10-27: el catálogo y los favoritos usan las fichas póster de la opción B (portada 3:4 sin recorte, etiqueta de puntuación, título y «año · plataformas»), en cinco columnas en escritorio y dos en teléfono. La tira de índice queda para el detalle y los estados. Newsreader aporta el carácter editorial; IBM Plex Sans ordena controles y lectura; IBM Plex Mono da estabilidad a posiciones, puntuaciones y años.
 
 ### Cambios respecto a la UI publicada
 
 La revisión de portfolio del 2026-10-24 identificó estos desajustes que la dirección A corrige:
 
-- **La tira de índice no aparece en las tarjetas:** pasa a ser obligatoria en catálogo y favoritos, y acompaña el detalle y los estados de catálogo.
-- **Grid genérico con imagen arriba:** se reemplaza por fichas horizontales de archivo; en escritorio se disponen en cuadrícula y en móvil en una columna compacta. La portada queda integrada en la ficha, no como patrón repetido de póster sobre texto.
+- **La tira de índice en las tarjetas:** con listas largas de plataformas estiraba las filas; desde 2026-10-27 acompaña el detalle y los estados, y la ficha muestra la puntuación en una etiqueta sobre el póster.
+- **Portadas recortadas:** la portada 4:3 recortaba los pósters de IGDB; desde 2026-10-27 la ficha es un póster 3:4 completo sobre título y metadatos, con la paleta y la tipografía de la dirección A.
 - **Acciones primarias que parecen deshabilitadas:** usan cobre de producto, texto contrastado, peso y estado de interacción inequívocos. Las acciones secundarias siguen siendo neutras.
 - **Hero demasiado grande:** pasa de aproximadamente el 45 % del primer viewport a una introducción compacta, de hasta cerca de un tercio de 1440 × 900. El ranking aparece antes del pliegue.
 - **Scrim de modal lavado:** el modal usa una capa oscura semitransparente tanto en tema claro como oscuro; portada, título y puntuación mantienen la prioridad y los metadatos se leen como ficha técnica.
@@ -30,8 +30,8 @@ La cabecera de escritorio también queda en una fila. Bajo el hero, filtros de n
 
 | Vista                       | Jerarquía                                           | Composición                                                                          |
 | --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Catálogo                    | Ranking y fichas; filtros y contexto después        | Hero compacto, barra de filtros pegajosa y grid de fichas con tira de índice.        |
-| Favoritos                   | Colección personal y cada ficha                     | Misma tarjeta y tira; acción contextual de eliminar con confirmación.                |
+| Catálogo                    | Ranking y fichas; filtros y contexto después        | Hero compacto, barra de filtros pegajosa y grid de pósters 3:4.                      |
+| Favoritos                   | Colección personal y cada ficha                     | Mismo póster; acción contextual de eliminar con confirmación.                        |
 | Detalle                     | Portada, título y puntuación; después ficha técnica | Modal centrado con scrim oscuro, metadatos, atribución y cierre accesible.           |
 | Inicio de sesión y registro | Formulario y acción principal                       | Panel editorial compacto, errores asociados a campos y navegación entre formularios. |
 | Perfil                      | Cambio de contraseña y desactivación                | Secciones legibles, confirmación antes de desactivar y estados visibles.             |
@@ -46,7 +46,7 @@ Se restablece el comportamiento especificado en `mvp.md` §4.4 y §4.5, tanto en
 
 1. Neón, glow y glassmorphism de videojuego → superficies materiales y cobre escaso.
 2. Sidebar permanente de SaaS → controles de catálogo junto al contenido.
-3. Grid homogéneo de cards con imagen arriba → fichas de archivo con tira de índice.
+3. Fichas con tira lateral y portada 4:3 → pósters 3:4 sin recorte con etiqueta de puntuación (enmienda 2026-10-27).
 4. Dashboard de métricas como portada → ranking y puntuación dentro de la ficha del juego.
 5. Acciones ambiguas basadas solo en iconos, color o hover → controles etiquetados, estados explícitos y foco visible.
 6. Hero dominante que empuja el catálogo bajo el pliegue → introducción editorial compacta.

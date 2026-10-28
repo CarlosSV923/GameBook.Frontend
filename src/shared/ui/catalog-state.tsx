@@ -58,33 +58,24 @@ export function CatalogState({
   return kind === "loading" ? (
     <div
       aria-live="polite"
-      className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] min-[768px]:gap-5"
+      className="grid grid-cols-2 gap-x-3 gap-y-5 min-[481px]:grid-cols-[repeat(auto-fill,minmax(190px,1fr))] min-[768px]:gap-x-5 min-[768px]:gap-y-6"
       role="status"
     >
       <span className="sr-only">{content.title}</span>
-      {Array.from({ length: 6 }, (_, index) => (
-        <div
-          aria-hidden="true"
-          className="flex min-h-[148px] overflow-hidden rounded-panel border border-border bg-paper-raised"
-          key={index}
-        >
-          <IndexStrip labels={messages.indexStrip} variant="card" />
-          <div className="flex min-w-0 flex-1 items-center gap-3 p-3">
-            <span className="hidden aspect-[4/3] w-28 shrink-0 animate-pulse rounded-control bg-paper-inset min-[768px]:block motion-reduce:animate-none" />
-            <span className="-my-3 -ml-3 w-[72px] shrink-0 animate-pulse bg-paper-inset min-[768px]:hidden motion-reduce:animate-none" />
-            <span className="grid min-w-0 flex-1 gap-3">
-              <span className="h-4 w-4/5 animate-pulse rounded bg-paper-inset motion-reduce:animate-none" />
-              <span className="h-3 w-3/5 animate-pulse rounded bg-paper-inset motion-reduce:animate-none" />
-            </span>
-            <span className="size-11 shrink-0 rounded-full bg-paper-inset" />
-          </div>
+      {Array.from({ length: 10 }, (_, index) => (
+        <div aria-hidden="true" className="grid gap-2.5" key={index}>
+          <span className="aspect-[3/4] w-full animate-pulse rounded-card border border-border-soft bg-paper-inset motion-reduce:animate-none" />
+          <span className="grid min-h-[3.75rem] content-start gap-2 pr-9">
+            <span className="h-4 w-4/5 animate-pulse rounded bg-paper-inset motion-reduce:animate-none" />
+            <span className="h-3 w-3/5 animate-pulse rounded bg-paper-inset motion-reduce:animate-none" />
+          </span>
         </div>
       ))}
     </div>
   ) : (
     <div
       aria-live={kind === "end" ? "polite" : "assertive"}
-      className={`grid min-h-48 grid-cols-[72px_minmax(0,1fr)] gap-5 rounded-panel border border-border-soft bg-paper-raised p-5 shadow-raised sm:min-h-52 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-6 sm:p-6 ${kind === "error" ? "border-danger/40" : ""} ${kind === "end" ? "min-h-0 grid-cols-[8px_minmax(0,1fr)] items-center gap-4 py-4 sm:grid-cols-[8px_minmax(0,1fr)]" : ""}`}
+      className={`grid rounded-panel border border-border-soft bg-paper-raised shadow-raised ${kind === "end" ? "grid-cols-[8px_minmax(0,1fr)] items-center gap-4 px-5 py-4" : "min-h-48 grid-cols-[72px_minmax(0,1fr)] gap-5 p-5 sm:min-h-52 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-6 sm:p-6"} ${kind === "error" ? "border-danger/40" : ""}`}
       role={kind === "error" ? "alert" : kind === "end" ? "status" : undefined}
     >
       {kind === "end" ? (

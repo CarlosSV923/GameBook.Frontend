@@ -108,7 +108,7 @@ describe("SegmentedControl", () => {
 
 describe("IndexStrip", () => {
   it("shows values only in card strips and keeps labeled details accessible", () => {
-    for (const variant of ["card", "card-compact", "detail"] as const) {
+    for (const variant of ["card", "detail"] as const) {
       const markup = render(
         createElement(IndexStrip, {
           labels: messages.en.indexStrip,
