@@ -5,7 +5,6 @@
 
 ### Bug Fixes
 
-* **favorites:** show the favorites end-of-list notice ([a1247e1](https://github.com/CarlosSV923/GameBook.Frontend/commit/a1247e10bede26d165160d4354c7ad0453bd254e))
 * **favorites:** show the favorites end-of-list notice ([9eab334](https://github.com/CarlosSV923/GameBook.Frontend/commit/9eab3344dc246788697bbaa8be9dc2383eed6824))
 
 ## [0.12.0](https://github.com/CarlosSV923/GameBook.Frontend/compare/gamebook-frontend-v0.11.0...gamebook-frontend-v0.12.0) (2026-10-28)
