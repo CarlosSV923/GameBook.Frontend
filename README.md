@@ -1,45 +1,42 @@
 # GameBook.Frontend
 
-[Read this README in Spanish](README.es.md)
+[Español](README.es.md) · **Status: active — latest release v0.12.0**
 
-`GameBook.Frontend` is the Next.js web application for GameBook. It lets visitors browse the public IGDB catalog and lets authenticated users manage their own favorite games.
+[![CI](https://github.com/CarlosSV923/GameBook.Frontend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CarlosSV923/GameBook.Frontend/actions/workflows/ci.yml)
 
-## Responsibility
+![A visitor browses the catalog, opens a game, signs in and saves it to favorites](docs/screenshots/en/main-flow.gif)
 
-The frontend owns the browser experience, account and session flows, favorites UI, responsive presentation, persistent theme preference, and English/Spanish interface preference. It calls AuthUser and Game for GameBook operations. Its server-only IGDB adapter authenticates with Twitch application credentials so those credentials never reach the browser.
+GameBook.Frontend is the Next.js application for browsing video game information from IGDB and managing a signed-in user's favorites through the GameBook services.
 
-The browser does not call IGDB directly. The Next.js server exposes the local `/api/igdb/*` proxy routes, obtains and renews the Twitch application token, applies the contract limits of four requests per second and eight concurrent requests, and translates provider failures into the frontend API contract.
+## What it does
 
-## Implemented architecture
+- Browses the public catalog by rating, name, platform and release year, with game details and suggestions.
+- Lets users register, sign in, view their profile, change their password and deactivate their account.
+- Saves, lists, filters and removes a user's favorite games after sign-in.
+- Provides English and Spanish interface text, light and dark themes, and responsive layouts.
+- Fetches IGDB data on the Next.js server; Twitch application credentials stay server-side.
 
-- `src/app/` — Next.js App Router pages, layout, and server API route boundaries.
-- `src/app/api/igdb/` — server-only catalog, detail, suggestions, and platform proxy routes.
-- `src/features/` — product features such as authentication, catalog, favorites, profile, navigation, and preferences.
-- `src/server/` — server-only IGDB and Twitch clients, request limiting, and provider error handling.
-- `src/shared/` — API contracts, browser session storage, i18n messages, preference storage, and reusable UI primitives.
+## Live demo and API docs
 
-The browser stores the GameBook JWT in `sessionStorage`. Authenticated requests forward it as `Authorization: Bearer <token>` to AuthUser and Game. Public catalog requests remain available without a GameBook account.
+**Live app:** [gamebook-frontend.vercel.app](https://gamebook-frontend.vercel.app) (Vercel, `main`). The app uses [AuthUser](https://github.com/CarlosSV923/GameBook.Microservice.AuthUser) and [Game](https://github.com/CarlosSV923/GameBook.Microservice.Game); their Swagger UIs are [AuthUser /docs](https://gamebook-microservice-authuser.onrender.com/docs) and [Game /docs](https://gamebook-microservice-game.onrender.com/docs). Both backends run on Render's free tier, so a first request may take a while; the app shows a warm-up notice.
 
-## Frontend architecture
+## Screenshots
 
-The repository architecture diagram is available in English and Spanish. The embedded previews use the validated dark theme; the standalone HTML files retain Archify's interactive viewer.
+Screenshots are generated with `pnpm screenshots` from fictitious fixtures.
 
-[![GameBook.Frontend architecture — English](architecture/GameBook.Frontend-architecture-en.svg)](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
+| Catalog                                     | Catalog · dark                                                 | Detail                                         |
+| ------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------- |
+| ![Catalog](docs/screenshots/en/catalog.png) | ![Catalog in dark theme](docs/screenshots/en/catalog-dark.png) | ![Game detail](docs/screenshots/en/detail.png) |
 
-- [Open the interactive diagram](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
+| Anonymous save                                                       | Favorites                                       | Profile                                     |
+| -------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------- |
+| ![Save prompt for a visitor](docs/screenshots/en/anonymous-save.png) | ![Favorites](docs/screenshots/en/favorites.png) | ![Profile](docs/screenshots/en/profile.png) |
 
-The Spanish diagram keeps Archify's fixed viewer controls in English while translating the authored architecture content.
+<p align="center"><img src="docs/screenshots/en/catalog-phone.png" alt="Catalog on a phone" width="300"></p>
 
-## Local setup
+## Quick development
 
-Prerequisites:
-
-- Node.js 24 or a compatible LTS version.
-- pnpm 12.4.1, enabled through Corepack.
-- Local test credentials for IGDB/Twitch when exercising the public catalog.
-- The sibling AuthUser and Game repositories for the complete local integration.
-
-Install dependencies and start the development server:
+Requires Node.js 24 and pnpm (via Corepack). Copy `.env.example` to `.env`, set local values, install dependencies and start the app:
 
 ```bash
 corepack enable
@@ -47,80 +44,33 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The frontend is available at `http://localhost:3000` by default.
+The app starts at `http://localhost:3000`. Run unit tests with `pnpm test`. See [development guide](docs/development.md) for environment variables, E2E, screenshots and deployment.
 
-## Local Docker image
+## Architecture
 
-The repository includes the production-style `Dockerfile` used by the integration Compose in [GameBook.System](https://github.com/CarlosSV923/GameBook.System). Keep the three repositories as sibling directories and follow the Compose setup there; the browser-facing `NEXT_PUBLIC_AUTHUSER_URL` and `NEXT_PUBLIC_GAME_URL` values are supplied as image build arguments.
+The browser UI is organized by feature. Next.js server routes fetch IGDB using server-only Twitch credentials; TanStack Query manages client server-state, while browser clients call AuthUser and Game for account and favorite operations.
 
-## Production deployment
+[![GameBook.Frontend architecture](architecture/GameBook.Frontend-architecture-en.svg)](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-architecture-en.html)
 
-The public GameBook frontend is deployed on Vercel at [`https://gamebook-frontend.vercel.app`](https://gamebook-frontend.vercel.app). Its production service dependencies are AuthUser at [`https://gamebook-microservice-authuser.onrender.com`](https://gamebook-microservice-authuser.onrender.com) and Game at [`https://gamebook-microservice-game.onrender.com`](https://gamebook-microservice-game.onrender.com). AuthUser and Game expose their production Swagger UI at [`/docs`](https://gamebook-microservice-authuser.onrender.com/docs) and [`/docs`](https://gamebook-microservice-game.onrender.com/docs), respectively.
+[![Public catalog sequence: server render, hydration and pagination](architecture/GameBook.Frontend-sequence-en.svg)](https://carlossv923.github.io/GameBook.Frontend/GameBook.Frontend-sequence-en.html)
 
-Production credentials remain server/provider configuration and are never committed to this repository.
+Click a diagram to open its interactive version, or browse the [diagram index](https://carlossv923.github.io/GameBook.Frontend/).
 
-## Runtime variables
+## Stack and decisions
 
-Copy `.env.example` to a private, ignored `.env` file and fill only the local values. The template contains the variable names required by the frontend without values:
-
-```dotenv
-IGDB_CLIENT_ID=
-IGDB_CLIENT_SECRET=
-NEXT_PUBLIC_AUTHUSER_URL=
-NEXT_PUBLIC_GAME_URL=
-PORT=
-```
-
-`IGDB_CLIENT_ID` and `IGDB_CLIENT_SECRET` are read only by server-side code. The two `NEXT_PUBLIC_` variables are the base URLs used by browser clients and must not contain the `/v1` suffix. Do not commit `.env` files or credentials. Restart the Next.js development server after changing a `NEXT_PUBLIC_` variable.
-
-## Local service integration
-
-Run AuthUser on local port 3001 and Game on local port 3002. AuthUser must allow the exact frontend origin `http://localhost:3000`; Game must allow the same origin and must resolve AuthUser through its own `AUTHUSER_URL` configuration.
-
-The local service endpoints are:
-
-| Service | URL |
-| --- | --- |
-| Frontend | `http://localhost:3000` |
-| AuthUser Swagger UI | `http://localhost:3001/docs` |
-| AuthUser OpenAPI JSON | `http://localhost:3001/docs/openapi.json` |
-| Game Swagger UI | `http://localhost:3002/docs` |
-| Game OpenAPI JSON | `http://localhost:3002/docs/openapi.json` |
-
-The frontend supports registration, login, session/profile access, password change and revocation, favorite listing, filtering, suggestions, snapshot synchronization, and deletion through those services.
-
-## Individual local execution
-
-This repository runs independently with the Next.js development server; no container orchestration is required. To exercise authenticated flows, start AuthUser and Game separately in their own repositories and configure the four frontend variables listed above.
-
-From this repository, after copying `.env.example` to `.env`:
-
-```bash
-corepack enable
-pnpm install --frozen-lockfile
-pnpm dev
-```
-
-Use `pnpm start` after creating a production build with `pnpm build`. The frontend remains available at `http://localhost:3000`; AuthUser and Game expose their own startup instructions and local API documentation in their repositories.
-
-## Tests and quality checks
-
-```bash
-pnpm test
-pnpm format:check
-pnpm lint
-pnpm typecheck
-pnpm build
-```
-
-## Release and deployment policy
-
-Commits follow Conventional Commits. The `release-please` workflow runs only on `main` pushes or a manual dispatch, uses the manifest files in the repository, and authenticates with the minimum `GITHUB_TOKEN` permissions required to create release pull requests and GitHub releases. The regular CI validates pull requests and `main`; the release commit is validated by CI after the release pull request is merged.
-
-`vercel.json` disables automatic Git deployments for every branch except `main`. No Vercel project or production deployment is created by this repository at this stage.
+| Technology                            | Why                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| Next.js App Router, React, TypeScript | Server-render the first public catalog page and keep IGDB credentials on the server. |
+| Tailwind CSS 4                        | Single styling system with theme tokens.                                             |
+| TanStack Query                        | Cache and paginate catalog, favorites, detail and suggestions.                       |
+| Axios and RxJS                        | HTTP clients for AuthUser and Game, and observable health checks for their warm-up.  |
+| Zod                                   | Validate IGDB responses before mapping them to app models.                           |
+| Vitest and Playwright                 | Unit tests, browser E2E and repeatable screenshot fixtures.                          |
 
 ## Related projects
 
-- [GameBook.Microservice.AuthUser](https://github.com/CarlosSV923/GameBook.Microservice.AuthUser)
-- [GameBook.Microservice.Game](https://github.com/CarlosSV923/GameBook.Microservice.Game)
-- [GameBook.System documentation](https://github.com/CarlosSV923/GameBook.System/blob/main/README.md)
+- [GameBook.System](https://github.com/CarlosSV923/GameBook.System) — system documentation and local integration Compose.
+- [GameBook.Microservice.AuthUser](https://github.com/CarlosSV923/GameBook.Microservice.AuthUser) — accounts, authentication and sessions.
+- [GameBook.Microservice.Game](https://github.com/CarlosSV923/GameBook.Microservice.Game) — user favorites and game snapshots.
+
+Licensed under the [MIT License](LICENSE) · © Carlos Sesme Vera.
