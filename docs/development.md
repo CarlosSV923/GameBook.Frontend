@@ -48,6 +48,8 @@ For local production mode, run `pnpm build` followed by `pnpm start`.
 
 The release-please workflow runs on pushes to `main` and manual dispatch. It opens or updates a release pull request from the Conventional Commits on `main`; merging that PR creates the version tag and GitHub release. Changes reach `main` through a `develop` → `main` promotion PR, followed by the release-please PR.
 
+After each release, the workflow opens a `main` → `develop` sync PR if one is not already open. Merge it with a merge commit.
+
 Vercel deploys the frontend from `main` at [gamebook-frontend.vercel.app](https://gamebook-frontend.vercel.app). Configure `NEXT_PUBLIC_AUTHUSER_URL`, `NEXT_PUBLIC_GAME_URL`, `IGDB_CLIENT_ID` and `IGDB_CLIENT_SECRET` in the Vercel project. `vercel.json` enables Git deployment for `main` only. The backend services are deployed independently to Render; this repository does not configure backend preview deployments.
 
 ## Docker
